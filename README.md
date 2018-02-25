@@ -18,4 +18,8 @@ npm run build
 npm run build --report
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+参考资料：
+1. Element-UI: [http://element.eleme.io/#/en-US/component/installation](http://element.eleme.io/#/en-US/component/installation)
+2. ECharts: [https://github.com/ecomfe/vue-echarts](https://github.com/ecomfe/vue-echarts)
+3. 微信开放平台：[https://open.weixin.qq.com](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=&lang=zh_CN)
+
