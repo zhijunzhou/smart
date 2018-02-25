@@ -10,22 +10,7 @@
           theme="ovilia-green"
           auto-resize
         />
-      </figure>
-      <div>
-        <el-button>扫描登陆</el-button>
-      </div>
-      <el-row>
-        <el-col :span="12">
-          <div class="grid-content">
-            <div id="login_container"></div>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content">
-            <div id="login_container2"></div>
-          </div>
-          </el-col>
-      </el-row>
+      </figure>      
     </el-main>
     <el-footer>Footer</el-footer>
   </el-container>
@@ -45,75 +30,14 @@ export default {
         renderer: 'canvas'
       }
     }
-  },
-  mounted () {
-    /* eslint-disable no-undef */
-    const obj = new WxLogin({
-      id: 'login_container',
-      appid: 'wxbdc5610cc59c1631',
-      scope: 'snsapi_login',
-      redirect_uri: encodeURIComponent('https://passport.yhd.com/wechat/login.do'),
-      state: Math.random().toString(36).substr(2, 15),
-      style: 'black',
-      href: ''
-    })
-
-    const obj2 = new WxLogin({
-      id: 'login_container2',
-      appid: 'wxd97ecfda77d6b9ae',
-      scope: 'snsapi_login',
-      redirect_uri: encodeURIComponent('http://www.starstech.cc/smart'),
-      state: Math.random().toString(36).substr(2, 15),
-      style: 'black',
-      href: ''
-    })
-
-    console.log(obj, obj2)
   }
 }
 </script>
 
 <style>
-
 .echarts {
   height: 300px;
 }
-.el-header,
-.el-footer {
-  /* background-color: #b3c0d1; */
-  /* color: #333; */
-  text-align: center;
-  line-height: 60px;
-}
-
-.el-aside {
-  /* background-color: #d3dce6; */
-  /* color: #333; */
-  text-align: center;
-  line-height: 200px;
-}
-
-.el-main {
-  /* background-color: #e9eef3; */
-  /* color: #333; */
-  text-align: center;
-  line-height: 160px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
-
-.el-container:nth-child(5) .el-aside,
-.el-container:nth-child(6) .el-aside {
-  line-height: 260px;
-}
-
-.el-container:nth-child(7) .el-aside {
-  line-height: 320px;
-}
-
-
 
 figure {
 	display: inline-block;
