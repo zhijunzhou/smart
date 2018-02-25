@@ -14,7 +14,18 @@
       <div>
         <el-button>扫描登陆</el-button>
       </div>
-			<div id="login_container"></div>
+      <el-row>
+        <el-col :span="12">
+          <div class="grid-content">
+            <div id="login_container"></div>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="grid-content">
+            <div id="login_container2"></div>
+          </div>
+          </el-col>
+      </el-row>
     </el-main>
     <el-footer>Footer</el-footer>
   </el-container>
@@ -37,17 +48,27 @@ export default {
   },
   mounted () {
     /* eslint-disable no-undef */
-    var obj = new WxLogin({
+    const obj = new WxLogin({
       id: 'login_container',
       appid: 'wxbdc5610cc59c1631',
       scope: 'snsapi_login',
       redirect_uri: 'https://passport.yhd.com/wechat/login.do',
-      state: '3d6be0a4035d839573b04816624a415e',
+      state: Math.random().toString(36).substr(2, 15),
       style: 'black',
       href: ''
     })
 
-    console.log(obj)
+    const obj2 = new WxLogin({
+      id: 'login_container2',
+      appid: 'wxd97ecfda77d6b9ae',
+      scope: 'snsapi_login',
+      redirect_uri: 'http://nstart.cc',
+      state: Math.random().toString(36).substr(2, 15),
+      style: 'black',
+      href: ''
+    })
+
+    console.log(obj, obj2)
   }
 }
 </script>
