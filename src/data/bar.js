@@ -15,7 +15,7 @@ export default function getData () {
       axisLabel: {show: true}
     },
     series: [{
-      type: 'bar',
+      type: 'line',
       name: '销量',
       data: items.map(() => Math.floor(Math.random() * 40 + 10))
     }]

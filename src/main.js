@@ -1,15 +1,24 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import ElementUI from 'element-ui'
+// import ElementUI from 'element-ui'
+import { Container, Header, Footer, Main, Row, Col, Button } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
+import store from './store'
 
 Vue.config.productionTip = false
 
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
+Vue.component(Container.name, Container)
+Vue.component(Header.name, Header)
+Vue.component(Footer.name, Footer)
+Vue.component(Main.name, Main)
+Vue.component(Row.name, Row)
+Vue.component(Col.name, Col)
+Vue.component(Button.name, Button)
 
 Vue.component('chart', ECharts)
 
@@ -17,6 +26,7 @@ Vue.component('chart', ECharts)
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

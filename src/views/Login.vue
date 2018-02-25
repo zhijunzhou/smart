@@ -34,7 +34,7 @@
 <script>
 
 import 'echarts/lib/chart/line'
-import 'echarts/lib/chart/bar'
+// import 'echarts/lib/chart/bar'
 import getBar from '@/data/bar'
 
 export default {
@@ -52,7 +52,7 @@ export default {
       id: 'login_container',
       appid: 'wxbdc5610cc59c1631',
       scope: 'snsapi_login',
-      redirect_uri: 'https://passport.yhd.com/wechat/login.do',
+      redirect_uri: encodeURIComponent('https://passport.yhd.com/wechat/login.do'),
       state: Math.random().toString(36).substr(2, 15),
       style: 'black',
       href: ''
@@ -62,7 +62,7 @@ export default {
       id: 'login_container2',
       appid: 'wxd97ecfda77d6b9ae',
       scope: 'snsapi_login',
-      redirect_uri: 'http://nstart.cc',
+      redirect_uri: encodeURIComponent('http://www.starstech.cc/smart'),
       state: Math.random().toString(36).substr(2, 15),
       style: 'black',
       href: ''
