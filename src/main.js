@@ -2,7 +2,20 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 // import ElementUI from 'element-ui'
-import { Container, Header, Footer, Main, Row, Col, Button } from 'element-ui'
+import {
+  Container,
+  Header,
+  Footer,
+  Main,
+  Row,
+  Col,
+  Button,
+  Dialog,
+  Tabs,
+  TabPane,
+  Radio,
+  RadioGroup
+} from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
@@ -19,6 +32,11 @@ Vue.component(Main.name, Main)
 Vue.component(Row.name, Row)
 Vue.component(Col.name, Col)
 Vue.component(Button.name, Button)
+Vue.component(Dialog.name, Dialog)
+Vue.component(Tabs.name, Tabs)
+Vue.component(TabPane.name, TabPane)
+Vue.component(Radio.name, Radio)
+Vue.component(RadioGroup.name, RadioGroup)
 
 Vue.component('chart', ECharts)
 

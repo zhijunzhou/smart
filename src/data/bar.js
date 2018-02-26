@@ -4,9 +4,14 @@ export default function getData () {
     title: {
       text: '异步数据加载示例'
     },
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis'
+    },
     legend: {
       data: ['销量']
+    },
+    toolbox: {
+      show: true
     },
     xAxis: {
       data: items
@@ -14,6 +19,7 @@ export default function getData () {
     yAxis: {
       axisLabel: {show: true}
     },
+    calculable: true,
     series: [{
       type: 'line',
       name: '销量',

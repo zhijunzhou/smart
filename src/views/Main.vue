@@ -1,6 +1,8 @@
 <template>
   <el-container>
-    <el-header>Header</el-header>
+    <el-header>
+      <main-header></main-header>
+		</el-header>
     <el-main>
       <figure>
         <chart 
@@ -10,8 +12,16 @@
           theme="ovilia-green"
           auto-resize
         />
-      </figure>      
+      </figure>
+      <el-row>
+        <el-col :span="24">
+          <el-button type="success" @click="dialogAnalysisVisible = true" round>分析统计示例</el-button>
+        </el-col>
+      </el-row>
     </el-main>
+    <el-dialog width="80%" :visible.sync="dialogAnalysisVisible">
+      <product-analysis></product-analysis>
+    </el-dialog>
     <el-footer>Footer</el-footer>
   </el-container>
 </template>
@@ -19,8 +29,9 @@
 <script>
 
 import 'echarts/lib/chart/line'
-// import 'echarts/lib/chart/bar'
 import getBar from '@/data/bar'
+
+import productAnalysis from '@/components/productAnalysis/productAnalysis'
 
 export default {
   data () {
@@ -28,13 +39,17 @@ export default {
       bar: getBar(),
       initOptions: {
         renderer: 'canvas'
-      }
+      },
+      dialogAnalysisVisible: false
     }
+  },
+  components: {
+    productAnalysis
   }
 }
 </script>
 
-<style>
+<style scoped>
 .echarts {
   height: 300px;
 }
