@@ -17,6 +17,11 @@ body {
   margin: 0;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,15 +32,13 @@ body {
 .el-footer {
   /* background-color: #b3c0d1; */
   /* color: #333; */
-  text-align: center;
-  line-height: 60px;
+  /* text-align: center; */
+  /* line-height: 60px; */
 }
 
 .el-aside {
   /* background-color: #d3dce6; */
   /* color: #333; */
-  text-align: center;
-  line-height: 200px;
 }
 
 .el-main {

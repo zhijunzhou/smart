@@ -7,6 +7,7 @@ import {
   Header,
   Footer,
   Main,
+  Aside,
   Row,
   Col,
   Button,
@@ -14,7 +15,11 @@ import {
   Tabs,
   TabPane,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Menu,
+  MenuItem,
+  MenuItemGroup,
+  Submenu
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -29,6 +34,7 @@ Vue.component(Container.name, Container)
 Vue.component(Header.name, Header)
 Vue.component(Footer.name, Footer)
 Vue.component(Main.name, Main)
+Vue.component(Aside.name, Aside)
 Vue.component(Row.name, Row)
 Vue.component(Col.name, Col)
 Vue.component(Button.name, Button)
@@ -37,6 +43,10 @@ Vue.component(Tabs.name, Tabs)
 Vue.component(TabPane.name, TabPane)
 Vue.component(Radio.name, Radio)
 Vue.component(RadioGroup.name, RadioGroup)
+Vue.component(Menu.name, Menu)
+Vue.component(MenuItem.name, MenuItem)
+Vue.component(MenuItemGroup.name, MenuItemGroup)
+Vue.component(Submenu.name, Submenu)
 
 Vue.component('chart', ECharts)
 

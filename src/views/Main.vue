@@ -1,24 +1,72 @@
 <template>
-  <el-container>
-    <el-header>
-      <main-header></main-header>
+  <el-container class="wrapper">
+    <el-header
+      height="80px"
+      :style="{'background-color': primaryColor}">      
+      <span class="header-logo">SMART LOGO</span>
+      <ul class="header-operations">    
+        <li>
+          <span>
+            张三
+          </span>
+        </li>    
+        <li>
+          <span>
+            退出
+          </span>
+        </li>
+      </ul>
 		</el-header>
-    <el-main>
-      <figure>
-        <chart 
-          :options="bar"
-          :init-options="initOptions"
-          ref="bar"
-          theme="ovilia-green"
-          auto-resize
-        />
-      </figure>
-      <el-row>
-        <el-col :span="24">
-          <el-button type="success" @click="dialogAnalysisVisible = true" round>分析统计示例</el-button>
-        </el-col>
-      </el-row>
-    </el-main>
+    <el-container>
+      <el-aside class="menu">
+        <el-menu
+          default-active="1"
+          active-text-color="#409EFF"
+          class="el-menu-vertical-d">
+          <el-menu-item index="1">
+            <i class="el-icon-menu"></i>
+            <span>推广</span>
+          </el-menu-item>
+          <el-submenu index="2">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>产品</span>
+            </template>
+            <el-menu-item-group title="Group One">
+              <el-menu-item index="1-1">item one</el-menu-item>
+              <el-menu-item index="1-2">item one</el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Group Two">
+              <el-menu-item index="1-3">item three</el-menu-item>
+            </el-menu-item-group>
+            <el-submenu index="1-4">
+              <template slot="title">item four</template>
+              <el-menu-item index="1-4-1">item one</el-menu-item>
+            </el-submenu>
+          </el-submenu>
+          <el-menu-item index="3">
+            <i class="el-icon-setting"></i>
+            <span>设置</span>
+          </el-menu-item>        
+        </el-menu>
+      </el-aside>
+      <el-main class="content">
+        <figure>
+          <chart 
+            :options="bar"
+            :init-options="initOptions"
+            ref="bar"
+            theme="ovilia-green"
+            auto-resize
+          />
+        </figure>
+        <el-row>
+          <el-col :span="24">
+            <el-button type="success" @click="dialogAnalysisVisible = true" round>分析统计示例</el-button>
+          </el-col>
+        </el-row>
+      </el-main>
+    </el-container>
     <el-dialog width="80%" :visible.sync="dialogAnalysisVisible">
       <product-analysis></product-analysis>
     </el-dialog>
@@ -30,7 +78,7 @@
 
 import 'echarts/lib/chart/line'
 import getBar from '@/data/bar'
-
+import mainHeader from '@/components/mainHeader/mainHeader'
 import productAnalysis from '@/components/productAnalysis/productAnalysis'
 
 export default {
@@ -40,16 +88,102 @@ export default {
       initOptions: {
         renderer: 'canvas'
       },
+      primaryColor: '#409eff',
       dialogAnalysisVisible: false
     }
   },
   components: {
+    mainHeader,
     productAnalysis
   }
 }
 </script>
 
 <style scoped>
+.menu {
+  height: 100%;
+}
+
+.content {
+  padding: 20px;
+}
+
+header::after {
+  display: inline-block;
+  content: "";
+  height: 100%;
+  vertical-align: middle;
+}
+.el-header {
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+.el-menu {
+    border-right: 1px solid #e6e6e6;
+    list-style: none;
+    position: relative;
+    margin: 0;
+    padding-left: 0;
+    background-color: #fff;
+}
+.el-menu-item {
+    height: 56px;
+    line-height: 56px;
+    font-size: 14px;
+    color: #303133;
+    padding: 0 20px;
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    transition: border-color .3s,background-color .3s,color .3s;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+.el-menu-item:focus, .el-menu-item:hover {
+    outline: none;
+    background-color: #ecf5ff;
+}
+.el-menu-item.is-active {
+    color: #409eff;
+}
+.header-logo {
+  display: inline-block;
+  vertical-align: middle;
+  color: #fff;
+}
+.header-operations {
+	display: inline-block;
+	float: right;
+	padding-right: 30px;
+	height: 100%;
+}
+
+.header-operations li {
+	color: #fff;
+	display: inline-block;
+	vertical-align: middle;
+	padding: 0 10px;
+	margin: 0 10px;
+	line-height: 80px;
+	cursor: pointer;
+}
+
+.header-operations li:last-child {
+	cursor: default;
+}
+
+.header-operations span {
+	opacity: 0.7;
+}
+
+.header-operations::after {
+	display: inline-block;
+	content: "";
+	height: 100%;
+	vertical-align: middle;
+}
+
+
 .echarts {
   height: 300px;
 }
