@@ -64,4 +64,12 @@ body > .el-container {
 .el-tabs__content {
   padding: 15px 15px;
 }
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.el-row:last-child {
+  margin-bottom: 0;
+}
 </style>

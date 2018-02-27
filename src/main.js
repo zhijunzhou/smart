@@ -19,7 +19,8 @@ import {
   Menu,
   MenuItem,
   MenuItemGroup,
-  Submenu
+  Submenu,
+  DatePicker
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -47,6 +48,7 @@ Vue.component(Menu.name, Menu)
 Vue.component(MenuItem.name, MenuItem)
 Vue.component(MenuItemGroup.name, MenuItemGroup)
 Vue.component(Submenu.name, Submenu)
+Vue.component(DatePicker.name, DatePicker)
 
 Vue.component('chart', ECharts)
 

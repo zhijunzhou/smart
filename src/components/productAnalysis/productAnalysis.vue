@@ -3,15 +3,32 @@
     <el-tab-pane label="销量" name="sales">
       <el-row>
         <el-col :span="4">
-          <el-radio-group v-model="sales">
-            <el-radio label="byYear">年销量</el-radio><p class="br"></p>
-            <el-radio label="bySeason">季度销量</el-radio><p class="br"></p>
-            <el-radio label="byMonth">月销量</el-radio><p class="br"></p>
-            <el-radio label="byWeek">周销量</el-radio><p class="br"></p>
-            <el-radio label="byDay">日销量</el-radio><p class="br"></p>
-          </el-radio-group>
+          <el-row>
+            <el-col :span="24">
+              <el-date-picker
+                v-model="dateRange"
+                type="daterange"
+                size="small"
+                range-separator="~"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                :default-time="['00:00:00', '23:59:59']">
+              </el-date-picker>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-radio-group v-model="sales">
+                <el-radio label="9">年销量</el-radio><p class="br"></p>
+                <el-radio label="8">季度销量</el-radio><p class="br"></p>
+                <el-radio label="7">月销量</el-radio><p class="br"></p>
+                <el-radio label="6">周销量</el-radio><p class="br"></p>
+                <el-radio label="5">日销量</el-radio><p class="br"></p>
+              </el-radio-group>
+            </el-col>
+          </el-row>        
         </el-col>
-        <el-col :span="20">
+        <el-col :span="20" style="padding-top: 50px;">
             <chart 
               :options="bar"
               :init-options="initOptions"
@@ -32,16 +49,15 @@
 </template>
 
 <script>
-
-import 'echarts/lib/chart/line'
 import getBar from '@/data/bar'
 
 export default {
   data () {
     return {
       activeName: 'sales',
-      sales: 'byYear',
+      sales: '9',
       bar: getBar(),
+      dateRange: [],
       initOptions: {
         renderer: 'svg'
       }

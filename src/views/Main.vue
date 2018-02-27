@@ -77,6 +77,10 @@
 <script>
 
 import 'echarts/lib/chart/line'
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
 import getBar from '@/data/bar'
 import mainHeader from '@/components/mainHeader/mainHeader'
 import productAnalysis from '@/components/productAnalysis/productAnalysis'

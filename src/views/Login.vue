@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header><h1>{{$store.state.projectTitle}}</h1></el-header>
+    <el-header><h1 class="project-title">{{$store.state.projectTitle}}</h1></el-header>
     <el-main>      
       <el-row>
         <el-col :span="24">
@@ -52,6 +52,10 @@ export default {
 <style>
 #login_container {
   height: 400px;
+}
+.project-title {
+  text-align: center;
+  line-height: 60px;
 }
 </style>
 
