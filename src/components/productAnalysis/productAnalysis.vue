@@ -2,9 +2,18 @@
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="销量" name="sales">
       <el-row>
-        <el-col :span="4">
+        <el-col :span="24" style="padding-top: 0;">
+            <chart 
+              :options="line"
+              :init-options="initOptions"
+              auto-resize
+            />
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
           <el-row>
-            <el-col :span="24">
+            <el-col>
               <el-date-picker
                 v-model="dateRange"
                 @change="processDateRangeChange"
@@ -17,9 +26,7 @@
                 end-placeholder="结束时间">
               </el-date-picker>
             </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
+            <el-col>
               <el-radio-group v-model="salesUnit" @change="processUnitChange">
                 <el-radio label="9">年销量</el-radio><p class="br"></p>
                 <el-radio label="8">季度销量</el-radio><p class="br"></p>
@@ -30,16 +37,7 @@
             </el-col>
           </el-row>        
         </el-col>
-        <el-col :span="20" style="padding-top: 50px;">
-            <chart 
-              :options="bar"
-              :init-options="initOptions"
-              ref="bar"
-              theme="ovilia-green"
-              auto-resize
-            />
-        </el-col>
-      </el-row>
+      </el-row>      
     </el-tab-pane>
     <el-tab-pane label="价格" name="prices">...</el-tab-pane>
     <el-tab-pane label="session" name="session">...</el-tab-pane>
@@ -52,25 +50,21 @@
 
 <script>
 import getBar from '@/data/bar'
-import service from '@/utils/service'
+import api from '@/utils/api'
+// import service from '@/utils/service'
 
 export default {
   data () {
     return {
       activeName: 'sales',
-      salesUnit: 9,
-      products: ['竞品1'],
-      bar: getBar(),
+      salesUnit: '9',
+      products: ['B07232TL6Z'],
+      line: getBar(),
       dateRange: [],
       initOptions: {
         renderer: 'svg'
       }
     }
-  },
-  mounted () {
-    console.log(service.get('/wepay').then((res) => {
-      console.log(res)
-    }))
   },
   methods: {
     handleClick (tab, event) {
@@ -95,9 +89,9 @@ export default {
         unit: this.salesUnit,
         products: this.products
       }
-
-      service.post('/wepay/prepay', query).then(res => {
-        console.log(res)
+      console.log(query)
+      api.post('/stat/list', query).then(res => {
+        console.log(res.data)
       })
     }
   }

@@ -18,12 +18,13 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu">
+      <el-aside class="menu" width="180px">
         <el-menu
+					:router="true"
           default-active="1"
           active-text-color="#409EFF"
           class="el-menu-vertical-d">
-          <el-menu-item index="1">
+          <el-menu-item index="1" :route="{ path: '/main' }">
             <i class="el-icon-menu"></i>
             <span>推广</span>
           </el-menu-item>
@@ -44,66 +45,36 @@
               <el-menu-item index="1-4-1">item one</el-menu-item>
             </el-submenu>
           </el-submenu>
-          <el-menu-item index="3">
+          <el-menu-item index="3" :route="{ path: '/main/setting' }">
             <i class="el-icon-setting"></i>
             <span>设置</span>
           </el-menu-item>        
         </el-menu>
       </el-aside>
       <el-main class="content">
-        <figure>
-          <chart 
-            :options="bar"
-            :init-options="initOptions"
-            ref="bar"
-            theme="ovilia-green"
-            auto-resize
-          />
-        </figure>
-        <el-row>
-          <el-col :span="24">
-            <el-button type="success" @click="dialogAnalysisVisible = true" round>分析统计示例</el-button>
-          </el-col>
-        </el-row>
+				<router-view></router-view>
       </el-main>
-    </el-container>
-    <el-dialog width="80%" :visible.sync="dialogAnalysisVisible">
-      <product-analysis></product-analysis>
-    </el-dialog>
+    </el-container>    
     <el-footer>Footer</el-footer>
   </el-container>
 </template>
 
 <script>
-
-import 'echarts/lib/chart/line'
-import 'echarts/lib/chart/bar'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/legend'
-import getBar from '@/data/bar'
 import mainHeader from '@/components/mainHeader/mainHeader'
-import productAnalysis from '@/components/productAnalysis/productAnalysis'
 
 export default {
   data () {
     return {
-      bar: getBar(),
-      initOptions: {
-        renderer: 'canvas'
-      },
-      primaryColor: '#409eff',
-      dialogAnalysisVisible: false
+      primaryColor: '#409eff'
     }
   },
   components: {
-    mainHeader,
-    productAnalysis
+    mainHeader
   }
 }
 </script>
 
-<style scoped>
+<style>
 .menu {
   height: 100%;
 }
@@ -185,11 +156,6 @@ header::after {
 	content: "";
 	height: 100%;
 	vertical-align: middle;
-}
-
-
-.echarts {
-  height: 300px;
 }
 
 figure {

@@ -1,13 +1,12 @@
 import axios from 'axios'
-import env from '../../config'
 
 const isProduction = !!(process.env.NODE_ENV === 'production')
-const environment = isProduction ? env.build.env : env.dev.env
+const baseURL = isProduction ? 'http://59.175.16.123:5556/' : 'http://59.175.16.123:5556/'
 
 // smart service
 const api = axios.create({
-  baseURL: environment.smartServer.baseURL,
-  withCredentials: true,
+  baseURL: baseURL,
+  // withCredentials: true,
   timeout: 30000
 })
 

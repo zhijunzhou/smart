@@ -5,13 +5,13 @@ var replyData = []
 let currentDate = moment()
 let DateRange = []
 
-for (let i = 0; i < 30; i++) {
+for (let i = 0; i < 100; i++) {
   currentDate.subtract(1, 'days')
   // console.log(currentDate.format('L'))
   DateRange.push(currentDate.format('L'))
 }
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 2; i++) {
   let sample = {
     id: '竞品' + i,
     name: '竞品名称' + i,
@@ -62,10 +62,13 @@ export default function getData() {
       trigger: 'axis'
     },
     legend: {
+      orient: 'vertical',
+      left: 'right',
       data: legendData
     },
+    padding: [20, 100, 20, 100],
     grid: {
-      left: '3%',
+      left: '5%',
       right: '4%',
       bottom: '3%',
       containLabel: true
