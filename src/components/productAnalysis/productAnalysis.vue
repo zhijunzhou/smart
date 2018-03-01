@@ -7,18 +7,20 @@
             <el-col :span="24">
               <el-date-picker
                 v-model="dateRange"
+                @change="processDateRangeChange"
                 type="daterange"
                 size="small"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
                 range-separator="~"
                 start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                :default-time="['00:00:00', '23:59:59']">
+                end-placeholder="结束时间">
               </el-date-picker>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-radio-group v-model="sales">
+              <el-radio-group v-model="salesUnit" @change="processUnitChange">
                 <el-radio label="9">年销量</el-radio><p class="br"></p>
                 <el-radio label="8">季度销量</el-radio><p class="br"></p>
                 <el-radio label="7">月销量</el-radio><p class="br"></p>
@@ -50,12 +52,14 @@
 
 <script>
 import getBar from '@/data/bar'
+import service from '@/utils/service'
 
 export default {
   data () {
     return {
       activeName: 'sales',
-      sales: '9',
+      salesUnit: 9,
+      products: ['竞品1'],
       bar: getBar(),
       dateRange: [],
       initOptions: {
@@ -63,9 +67,38 @@ export default {
       }
     }
   },
+  mounted () {
+    console.log(service.get('/wepay').then((res) => {
+      console.log(res)
+    }))
+  },
   methods: {
     handleClick (tab, event) {
       console.log(tab, event)
+    },
+    udpateSalesChart (unit, period) {
+      console.log(unit, period)
+      this.querySales()
+    },
+    processUnitChange (unit) {
+      this.udpateSalesChart(unit, this.dateRange)
+    },
+    processDateRangeChange (range) {
+      this.udpateSalesChart(this.salesUnit, range)
+    },
+    querySales () {
+      const query = {
+        period: {
+          start: this.dateRange[0],
+          end: this.dateRange[1]
+        },
+        unit: this.salesUnit,
+        products: this.products
+      }
+
+      service.post('/wepay/prepay', query).then(res => {
+        console.log(res)
+      })
     }
   }
 }
