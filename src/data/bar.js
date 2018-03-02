@@ -1,9 +1,11 @@
 /* eslint-disable */
+/*
 import moment from 'moment'
 var replyData = []
 
 let currentDate = moment()
 let DateRange = []
+let colors = ['#fe9800', '#6498cb']
 
 for (let i = 0; i < 100; i++) {
   currentDate.subtract(1, 'days')
@@ -26,11 +28,13 @@ for (let i = 0; i < 2; i++) {
   })
   replyData.push(sample)
 }
+*/
 
-export default function getData() {
+export default function getData(replyData) {
   let legendData = []
   let xAxisData = []
   let seriesData = []
+  let colors = ['#fe9800', '#6498cb']
 
   replyData.forEach((item, index) => {
     legendData.push(item.name)
@@ -38,7 +42,14 @@ export default function getData() {
       name: item.name,
       type: 'line',
       stack: '总量',
-      data: []
+      symbol: 'circle',
+      symbolSize: 6,
+      data: [],
+      itemStyle: {
+        normal: {
+          color: colors[index % 2]
+        }
+      }
     }
 
     item.info.forEach((v, i) => {
@@ -62,8 +73,6 @@ export default function getData() {
       trigger: 'axis'
     },
     legend: {
-      orient: 'vertical',
-      left: 'right',
       data: legendData
     },
     padding: [20, 100, 20, 100],
@@ -74,9 +83,10 @@ export default function getData() {
       containLabel: true
     },
     toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
+      show: true,
+      orient: 'horizontal',
+      itemGap: 10,
+      itemSize: 15
     },
     xAxis: {
       type: 'category',

@@ -10,34 +10,49 @@
             />
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="24">
-          <el-row>
-            <el-col>
-              <el-date-picker
-                v-model="dateRange"
-                @change="processDateRangeChange"
-                type="daterange"
-                size="small"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-col>
-            <el-col>
-              <el-radio-group v-model="salesUnit" @change="processUnitChange">
-                <el-radio label="9">年销量</el-radio><p class="br"></p>
-                <el-radio label="8">季度销量</el-radio><p class="br"></p>
-                <el-radio label="7">月销量</el-radio><p class="br"></p>
-                <el-radio label="6">周销量</el-radio><p class="br"></p>
-                <el-radio label="5">日销量</el-radio><p class="br"></p>
-              </el-radio-group>
-            </el-col>
-          </el-row>        
+      <el-row class="text-right">
+        <el-col>
+          <el-date-picker
+            v-model="dateRange"
+            @change="processDateRangeChange"
+            type="daterange"
+            size="small"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            range-separator="~"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
+          </el-date-picker>
         </el-col>
-      </el-row>      
+      </el-row>
+      <el-row>
+        <el-col>
+          <el-radio-group v-model="salesUnit" @change="processUnitChange">
+            <el-radio label="7">月销量</el-radio>
+            <el-radio label="6">周销量</el-radio>
+            <el-radio label="5">日销量</el-radio>
+          </el-radio-group>
+        </el-col>
+      </el-row>
+      <el-table
+        border
+        show-summary
+        :data="replyData[0].info">
+        <el-table-column
+          type="selection">
+        </el-table-column>
+        <el-table-column
+          label="日期"
+          prop="label"          
+          :sort-method="sortByDate"
+          sortable>
+        </el-table-column>
+        <el-table-column
+          label="销量"
+          prop="value"
+          sortable>
+        </el-table-column>
+      </el-table>
     </el-tab-pane>
     <el-tab-pane label="价格" name="prices">...</el-tab-pane>
     <el-tab-pane label="session" name="session">...</el-tab-pane>
@@ -49,22 +64,53 @@
 </template>
 
 <script>
+import moment from 'moment'
 import getBar from '@/data/bar'
 import api from '@/utils/api'
-// import service from '@/utils/service'
 
 export default {
   data () {
     return {
       activeName: 'sales',
-      salesUnit: '9',
+      salesUnit: '7',
       products: ['B07232TL6Z'],
-      line: getBar(),
+      line: {},
       dateRange: [],
+      replyData: [],
+      tableData: [],
       initOptions: {
         renderer: 'svg'
       }
     }
+  },
+  created () {
+    let currentDate = moment()
+    let DateRange = []
+
+    for (let i = 0; i < 100; i++) {
+      currentDate.subtract(1, 'days')
+      DateRange.push(currentDate.format('L'))
+    }
+
+    for (let i = 0; i < 2; i++) {
+      let sample = {
+        id: '竞品' + i,
+        name: '竞品名称' + i,
+        description: '商品描述' + i,
+        info: []
+      }
+      DateRange.reverse().forEach((date, j) => {
+        sample.info.push({
+          label: date,
+          value: Math.ceil(Math.random() * 45 + 55)
+        })
+      })
+      this.replyData.push(sample)
+    }
+    this.line = getBar(this.replyData)
+  },
+  mounted () {
+    console.log(this.replyData)
   },
   methods: {
     handleClick (tab, event) {
@@ -89,10 +135,15 @@ export default {
         unit: this.salesUnit,
         products: this.products
       }
-      console.log(query)
+
       api.post('/stat/list', query).then(res => {
         console.log(res.data)
       })
+    },
+    sortByDate (a, b) {
+      let originFormat = 'MM/DD/YYYY'
+      let uiFormat = 'YYYY-MM-DD'
+      return moment(a.label, originFormat).format(uiFormat) > moment(b.label, originFormat).format(uiFormat)
     }
   }
 }

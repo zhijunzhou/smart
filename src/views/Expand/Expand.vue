@@ -1,14 +1,5 @@
 <template>
-  <div>
-    <figure>
-      <chart 
-        :options="bar"
-        :init-options="initOptions"
-        ref="bar"
-        theme="ovilia-green"
-        auto-resize
-      />
-    </figure>
+  <div>    
     <el-row>
       <el-col :span="24">
         <el-button type="success" round>
@@ -25,18 +16,13 @@
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/toolbox'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
-import getBar from '@/data/bar'
 
 export default {
   data () {
-    return {
-      bar: getBar(),
-      initOptions: {
-        renderer: 'canvas'
-      }
-    }
+    return {}
   }
 }
 </script>

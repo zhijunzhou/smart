@@ -1,7 +1,7 @@
 <template>
   <el-container class="wrapper">
     <el-header
-      height="80px"
+      height="60px"
       :style="{'background-color': primaryColor}">      
       <span class="header-logo">SMART LOGO</span>
       <ul class="header-operations">    
@@ -139,7 +139,7 @@ header::after {
 	vertical-align: middle;
 	padding: 0 10px;
 	margin: 0 10px;
-	line-height: 80px;
+	line-height: 60px;
 	cursor: pointer;
 }
 
