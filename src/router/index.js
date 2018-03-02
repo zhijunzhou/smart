@@ -4,6 +4,9 @@ import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Expand from '@/views/Expand/Expand'
 import Analysis from '@/views/Analysis/Analysis'
+import Products from '@/views/Products/Products'
+import AddProduct from '@/views/Products/Add'
+import Setting from '@/views/Setting/Setting'
 
 Vue.use(Router)
 
@@ -33,6 +36,21 @@ export default new Router({
           path: 'analysis',
           name: 'analysis',
           component: Analysis
+        },
+        {
+          path: 'products',
+          name: 'products',
+          component: Products
+        },
+        {
+          path: 'add-product',
+          name: 'add-product',
+          component: AddProduct
+        },
+        {
+          path: 'setting',
+          name: 'setting',
+          component: Setting
         }
       ]
     }

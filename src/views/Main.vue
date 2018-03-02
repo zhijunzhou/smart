@@ -18,9 +18,10 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu" width="180px">
+      <el-aside class="menu" width="200px">
         <el-menu
 					:router="true"
+					:defaultOpeneds="defaultOpeneds"
           default-active="1"
           active-text-color="#409EFF"
           class="el-menu-vertical-d">
@@ -33,17 +34,8 @@
               <i class="el-icon-location"></i>
               <span>产品</span>
             </template>
-            <el-menu-item-group title="Group One">
-              <el-menu-item index="1-1">item one</el-menu-item>
-              <el-menu-item index="1-2">item one</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="Group Two">
-              <el-menu-item index="1-3">item three</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="1-4">
-              <template slot="title">item four</template>
-              <el-menu-item index="1-4-1">item one</el-menu-item>
-            </el-submenu>
+              <el-menu-item index="1-1" :route="{path: '/main/add-product'}">新增产品</el-menu-item>
+              <el-menu-item index="1-2" :route="{path: '/main/products'}">统计结果</el-menu-item>
           </el-submenu>
           <el-menu-item index="3" :route="{ path: '/main/setting' }">
             <i class="el-icon-setting"></i>
@@ -55,7 +47,7 @@
 				<router-view></router-view>
       </el-main>
     </el-container>    
-    <el-footer>Footer</el-footer>
+    <el-footer></el-footer>
   </el-container>
 </template>
 
@@ -65,7 +57,8 @@ import mainHeader from '@/components/mainHeader/mainHeader'
 export default {
   data () {
     return {
-      primaryColor: '#409eff'
+      primaryColor: '#409eff',
+      defaultOpeneds: ['2']
     }
   },
   components: {
