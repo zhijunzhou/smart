@@ -1,19 +1,21 @@
 <template>
   <el-container>
-    <el-header><h1 class="project-title">{{$store.state.projectTitle}}</h1></el-header>
+    <el-header><h1 class="project-title text-center">{{$store.state.projectTitle}}</h1></el-header>
     <el-main>      
       <el-row>
         <el-col :span="24">
-          <div class="grid-content">
+          <div class="grid-content text-center">
             <div id="login_container"></div>
           </div>
         </el-col>
-        <el-col :span="24">
+      </el-row>
+      <el-row>
+        <el-col :span="24" class="text-center">
           <el-button @click="startJourney">快速体验</el-button>
         </el-col>
       </el-row>
     </el-main>
-    <el-footer><small>© 2018 www.starstech.cc. All Rights Reserved</small></el-footer>
+    <el-footer class="text-center"><small>© 2018 www.starstech.cc. All Rights Reserved</small></el-footer>
   </el-container>
 </template>
 
@@ -51,10 +53,9 @@ export default {
 
 <style>
 #login_container {
-  height: 400px;
+  height: 400px;  
 }
 .project-title {
-  text-align: center;
   line-height: 60px;
 }
 </style>
