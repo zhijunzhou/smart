@@ -97,17 +97,21 @@ export default {
   created () {
     let currentDate = moment()
     let DateRange = []
+    const LEGEND = [
+      '价格', '订单数量', 'Session', 'Page', 'Views', '转化率', '类目1排名',
+      '类目2排名', '类目3排名', 'Bluetooth receiver排名', 'bluetooth car adapter排名', 'Reviews', 'Rating', 'QA数量'
+    ]
 
     for (let i = 0; i < 100; i++) {
       currentDate.subtract(1, 'days')
       DateRange.push(currentDate.format('L'))
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 14; i++) {
       let sample = {
-        id: '竞品' + i,
-        name: '竞品名称' + i,
-        description: '商品描述' + i,
+        id: '分类' + i,
+        name: LEGEND[i],
+        description: '商品描述' + LEGEND[i],
         info: []
       }
       DateRange.reverse().forEach((date, j) => {

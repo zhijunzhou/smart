@@ -34,7 +34,10 @@ export default function getData(replyData) {
   let legendData = []
   let xAxisData = []
   let seriesData = []
-  let colors = ['#fe9800', '#6498cb']
+  let colors = ['#fe9800', '#6498cb','#fe0800', '#0498cb','#f09800', 
+    '#649999','#fe9899', '#6000cb','#fe1000', '#6466cb',
+    '#640000','#f00000', '#6999cb','#fdd800'
+  ]
 
   replyData.forEach((item, index) => {
     legendData.push(item.name)
@@ -47,7 +50,7 @@ export default function getData(replyData) {
       data: [],
       itemStyle: {
         normal: {
-          color: colors[index % 2]
+          color: colors[index % 14]
         }
       }
     }
