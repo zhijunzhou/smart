@@ -9,6 +9,13 @@
               auto-resize
             />
         </el-col>
+        <el-col :span="24" style="padding-top: 0;">
+          <chart 
+            :options="line2"
+            :init-options="initOptions"
+            auto-resize
+          />
+      </el-col>
       </el-row>
       <el-row class="text-right">
         <el-col>
@@ -67,6 +74,9 @@
 import moment from 'moment'
 import getBar from '@/data/bar'
 import api from '@/utils/api'
+import 'echarts/lib/component/markPoint'
+import 'echarts/lib/component/markLine'
+import 'echarts/lib/component/markArea'
 
 export default {
   data () {
@@ -75,6 +85,7 @@ export default {
       salesUnit: '7',
       products: ['B07232TL6Z'],
       line: {},
+      line2: {},
       dateRange: [],
       replyData: [],
       tableData: [],
@@ -92,7 +103,7 @@ export default {
       DateRange.push(currentDate.format('L'))
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       let sample = {
         id: '竞品' + i,
         name: '竞品名称' + i,
@@ -108,6 +119,48 @@ export default {
       this.replyData.push(sample)
     }
     this.line = getBar(this.replyData)
+    this.line2 = {
+      title: {
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: this.replyData.map(dt => dt.name)
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          dataView: {readOnly: false},
+          magicType: {type: ['line', 'bar']},
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: this.replyData[0].info.map(dt => dt.label)
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: this.replyData.map(dt => {
+        let name = dt.name
+        let type = 'line'
+        let markPoint = {
+          data: [
+            {type: 'max', name: '最大值'},
+            {type: 'min', name: '最小值'}
+          ]
+        }
+        let data = dt.info.map(i => i.value)
+        return {name, type, markPoint, data}
+      })
+    }
   },
   mounted () {
     console.log(this.replyData)
