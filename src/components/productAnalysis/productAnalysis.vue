@@ -2,13 +2,13 @@
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="销量" name="sales">
       <el-row>
-        <el-col :span="24" style="padding-top: 0;">
+        <!-- <el-col :span="24" style="padding-top: 0;">
             <chart 
               :options="line"
               :init-options="initOptions"
               auto-resize
             />
-        </el-col>
+        </el-col> -->
         <el-col :span="24" style="padding-top: 0;">
           <chart 
             :options="line2"
@@ -117,7 +117,8 @@ export default {
       DateRange.reverse().forEach((date, j) => {
         sample.info.push({
           label: date,
-          value: Math.ceil(Math.random() * 45 + 55)
+          value: Math.ceil(Math.random() * 45 + 55),
+          rate: Math.random()
         })
       })
       this.replyData.push(sample)
@@ -161,7 +162,7 @@ export default {
             {type: 'min', name: '最小值'}
           ]
         }
-        let data = dt.info.map(i => i.value)
+        let data = dt.info.map(i => i.rate)
         return {name, type, markPoint, data}
       })
     }
