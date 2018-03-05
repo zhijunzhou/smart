@@ -1,6 +1,50 @@
 <template>
   <div>
+    <el-row>
+      <el-form ref="form">
+        <el-col :span="4">
+          <el-button>选择店铺</el-button>
+        </el-col>
+        <el-col :span="8">        
+          <el-form-item label="产品类型：">
+            <el-select v-model="productType" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item>
+            <el-input
+              placeholder="帽子"
+              prefix-icon="el-icon-search"
+              v-model="search_val">
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2" style="padding-left: 5px;">
+          <el-button type="primary" icon="el-icon-search">搜索</el-button>
+        </el-col>
+        <el-col :span="7" class="text-right">
+          <el-form-item>
+            <el-checkbox v-model="showLiked">只显示我关注的</el-checkbox>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </el-row>
     <el-row :gutter="20">
+      <el-col :span="24" class="text-right">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageProducts"
+          :page-size="pageSize"
+          :total="products.length">
+        </el-pagination>
+      </el-col>
       <el-col :span="24">
         <el-table
             :data="pageProducts">
@@ -8,15 +52,21 @@
               type="selection">
             </el-table-column>
             <el-table-column
-              label="日期"
-              prop="label"
+              label="商品"
+              sortable>
+              <template slot-scope="scope">
+                <i class="el-icon-picture"></i>
+                {{ scope.row.name }}
+                </template>              
+            </el-table-column>
+            <el-table-column
+              label="产品描述"
               sortable>
             </el-table-column>
             <el-table-column
-              label="商品"
-              prop="name"
+              label="所属店铺"
               sortable>
-            </el-table-column>
+            </el-table-column>            
             <el-table-column
               label="销量"
               prop="sales"
@@ -59,7 +109,26 @@ export default {
     return {
       products: [],
       pageSize: 15,
-      pageProducts: []
+      pageProducts: [],
+      search_val: '',
+      showLiked: false,
+      options: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      }, {
+        value: '选项5',
+        label: '北京烤鸭'
+      }],
+      productType: ''
     }
   },
   created () {

@@ -35,7 +35,7 @@
               <span>产品</span>
             </template>
               <el-menu-item index="1-1" :route="{path: '/main/add-product'}">新增产品</el-menu-item>
-              <el-menu-item index="1-2" :route="{path: '/main/products'}">统计结果</el-menu-item>
+              <el-menu-item index="1-2" :route="{path: '/main/products'}">产品列表</el-menu-item>
           </el-submenu>
           <el-menu-item index="3" :route="{ path: '/main/setting' }">
             <i class="el-icon-setting"></i>

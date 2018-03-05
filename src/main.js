@@ -23,7 +23,13 @@ import {
   DatePicker,
   Table,
   TableColumn,
-  Pagination
+  Pagination,
+  Form,
+  FormItem,
+  Select,
+  Option,
+  Input,
+  Checkbox
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -55,6 +61,12 @@ Vue.component(DatePicker.name, DatePicker)
 Vue.component(Table.name, Table)
 Vue.component(TableColumn.name, TableColumn)
 Vue.component(Pagination.name, Pagination)
+Vue.component(Form.name, Form)
+Vue.component(FormItem.name, FormItem)
+Vue.component(Select.name, Select)
+Vue.component(Option.name, Option)
+Vue.component(Input.name, Input)
+Vue.component(Checkbox.name, Checkbox)
 
 Vue.component('chart', ECharts)
 
