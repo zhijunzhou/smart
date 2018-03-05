@@ -1,6 +1,6 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="销量" name="sales">
+    <el-tab-pane label="本产品" name="sales">
       <el-row>
         <!-- <el-col :span="24" style="padding-top: 0;">
             <chart 
@@ -61,12 +61,12 @@
         </el-table-column>
       </el-table>
     </el-tab-pane>
-    <el-tab-pane label="价格" name="prices">...</el-tab-pane>
-    <el-tab-pane label="session" name="session">...</el-tab-pane>
+    <el-tab-pane label="比较" name="prices">...</el-tab-pane>
+    <!-- <el-tab-pane label="session" name="session">...</el-tab-pane>
     <el-tab-pane label="转化率" name="conversionRate">...</el-tab-pane>
     <el-tab-pane label="类目" name="category">...</el-tab-pane>
     <el-tab-pane label="关键字" name="keyword">...</el-tab-pane>
-    <el-tab-pane label="广告" name="ads">...</el-tab-pane>
+    <el-tab-pane label="广告" name="ads">...</el-tab-pane> -->
   </el-tabs>
 </template>
 
@@ -98,7 +98,7 @@ export default {
     let currentDate = moment()
     let DateRange = []
     const LEGEND = [
-      '价格', '订单数量', 'Session', 'Page', 'Views', '转化率', '类目1排名',
+      '订单数量', 'Session', '转化率', '价格', 'Page', 'Views', '类目1排名',
       '类目2排名', '类目3排名', 'Bluetooth receiver排名', 'bluetooth car adapter排名', 'Reviews', 'Rating', 'QA数量'
     ]
 
@@ -128,10 +128,34 @@ export default {
       title: {
       },
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        formatter: (params) => {
+          let res = '' + params[0].name + '</br>'
+          params.forEach(param => {
+            res = res + param.seriesName + ':' + this.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
+          })
+          return res
+        }
       },
       legend: {
-        data: this.replyData.map(dt => dt.name)
+        data: this.replyData.map(dt => dt.name),
+        selected: {
+          '价格': false,
+          '订单数量': true,
+          'Session': true,
+          'Page': false,
+          'Views': false,
+          '转化率': true,
+          '类目1排名': false,
+          '类目2排名': false,
+          '类目3排名': false,
+          'Bluetooth': false,
+          'bluetooth car adapter排名': false,
+          'Bluetooth receiver排名': false,
+          'Reviews': false,
+          'Rating': false,
+          'QA数量': false
+        }
       },
       toolbox: {
         show: true,
