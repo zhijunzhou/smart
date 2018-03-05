@@ -41,10 +41,18 @@
           </el-radio-group>
         </el-col>
       </el-row>
+      <el-row>
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageProducts"
+          :page-size="pageSize"
+          :total="products.length">
+        </el-pagination>
+      </el-row>
       <el-table
         border
         show-summary
-        :data="replyData[0].info">
+        :data="pageProducts">
         <el-table-column
           type="selection">
         </el-table-column>
@@ -60,13 +68,16 @@
           sortable>
         </el-table-column>
       </el-table>
+      <el-row>
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageProducts"
+          :page-size="pageSize"
+          :total="products.length">
+        </el-pagination>
+      </el-row>
     </el-tab-pane>
     <el-tab-pane label="比较" name="prices">...</el-tab-pane>
-    <!-- <el-tab-pane label="session" name="session">...</el-tab-pane>
-    <el-tab-pane label="转化率" name="conversionRate">...</el-tab-pane>
-    <el-tab-pane label="类目" name="category">...</el-tab-pane>
-    <el-tab-pane label="关键字" name="keyword">...</el-tab-pane>
-    <el-tab-pane label="广告" name="ads">...</el-tab-pane> -->
   </el-tabs>
 </template>
 
@@ -83,7 +94,9 @@ export default {
     return {
       activeName: 'sales',
       salesUnit: '7',
-      products: ['B07232TL6Z'],
+      products: [],
+      pageSize: 15,
+      pageProducts: [],
       line: {},
       line2: {},
       dateRange: [],
@@ -190,6 +203,8 @@ export default {
         return {name, type, markPoint, data}
       })
     }
+    this.products = this.replyData[0].info
+    this.pageProducts = this.products.slice(0, this.pageSize)
   },
   mounted () {
     console.log(this.replyData)
@@ -226,6 +241,13 @@ export default {
       let originFormat = 'MM/DD/YYYY'
       let uiFormat = 'YYYY-MM-DD'
       return moment(a.label, originFormat).format(uiFormat) > moment(b.label, originFormat).format(uiFormat)
+    },
+    updatePageProducts (currentPage) {
+      let start = (currentPage - 1) * this.pageSize
+      let lastPageSize = this.products.length % this.pageSize
+      let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
+      let end = start + (isLastPage ? lastPageSize : this.pageSize)
+      this.pageProducts = this.products.slice(start, end)
     }
   }
 }

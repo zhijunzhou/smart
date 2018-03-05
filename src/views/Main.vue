@@ -18,7 +18,7 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu" width="200px">
+      <el-aside class="menu" width="300px">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
