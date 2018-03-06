@@ -18,7 +18,7 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu" width="300px">
+      <el-aside class="menu">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
@@ -29,14 +29,10 @@
             <i class="el-icon-menu"></i>
             <span>推广</span>
           </el-menu-item>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>产品</span>
-            </template>
-              <el-menu-item index="1-1" :route="{path: '/main/add-product'}">新增产品</el-menu-item>
-              <el-menu-item index="1-2" :route="{path: '/main/products'}">产品列表</el-menu-item>
-          </el-submenu>
+					<el-menu-item index="2" :route="{path: '/main/products'}">
+						<i class="el-icon-location"></i>
+						<span>产品列表</span>
+					</el-menu-item>
           <el-menu-item index="3" :route="{ path: '/main/setting' }">
             <i class="el-icon-setting"></i>
             <span>设置</span>

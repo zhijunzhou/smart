@@ -65,6 +65,14 @@ body > .el-container {
   padding: 15px 15px;
 }
 
+.el-table th>.cell {
+  font-size: 10px;
+}
+
+.el-table .cell {
+  font-size: 10px;
+}
+
 .el-row {
   margin-bottom: 20px;
 }
