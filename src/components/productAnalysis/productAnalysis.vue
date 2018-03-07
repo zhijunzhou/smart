@@ -10,52 +10,8 @@
           />
       </el-col>
       </el-row>
-      <el-row>
-        <el-form ref="form">
-          <el-col :span="8">
-            <el-form-item label="单位">
-              <el-radio-group size="mini" v-model="salesUnit" @change="processUnitChange">
-                <el-radio label="7">月</el-radio>
-                <el-radio label="6">周</el-radio>
-                <el-radio label="5">日</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-button size="mini">显示/隐藏列</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="最近">
-              <el-select size="mini" style="width: 150px;">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item>
-              <el-date-picker
-                v-model="dateRange"
-                @change="processDateRangeChange"
-                type="daterange"
-                size="small"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <el-row>
+      <product-search :options="options" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
+      <el-row class="text-right">
         <el-pagination
           layout="total, prev, pager, next, jumper"
           @current-change="updatePageProducts"
@@ -133,7 +89,7 @@
           :label="LEGEND[13]">
         </el-table-column>
       </el-table>
-      <el-row>
+      <el-row class="text-right">
         <el-pagination
           layout="total, prev, pager, next, jumper"
           @current-change="updatePageProducts"
@@ -142,23 +98,35 @@
         </el-pagination>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="比较" name="prices">...</el-tab-pane>
+    <el-tab-pane label="比较" name="prices">
+      <el-row>
+        <el-col :span="24" style="padding-top: 0;">
+          <chart 
+            :options="line"
+            :init-options="initOptions"
+            auto-resize
+          />
+        </el-col>
+      </el-row>
+      <product-search :options="options" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
 import moment from 'moment'
-import getBar from '@/data/bar'
-import api from '@/utils/api'
 import 'echarts/lib/component/markPoint'
 import 'echarts/lib/component/markLine'
 import 'echarts/lib/component/markArea'
+import api from '@/utils/api'
+import productSearch from '@/components/productSearch/productSearch'
 
 export default {
   data () {
     return {
       activeName: 'sales',
       salesUnit: '7',
+      latestUnit: '5',
       products: [],
       pageSize: 15,
       pageProducts: [],
@@ -203,7 +171,7 @@ export default {
       '类目2排名', '类目3排名', 'Bluetooth receiver排名', 'bluetooth car adapter排名', 'Reviews', 'Rating', 'QA数量'
     ]
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       currentDate.subtract(1, 'days')
       DateRange.push(currentDate.format('L'))
     }
@@ -225,7 +193,65 @@ export default {
       })
       this.replyData.push(sample)
     }
-    this.line = getBar(this.replyData)
+
+    const lineLegend = {
+      '类目1排名': true,
+      '类目2排名': true,
+      '类目3排名': true
+    }
+
+    this.line = {
+      tooltip: {
+        trigger: 'axis',
+        formatter: (params) => {
+          let res = '' + params[0].name + '</br>'
+          params.forEach(param => {
+            res = res + param.seriesName + ':' + this.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
+          })
+          return res
+        }
+      },
+      legend: {
+        data: this.replyData.map(dt => dt.name),
+        selected: lineLegend
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          dataView: {readOnly: false},
+          magicType: {type: ['line', 'bar']},
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        minInterval: 1,
+        data: this.replyData[0].info.map(dt => dt.label)
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: this.replyData.map(dt => {
+        let name = dt.name
+        let type = 'line'
+        let markPoint = {
+          data: [
+            {type: 'max', name: '最大值'},
+            {type: 'min', name: '最小值'}
+          ]
+        }
+        let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
+        if (lineLegend[name] === true) {
+          return {name, type, markPoint, data}
+        }
+      })
+    }
+
     this.line2 = {
       title: {
       },
@@ -288,7 +314,7 @@ export default {
             {type: 'min', name: '最小值'}
           ]
         }
-        let data = dt.info.map(i => i.rate)
+        let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
         return {name, type, markPoint, data}
       })
     }
@@ -296,14 +322,13 @@ export default {
     this.pageProducts = this.products.slice(0, this.pageSize)
   },
   mounted () {
-    console.log(this.replyData)
+    console.table(this.replyData)
   },
   methods: {
     handleClick (tab, event) {
       console.log(tab, event)
     },
     udpateSalesChart (unit, period) {
-      console.log(unit, period)
       this.querySales()
     },
     processUnitChange (unit) {
@@ -338,6 +363,9 @@ export default {
       let end = start + (isLastPage ? lastPageSize : this.pageSize)
       this.pageProducts = this.products.slice(start, end)
     }
+  },
+  components: {
+    productSearch
   }
 }
 </script>
