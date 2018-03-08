@@ -1,5 +1,12 @@
 <template>
   <el-row>
+    <el-popover
+      ref="showHideColumns"
+      trigger="hover">
+      <el-checkbox-group v-model="checkList">
+        <el-checkbox v-for="col in cols" :key="col" :label="col" style="width: 100%;"></el-checkbox>
+      </el-checkbox-group>
+    </el-popover>
     <el-form ref="form">
       <el-col :span="8">
         <el-form-item label="单位">
@@ -12,7 +19,7 @@
       </el-col>
       <el-col :span="3">
         <el-form-item>
-          <el-button size="mini">显示/隐藏列</el-button>
+          <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
         </el-form-item>
       </el-col>
       <el-col :span="5">
@@ -52,11 +59,23 @@ export default {
     return {
       lu: this.latestUnit,
       su: this.salesUnit,
-      dr: this.dateRange
+      dr: this.dateRange,
+      cols: [],
+      checkList: []
     }
+  },
+  created () {
+    for (let p in this.columns) {
+      this.cols.push(p)
+      if (this.columns[p]) {
+        this.checkList.push(p)
+      }
+    }
+    console.log(this.cols, this.checkList)
   },
   props: [
     'options',
+    'columns',
     'latestUnit',
     'salesUnit',
     'dateRange',
@@ -65,4 +84,10 @@ export default {
   ]
 }
 </script>
+<style scoped>
+.el-checkbox+.el-checkbox {
+  margin-left: 0;
+}
+</style>
+
 

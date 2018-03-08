@@ -98,4 +98,7 @@ a {
 .text-right {
   text-align: right;
 }
+.el-popover {
+  max-width: 450px;
+}
 </style>

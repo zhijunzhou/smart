@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="24">
           <div class="grid-content text-center">
-            <div id="login_container"></div>
+            <canvas id="login_container"></canvas>
           </div>
         </el-col>
       </el-row>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import QRCode from 'qrcode'
 
 export default {
   data () {
@@ -34,19 +35,27 @@ export default {
   },
   mounted () {
     /* eslint-disable no-undef */
-    const self = this
-    const obj = new WxLogin({
-      id: 'login_container',
-      appid: self.$store.state.appid,
-      scope: self.$store.state.scope,
-      redirect_uri: self.$store.state.redirect_uri,
-      state: Math.random().toString(36).substr(2, 15),
-      style: 'black',
-      href: 'http://localhost:8080/static/style/qrcode.css'
-      // href: http://starstech.cc/smart/static/style/qrcode.css
-    })
+    // const self = this
+    // const timestamp = Date.parse(new Date())
+    const canvas = document.getElementById('login_container')
 
-    console.log(obj, this.$store.state)
+    QRCode.toCanvas(canvas, 'url', function (error) {
+      if (error) {
+        alert(error)
+      }
+    })
+    // const obj = new WxLogin({
+    //   id: 'login_container',
+    //   appid: self.$store.state.appid,
+    //   scope: self.$store.state.scope,
+    //   redirect_uri: self.$store.state.redirect_uri,
+    //   state: Math.random().toString(36).substr(2, 15),
+    //   style: 'black',
+    //   href: 'http://localhost:8080/static/style/qrcode.css'
+    //   // href: http://starstech.cc/smart/static/style/qrcode.css
+    // })
+
+    // console.log(obj, this.$store.state)
   }
 }
 </script>
