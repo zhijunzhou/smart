@@ -10,7 +10,7 @@
           />
       </el-col>
       </el-row>
-      <product-search :options="options" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
+      <product-search :options="options" :columns="columns" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
       <el-row class="text-right">
         <el-pagination
           layout="total, prev, pager, next, jumper"
@@ -108,7 +108,7 @@
           />
         </el-col>
       </el-row>
-      <product-search :options="options" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
+      <product-search :options="options" :columns="lineColumns" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -138,6 +138,28 @@ export default {
       initOptions: {
         renderer: 'svg'
       },
+      columns: {
+        '价格': false,
+        '订单数量': true,
+        'Session': true,
+        'Page': false,
+        'Views': false,
+        '转化率': true,
+        '类目1排名': false,
+        '类目2排名': false,
+        '类目3排名': false,
+        'Bluetooth': false,
+        'bluetooth car adapter排名': false,
+        'Bluetooth receiver排名': false,
+        'Reviews': false,
+        'Rating': false,
+        'QA数量': false
+      },
+      lineColumns: {
+        '类目1排名': true,
+        '类目2排名': true,
+        '类目3排名': true
+      },
       LEGEND: [],
       options: [
         {
@@ -165,8 +187,9 @@ export default {
   created () {
     let currentDate = moment()
     let DateRange = []
+    let self = this
 
-    this.LEGEND = [
+    self.LEGEND = [
       '订单数量', 'Session', '转化率', '价格', 'Page', 'Views', '类目1排名',
       '类目2排名', '类目3排名', 'Bluetooth receiver排名', 'bluetooth car adapter排名', 'Reviews', 'Rating', 'QA数量'
     ]
@@ -179,8 +202,8 @@ export default {
     for (let i = 0; i < 14; i++) {
       let sample = {
         id: '分类' + i,
-        name: this.LEGEND[i],
-        description: '商品描述' + this.LEGEND[i],
+        name: self.LEGEND[i],
+        description: '商品描述' + self.LEGEND[i],
         info: []
       }
       DateRange.reverse().forEach((date, j) => {
@@ -191,29 +214,23 @@ export default {
           session: Math.ceil(Math.random() * 1000 + 100)
         })
       })
-      this.replyData.push(sample)
+      self.replyData.push(sample)
     }
 
-    const lineLegend = {
-      '类目1排名': true,
-      '类目2排名': true,
-      '类目3排名': true
-    }
-
-    this.line = {
+    self.line = {
       tooltip: {
         trigger: 'axis',
         formatter: (params) => {
           let res = '' + params[0].name + '</br>'
           params.forEach(param => {
-            res = res + param.seriesName + ':' + this.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
+            res = res + param.seriesName + ':' + self.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
           })
           return res
         }
       },
       legend: {
-        data: this.replyData.map(dt => dt.name),
-        selected: lineLegend
+        data: self.replyData.map(dt => dt.name),
+        selected: self.lineColumns
       },
       toolbox: {
         show: true,
@@ -231,12 +248,12 @@ export default {
         type: 'category',
         boundaryGap: false,
         minInterval: 1,
-        data: this.replyData[0].info.map(dt => dt.label)
+        data: self.replyData[0].info.map(dt => dt.label)
       },
       yAxis: {
         type: 'value'
       },
-      series: this.replyData.map(dt => {
+      series: self.replyData.map(dt => {
         let name = dt.name
         let type = 'line'
         let markPoint = {
@@ -246,7 +263,7 @@ export default {
           ]
         }
         let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
-        if (lineLegend[name] === true) {
+        if (self.lineColumns[name] === true) {
           return {name, type, markPoint, data}
         }
       })
@@ -260,30 +277,14 @@ export default {
         formatter: (params) => {
           let res = '' + params[0].name + '</br>'
           params.forEach(param => {
-            res = res + param.seriesName + ':' + this.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
+            res = res + param.seriesName + ':' + self.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
           })
           return res
         }
       },
       legend: {
-        data: this.replyData.map(dt => dt.name),
-        selected: {
-          '价格': false,
-          '订单数量': true,
-          'Session': true,
-          'Page': false,
-          'Views': false,
-          '转化率': true,
-          '类目1排名': false,
-          '类目2排名': false,
-          '类目3排名': false,
-          'Bluetooth': false,
-          'bluetooth car adapter排名': false,
-          'Bluetooth receiver排名': false,
-          'Reviews': false,
-          'Rating': false,
-          'QA数量': false
-        }
+        data: self.replyData.map(dt => dt.name),
+        selected: self.columns
       },
       toolbox: {
         show: true,
@@ -300,12 +301,12 @@ export default {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: this.replyData[0].info.map(dt => dt.label)
+        data: self.replyData[0].info.map(dt => dt.label)
       },
       yAxis: {
         type: 'value'
       },
-      series: this.replyData.map(dt => {
+      series: self.replyData.map(dt => {
         let name = dt.name
         let type = 'line'
         let markPoint = {
@@ -318,8 +319,8 @@ export default {
         return {name, type, markPoint, data}
       })
     }
-    this.products = this.replyData[0].info
-    this.pageProducts = this.products.slice(0, this.pageSize)
+    self.products = self.replyData[0].info
+    self.pageProducts = self.products.slice(0, self.pageSize)
   },
   mounted () {
     console.table(this.replyData)

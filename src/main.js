@@ -29,7 +29,9 @@ import {
   Select,
   Option,
   Input,
-  Checkbox
+  Checkbox,
+  CheckboxGroup,
+  Popover
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -67,6 +69,8 @@ Vue.component(Select.name, Select)
 Vue.component(Option.name, Option)
 Vue.component(Input.name, Input)
 Vue.component(Checkbox.name, Checkbox)
+Vue.component(CheckboxGroup.name, CheckboxGroup)
+Vue.component(Popover.name, Popover)
 
 Vue.component('chart', ECharts)
 
