@@ -58,6 +58,17 @@ export default {
         })
         // window.location.href = wxUrl
       })
+      const infoUrl = 'http://nstart.cc:8688/getUserInfo?uid=3f0748c70e5ba758b9'
+      setTimeout(() => {
+        api.get(infoUrl).then(res => {
+          // let wxUrl = res.data
+          console.log(res)
+          api.get('http://nstart.cc:8688/wepay/userinfo').then(r => {
+            console.log(r)
+          })
+        // window.location.href = wxUrl
+        })
+      }, 1000)
     }
   },
   mounted () {

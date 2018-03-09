@@ -35,7 +35,7 @@ var app = new Vue({
             // var tmpUrl = 'http://www.starstech.cc/login?uid=' + this.guid;
             // var path = window.encodeURI(tmpUrl)
          
-            var url = 'http://nstart.cc/confirmlogin?uid=' + this.uid + '&code=' + this.code;
+            var url = 'http://nstart.cc/wepay/login?uid=' + this.uid + '&code=' + this.code;
             var ajax = new XMLHttpRequest();
             //步骤二:设置请求的url参数,参数一是请求的类型,参数二是请求的url,可以带参数,动态的传递参数starName到服务端
 
@@ -47,6 +47,7 @@ var app = new Vue({
             ajax.onreadystatechange = function () {
             if (ajax.readyState==4 &&ajax.status==200) {
                 //步骤五 如果能够进到这个判断 说明 数据 完美的回来了,并且请求的页面是存在的
+                    alert(xml.responseText);
             　　　　console.log(xml.responseText);//输入相应的内容
             　　}
             }
