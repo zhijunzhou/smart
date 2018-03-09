@@ -21,6 +21,7 @@
 
 <script>
 import QRCode from 'qrcode'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -31,19 +32,40 @@ export default {
   methods: {
     startJourney () {
       this.$router.push('/main')
+    },
+    guid () {
+      return 'xxxxxxxxxxxxyxxxyx'.replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0
+        const v = c === 'x' ? r : (r & 0x3 | 0x8)
+        return v.toString(16)
+      })
+    },
+    getWXCode () {
+      const uid = this.guid()
+      let self = this
+      let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=${this.$route.query.shopID}_${uid}`)
+      let url = 'http://nstart.cc:8688/wepay/webAuthCodeUrl?path=' + $path
+      console.log('getWXCode')
+      api.get(url).then(res => {
+        let wxUrl = res.data
+        self.showLoading = false
+        const canvas = document.getElementById('login_container')
+
+        QRCode.toCanvas(canvas, wxUrl, function (error) {
+          if (error) {
+            alert(error)
+          }
+        })
+        // window.location.href = wxUrl
+      })
     }
   },
   mounted () {
+    this.getWXCode()
     /* eslint-disable no-undef */
     // const self = this
     // const timestamp = Date.parse(new Date())
-    const canvas = document.getElementById('login_container')
 
-    QRCode.toCanvas(canvas, 'url', function (error) {
-      if (error) {
-        alert(error)
-      }
-    })
     // const obj = new WxLogin({
     //   id: 'login_container',
     //   appid: self.$store.state.appid,

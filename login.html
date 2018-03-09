@@ -20,6 +20,9 @@ var app = new Vue({
     data: {
         message: 'Hello Vue!',
         code:'',
+        uid:'',
+        shopID:'',
+        state:'',
     },
     methods: {
         guid: function () {
@@ -31,7 +34,8 @@ var app = new Vue({
         redirectToUrl: function () {
             // var tmpUrl = 'http://www.starstech.cc/login?uid=' + this.guid;
             // var path = window.encodeURI(tmpUrl)
-            var url = 'http://nstart.cc/confirmlogin?uid=' + this.guid() + '&code=' + this.code;
+         
+            var url = 'http://nstart.cc/confirmlogin?uid=' + this.uid + '&code=' + this.code;
             var ajax = new XMLHttpRequest();
             //步骤二:设置请求的url参数,参数一是请求的类型,参数二是请求的url,可以带参数,动态的传递参数starName到服务端
 
@@ -60,6 +64,11 @@ var app = new Vue({
             }
             // 这样调用：
             this.code = getQueryString("code");
+            this.shopID = getQueryString("shopID");
+            this.state = getQueryString("state");
+            this.uid = this.shopID.split('_')[1];
+            alert(this.code);
+            alert(this.uid);
             this.redirectToUrl();
               
 
