@@ -14,9 +14,11 @@
           </span>
         </li>    
         <li>
-          <span>
-            退出
-          </span>
+					<router-link to="/">
+						<span>
+							退出
+						</span>
+					</router-link>
         </li>
       </ul>
 		</el-header>

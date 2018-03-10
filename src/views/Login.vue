@@ -70,6 +70,7 @@ export default {
             api.get('http://nstart.cc:8688/wepay/userinfo?openid=' + openid).then(r => {
               console.log(r)
               this.$store.commit('setUserInfo', r.data)
+              this.$router.push('/main')
             })
           }
         // window.location.href = wxUrl
