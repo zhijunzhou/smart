@@ -26,11 +26,13 @@ import api from '@/utils/api'
 export default {
   data () {
     return {
-      _code: undefined
+      _code: undefined,
+      timer: null
     }
   },
   methods: {
     startJourney () {
+      clearInterval(this.timer)
       this.$router.push('/main')
     },
     guid () {
@@ -59,12 +61,12 @@ export default {
         // window.location.href = wxUrl
       })
       const infoUrl = 'http://nstart.cc:8688/getUserInfo?uid=' + uid
-      const timer = setInterval(() => {
+      this.timer = setInterval(() => {
         api.get(infoUrl).then(res => {
           // let wxUrl = res.data
           console.log(res)
           if (res.data.openid) {
-            clearInterval(timer)
+            clearInterval(this.timer)
             const openid = res.data.openid
             console.log(res)
             api.get('http://nstart.cc:8688/wepay/userinfo?openid=' + openid).then(r => {
