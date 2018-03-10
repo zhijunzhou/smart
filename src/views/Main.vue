@@ -5,9 +5,12 @@
       :style="{'background-color': primaryColor}">      
       <span class="header-logo">SMART LOGO</span>
       <ul class="header-operations">    
+				<li>
+					<img :src="$store.state.userInfo.headimgurl" class="privateImage" v-if="$store.state.userInfo.headimgurl">
+				</li>
         <li>
           <span>
-            张三
+						{{$store.state.userInfo.nickname}}
           </span>
         </li>    
         <li>
@@ -72,6 +75,13 @@ export default {
   padding: 20px;
 }
 
+.privateImage{
+	display:inline-block;
+	border-radius:50%;
+	height: 40px;
+	vertical-align:middle;
+}
+
 header::after {
   display: inline-block;
   content: "";
@@ -127,7 +137,7 @@ header::after {
 	display: inline-block;
 	vertical-align: middle;
 	padding: 0 10px;
-	margin: 0 10px;
+	/* margin: 0 10px; */
 	line-height: 60px;
 	cursor: pointer;
 }

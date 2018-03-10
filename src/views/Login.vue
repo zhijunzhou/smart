@@ -58,17 +58,23 @@ export default {
         })
         // window.location.href = wxUrl
       })
-      const infoUrl = 'http://nstart.cc:8688/getUserInfo?uid=3f0748c70e5ba758b9'
-      setTimeout(() => {
+      const infoUrl = 'http://nstart.cc:8688/getUserInfo?uid=' + uid
+      const timer = setInterval(() => {
         api.get(infoUrl).then(res => {
           // let wxUrl = res.data
           console.log(res)
-          api.get('http://nstart.cc:8688/wepay/userinfo').then(r => {
-            console.log(r)
-          })
+          if (res.data.openid) {
+            clearInterval(timer)
+            const openid = res.data.openid
+            console.log(res)
+            api.get('http://nstart.cc:8688/wepay/userinfo?openid=' + openid).then(r => {
+              console.log(r)
+              this.$store.commit('setUserInfo', r.data)
+            })
+          }
         // window.location.href = wxUrl
         })
-      }, 1000)
+      }, 5000)
     }
   },
   mounted () {
