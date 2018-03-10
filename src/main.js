@@ -38,6 +38,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
 import store from './store'
+import { role } from './filter/role'
 
 Vue.config.productionTip = false
 
@@ -73,6 +74,8 @@ Vue.component(CheckboxGroup.name, CheckboxGroup)
 Vue.component(Popover.name, Popover)
 
 Vue.component('chart', ECharts)
+
+Vue.filter('role', role)
 
 /* eslint-disable no-new */
 new Vue({
