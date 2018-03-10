@@ -67,18 +67,34 @@
                 </template>
               </el-table-column>
               <el-table-column
-                label="所属店铺">
+                label="所属店铺"
+                prop="shops">
+                <template slot-scope="scope">
+                  <span v-for="shop in scope.row.shops">
+                    <el-tag size="mini" :hit="false">{{ getShopName(shop) }}</el-tag>
+                  </span>
+                </template>
               </el-table-column>            
               <el-table-column
                 label="状态"
                 prop="userStatus">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.userStatus===0">
+                    正常
+                  </span>
+                  <span v-if="scope.row.userStatus===2">
+                    申请加入
+                    <el-button type="primary" icon="el-icon-check" size="mini" round></el-button>
+                    <el-button icon="el-icon-close" size="mini" round></el-button>
+                  </span>
+                </template>
               </el-table-column>
               <el-table-column
                 label="操作">
                 <template slot-scope="scope">
                   <el-button size="mini" round>编辑</el-button>
                   <el-button size="mini" round>
-                    <router-link :to="{path: '/main/analysis'}">分析</router-link>
+                    <router-link :to="{path: '/main/analysis'}">删除</router-link>
                   </el-button>
                 </template>
               </el-table-column>
@@ -122,9 +138,11 @@
           shops: [
             '1', '2', '3'
           ],
-          userStatus: 0
+          userStatus: 2
         })
       }
+      this.products[0].userName = this.$store.state.userInfo.nickname
+      this.products[0].userImg = this.$store.state.userInfo.headimgurl
       this.pageProducts = this.products.slice(0, this.pageSize)
     },
     methods: {
@@ -134,6 +152,17 @@
         let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
         let end = start + (isLastPage ? lastPageSize : this.pageSize)
         this.pageProducts = this.products.slice(start, end)
+      },
+      getShopName (shopId) {
+        const scope = this.getShops().find(s => s.shopId === shopId)
+        return scope ? scope.shopName : ''
+      },
+      getShops () {
+        return [
+          { shopId: '1', shopName: '店铺A' },
+          { shopId: '2', shopName: '店铺B' },
+          { shopId: '3', shopName: '店铺C' }
+        ]
       }
     }
   }

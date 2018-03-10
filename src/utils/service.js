@@ -1,12 +1,16 @@
 import axios from 'axios'
-import env from '../../config'
+// import env from '../../config'
 
-const isProduction = !!(process.env.NODE_ENV === 'production')
-const environment = isProduction ? env.build.env : env.dev.env
+// const isProduction = !!(process.env.NODE_ENV === 'production')
+// const environment = isProduction ? env.build.env : env.dev.env
+
+const ajaxUrl = process.env.NODE_ENV === 'development' ? 'http://nstart.cc:8688' : process.env.NODE_ENV === 'production' ? 'http://nstart.cc:80' : 'https://debug.url.com'
 
 // node service
 const service = axios.create({
-  baseURL: environment.servicesCenter.baseURL,
+  baseURL: ajaxUrl,
+
+  // baseURL: environment.servicesCenter.baseURL,
   withCredentials: true,
   timeout: 30000
 })

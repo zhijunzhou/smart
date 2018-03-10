@@ -21,7 +21,7 @@
 
 <script>
 import QRCode from 'qrcode'
-import api from '@/utils/api'
+import service from '@/utils/service'
 
 export default {
   data () {
@@ -46,9 +46,9 @@ export default {
       const uid = this.guid()
       let self = this
       let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=${this.$route.query.shopID}_${uid}`)
-      let url = 'http://nstart.cc:8688/wepay/webAuthCodeUrl?path=' + $path
+      let url = '/wepay/webAuthCodeUrl?path=' + $path
       console.log('getWXCode')
-      api.get(url).then(res => {
+      service.get(url).then(res => {
         let wxUrl = res.data
         self.showLoading = false
         const canvas = document.getElementById('login_container')
@@ -60,16 +60,16 @@ export default {
         })
         // window.location.href = wxUrl
       })
-      const infoUrl = 'http://nstart.cc:8688/getUserInfo?uid=' + uid
+      const infoUrl = '/getUserInfo?uid=' + uid
       this.timer = setInterval(() => {
-        api.get(infoUrl).then(res => {
+        service.get(infoUrl).then(res => {
           // let wxUrl = res.data
           console.log(res)
           if (res.data.openid) {
             clearInterval(this.timer)
             const openid = res.data.openid
             console.log(res)
-            api.get('http://nstart.cc:8688/wepay/userinfo?openid=' + openid).then(r => {
+            service.get('/wepay/userinfo?openid=' + openid).then(r => {
               console.log(r)
               this.$store.commit('setUserInfo', r.data)
               this.$router.push('/main')

@@ -31,6 +31,7 @@ import {
   Input,
   Checkbox,
   CheckboxGroup,
+  Tag,
   Popover
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
@@ -72,6 +73,7 @@ Vue.component(Input.name, Input)
 Vue.component(Checkbox.name, Checkbox)
 Vue.component(CheckboxGroup.name, CheckboxGroup)
 Vue.component(Popover.name, Popover)
+Vue.component(Tag.name, Tag)
 
 Vue.component('chart', ECharts)
 
