@@ -48,6 +48,11 @@ export default new Router({
           component: AddProduct
         },
         {
+          path: 'edit-product',
+          name: 'edit-product',
+          component: AddProduct
+        },
+        {
           path: 'setting',
           name: 'setting',
           component: Setting
