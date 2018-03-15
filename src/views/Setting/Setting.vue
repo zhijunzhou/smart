@@ -105,7 +105,7 @@
             layout="total, prev, pager, next, jumper"
             @current-change="updatePageProducts"
             :page-size="pageSize"
-            :total="products.length">
+            :total="total">
           </el-pagination>
         </el-col>
       </el-row>
@@ -113,11 +113,13 @@
 </template>
 <script>
   // import { ROLE } from '../../../static/enum.js'
+  import api from '../../utils/api'
   export default {
     data () {
       return {
         products: [],
-        pageSize: 15,
+        pageSize: 20,
+        total: 0,
         pageProducts: [],
         search_val: '',
         showLiked: false,
@@ -126,6 +128,15 @@
       }
     },
     created () {
+      const pagination = {
+        pagesize: 20,
+        currentpage: 1
+      }
+      api.post('/api/user/pagination', {pagination}).then(res => {
+        console.log(res)
+        this.products = res.data.grid
+        this.total = res.data.pagination.total
+      })
       for (let i = 1; i <= 5; i++) {
         this.products.push({
           index: i,
