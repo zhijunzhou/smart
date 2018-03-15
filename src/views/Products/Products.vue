@@ -83,7 +83,9 @@
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" round>编辑</el-button>
+                <el-button size="mini" round>
+                  <router-link :to="{path: '/main/edit-product', query: scope.row}">编辑</router-link>
+                </el-button>
                 <el-button size="mini" round>
                   <router-link :to="{path: '/main/analysis'}">分析</router-link>
                 </el-button>
@@ -141,7 +143,9 @@ export default {
         sn: 'SN码' + i,
         category: '类目一',
         shop: '所属店铺',
-        description: '描述文字' + i
+        imgUrl: '',
+        description: '描述文字' + i,
+        keywords: ['关键字一', '关键字二']
       })
     }
     this.pageProducts = this.products.slice(0, this.pageSize)
