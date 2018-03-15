@@ -37,17 +37,17 @@
         </el-form> -->
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="24" class="text-right">
-          <el-pagination
+        <!-- <el-col :span="24" class="text-right"> -->
+          <!-- <el-pagination
             layout="total, prev, pager, next, jumper"
             @current-change="updatePageProducts"
             :page-size="pageSize"
-            :total="products.length">
-          </el-pagination>
-        </el-col>
+            :total="total">
+          </el-pagination> -->
+        <!-- </el-col> -->
         <el-col :span="24">
           <el-table
-            :data="pageProducts">
+            :data="products">
               <el-table-column
                 label="用户编号"
                 prop="userId">
@@ -63,10 +63,14 @@
                 label="角色"
                 prop="role">
                 <template slot-scope="scope">
-                  {{ scope.row.role | role }}
+                  <span v-for="role in scope.row.roles">
+                    <el-tooltip :content="role.shopName" placement="bottom" effect="light">
+                      <span class="role-txt">{{ role.roleName }}</span>
+                    </el-tooltip>
+                  </span>
                 </template>
               </el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 label="所属店铺"
                 prop="shops">
                 <template slot-scope="scope">
@@ -74,16 +78,19 @@
                     <el-tag size="mini" :hit="false">{{ getShopName(shop) }}</el-tag>
                   </span>
                 </template>
-              </el-table-column>            
+              </el-table-column>             -->
               <el-table-column
                 label="状态"
                 prop="userStatus">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.userStatus===0">
-                    正常
+                  <span v-if="scope.row.userStatus==='active'">
+                    <el-tag size="mini" :hit="false" type="success">正常</el-tag>
                   </span>
-                  <span v-if="scope.row.userStatus===2">
-                    申请加入
+                  <span v-if="scope.row.userStatus==='disabled'">
+                    <el-tag size="mini" :hit="false" type="danger">禁用</el-tag>
+                  </span>
+                  <span v-if="scope.row.userStatus==='visit'">
+                    
                     <el-button type="primary" icon="el-icon-check" size="mini" round></el-button>
                     <el-button icon="el-icon-close" size="mini" round></el-button>
                   </span>
@@ -118,8 +125,9 @@
     data () {
       return {
         products: [],
-        pageSize: 20,
+        pageSize: 10,
         total: 0,
+        currentPage: 1,
         pageProducts: [],
         search_val: '',
         showLiked: false,
@@ -128,41 +136,48 @@
       }
     },
     created () {
-      const pagination = {
-        pagesize: 20,
-        currentpage: 1
-      }
-      api.post('/api/user/pagination', {pagination}).then(res => {
-        console.log(res)
-        this.products = res.data.grid
-        this.total = res.data.pagination.total
-      })
-      for (let i = 1; i <= 5; i++) {
-        this.products.push({
-          index: i,
-          name: '测试数据' + i,
-          role: Math.round(Math.random() * 10),
-          sales: Math.round(Math.random() * 45 + 55),
-          userId: '员工号码',
-          userName: '员工名',
-          userImg: '',
-          shops: [
-            '1', '2', '3'
-          ],
-          userStatus: 2
-        })
-      }
-      this.products[0].userName = this.$store.state.userInfo.nickname
-      this.products[0].userImg = this.$store.state.userInfo.headimgurl
-      this.pageProducts = this.products.slice(0, this.pageSize)
+      this.getUserData()
+      // for (let i = 1; i <= 5; i++) {
+      // this.products.push({
+      //   index: 1,
+      //   name: '测试数据' + 1,
+      //   role: Math.round(Math.random() * 10),
+      //   sales: Math.round(Math.random() * 45 + 55),
+      //   userId: '员工号码',
+      //   userName: '员工名',
+      //   userImg: '',
+      //   shops: [
+      //     '1', '2', '3'
+      //   ],
+      //   userStatus: 2
+      // })
+      // }
+      // this.products[0].userName = this.$store.state.userInfo.nickname
+      // this.products[0].userImg = this.$store.state.userInfo.headimgurl
+      // this.pageProducts = this.products.slice(0, this.pageSize)
+    },
+    mounted () {
     },
     methods: {
+      getUserData () {
+        const pagination = {
+          pagesize: this.pageSize,
+          currentpage: this.currentPage
+        }
+        api.post('/api/user/pagination', {pagination}).then(res => {
+          this.products = res.data.grid
+          this.total = res.data.pagination.total
+          console.log(this.products)
+        })
+      },
       updatePageProducts (currentPage) {
-        let start = (currentPage - 1) * this.pageSize
-        let lastPageSize = this.products.length % this.pageSize
-        let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
-        let end = start + (isLastPage ? lastPageSize : this.pageSize)
-        this.pageProducts = this.products.slice(start, end)
+        this.currentPage = currentPage
+        this.getUserData()
+        // let start = (currentPage - 1) * this.pageSize
+        // let lastPageSize = this.products.length % this.pageSize
+        // let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
+        // let end = start + (isLastPage ? lastPageSize : this.pageSize)
+        // this.pageProducts = this.products.slice(start, end)
       },
       getShopName (shopId) {
         const scope = this.getShops().find(s => s.shopId === shopId)
@@ -184,6 +199,9 @@
 	border-radius:50%;
 	height: 40px;
 	vertical-align:middle;
+}
+.role-txt {
+  margin: 5px;
 }
 </style>
   

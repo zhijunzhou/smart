@@ -32,6 +32,7 @@ import {
   Checkbox,
   CheckboxGroup,
   Tag,
+  Tooltip,
   Popover,
   Upload
 } from 'element-ui'
@@ -76,6 +77,7 @@ Vue.component(CheckboxGroup.name, CheckboxGroup)
 Vue.component(Popover.name, Popover)
 Vue.component(Tag.name, Tag)
 Vue.component(Upload.name, Upload)
+Vue.component(Tooltip.name, Tooltip)
 
 Vue.component('chart', ECharts)
 
