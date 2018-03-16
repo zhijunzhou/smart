@@ -10,7 +10,7 @@
           />
         </el-col>
       </el-row>
-      <product-search :options="options" :columns="columns" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
+      <product-search :options="options" :columns="[]" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
       <el-table
         show-summary
         cell-class-name="cell-class-name"
@@ -115,7 +115,7 @@ export default {
       pageSize: 15,
       pageProducts: [],
       productId: this.$route.query.productId,
-      shopid: this.$route.query.shopid,
+      shopId: this.$route.query.shopId,
       line: {},
       dateRange: [],
       replyData: [],
@@ -207,7 +207,7 @@ export default {
         },
         unit: this.salesUnit,
         productId: this.productId,
-        shopid: this.shopid
+        shopId: this.shopId
       }
 
       api.post('/api/product/statistics', params).then(res => {

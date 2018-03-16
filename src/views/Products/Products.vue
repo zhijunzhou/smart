@@ -98,7 +98,7 @@
                 </el-button>
                 <br />
                 <el-button size="mini" round>
-                  <router-link :to="{path: '/main/analysis', query: {shopid: scope.row.shopID, productId: scope.row.asin}}">分析</router-link>
+                  <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">分析</router-link>
                 </el-button>
               </template>
             </el-table-column>
@@ -157,8 +157,8 @@ export default {
   methods: {
     getPageProducts () {
       const pagination = {
-        pagesize: this.pageSize,
-        currentpage: this.currentPage
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
       }
 
       api.post('/api/product/pagination', {pagination}).then(res => {
