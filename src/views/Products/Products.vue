@@ -2,8 +2,17 @@
   <div>
     <el-row>
       <el-form ref="form">
-        <el-col :span="4">
-          <el-button>选择店铺</el-button>
+        <el-col :span="3" style="padding-right: 5px;">
+          <el-form-item>
+            <el-select v-model="shopid" placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopID">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
         <el-col :span="8">        
           <el-form-item label="产品类型：">
@@ -27,7 +36,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="2" style="padding-left: 5px;">
-          <el-button type="primary" icon="el-icon-search">搜索</el-button>
+          <el-button type="primary" icon="el-icon-search" @click="getPageProducts">搜索</el-button>
         </el-col>
         <el-col :span="7" class="text-right">
           <el-form-item>
@@ -42,12 +51,12 @@
           layout="total, prev, pager, next, jumper"
           @current-change="updatePageProducts"
           :page-size="pageSize"
-          :total="products.length">
+          :total="productTotal">
         </el-pagination>
       </el-col>
       <el-col :span="24">
         <el-table
-            :data="pageProducts">
+            :data="products">
             <el-table-column
               type="selection">
             </el-table-column>
@@ -56,29 +65,30 @@
               sortable>
               <template slot-scope="scope">
                 <i class="el-icon-picture"></i>
-                {{ scope.row.name }}
                 </template>              
             </el-table-column>
             <el-table-column
               label="产品描述"
+              prop="name"
               sortable>
             </el-table-column>
             <el-table-column
               label="所属店铺"
+              prop="shopName"
               sortable>
             </el-table-column>            
             <el-table-column
               label="销量"
-              prop="sales"
+              prop="orders"
               sortable>
             </el-table-column>
             <el-table-column
               label="S/N码"
-              prop="sn">
+              prop="asin">
             </el-table-column>
             <el-table-column
-              label="类目"
-              prop="category">
+              label="价格"
+              prop="price">
             </el-table-column>
             <el-table-column
               label="操作">
@@ -86,6 +96,7 @@
                 <el-button size="mini" round>
                   <router-link :to="{path: '/main/edit-product', query: scope.row}">编辑</router-link>
                 </el-button>
+                <br />
                 <el-button size="mini" round>
                   <router-link :to="{path: '/main/analysis'}">分析</router-link>
                 </el-button>
@@ -98,7 +109,7 @@
           layout="total, prev, pager, next, jumper"
           @current-change="updatePageProducts"
           :page-size="pageSize"
-          :total="products.length">
+          :total="productTotal">
         </el-pagination>
       </el-col>
     </el-row>
@@ -106,14 +117,20 @@
 </template>
 
 <script>
+import api from '../../utils/api'
+
 export default {
   data () {
     return {
       products: [],
       pageSize: 15,
+      productTotal: 0,
+      currentPage: 1,
       pageProducts: [],
       search_val: '',
       showLiked: false,
+      shopid: undefined,
+      shopList: [],
       options: [{
         value: '选项1',
         label: '黄金糕'
@@ -134,29 +151,31 @@ export default {
     }
   },
   created () {
-    for (let i = 1; i <= 100; i++) {
-      this.products.push({
-        index: i,
-        label: '2018-01-01',
-        name: '测试数据' + i,
-        sales: Math.round(Math.random() * 45 + 55),
-        sn: 'SN码' + i,
-        category: '类目一',
-        shop: '所属店铺',
-        imgUrl: '',
-        description: '描述文字' + i,
-        keywords: ['关键字一', '关键字二']
-      })
-    }
-    this.pageProducts = this.products.slice(0, this.pageSize)
+    this.getShopList()
+    this.getPageProducts()
   },
   methods: {
+    getPageProducts () {
+      const pagination = {
+        pagesize: this.pageSize,
+        currentpage: this.currentPage
+      }
+
+      api.post('/api/product/pagination', {pagination}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.products = res.data.grid
+          this.productTotal = res.data.pagination.total
+        }
+      })
+    },
+    getShopList () {
+      api.get('/api/shop').then(res => {
+        this.shopList = res.data
+      })
+    },
     updatePageProducts (currentPage) {
-      let start = (currentPage - 1) * this.pageSize
-      let lastPageSize = this.products.length % this.pageSize
-      let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
-      let end = start + (isLastPage ? lastPageSize : this.pageSize)
-      this.pageProducts = this.products.slice(start, end)
+      this.currentPage = currentPage
+      this.getPageProducts()
     }
   }
 }

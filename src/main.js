@@ -34,7 +34,10 @@ import {
   Tag,
   Tooltip,
   Popover,
-  Upload
+  Upload,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -78,6 +81,9 @@ Vue.component(Popover.name, Popover)
 Vue.component(Tag.name, Tag)
 Vue.component(Upload.name, Upload)
 Vue.component(Tooltip.name, Tooltip)
+Vue.component(Dropdown.name, Dropdown)
+Vue.component(DropdownItem.name, DropdownItem)
+Vue.component(DropdownMenu.name, DropdownMenu)
 
 Vue.component('chart', ECharts)
 

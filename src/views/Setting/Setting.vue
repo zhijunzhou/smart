@@ -1,53 +1,11 @@
 <template>
     <div>
       <el-row>
-        <!-- <el-form ref="form">
-          <el-col :span="4">
-            <el-button>选择店铺</el-button>
-          </el-col>
-          <el-col :span="8">        
-            <el-form-item label="产品类型：">
-              <el-select v-model="productType" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3">
-            <el-form-item>
-              <el-input
-                placeholder="帽子"
-                prefix-icon="el-icon-search"
-                v-model="search_val">
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="2" style="padding-left: 5px;">
-            <el-button type="primary" icon="el-icon-search">搜索</el-button>
-          </el-col>
-          <el-col :span="7" class="text-right">
-            <el-form-item>
-              <el-checkbox v-model="showLiked">只显示我关注的</el-checkbox>
-            </el-form-item>
-          </el-col>
-        </el-form> -->
       </el-row>
       <el-row :gutter="20">
-        <!-- <el-col :span="24" class="text-right"> -->
-          <!-- <el-pagination
-            layout="total, prev, pager, next, jumper"
-            @current-change="updatePageProducts"
-            :page-size="pageSize"
-            :total="total">
-          </el-pagination> -->
-        <!-- </el-col> -->
         <el-col :span="24">
           <el-table
-            :data="products">
+            :data="users">
               <el-table-column
                 label="用户编号"
                 prop="userId">
@@ -70,15 +28,6 @@
                   </span>
                 </template>
               </el-table-column>
-              <!-- <el-table-column
-                label="所属店铺"
-                prop="shops">
-                <template slot-scope="scope">
-                  <span v-for="shop in scope.row.shops">
-                    <el-tag size="mini" :hit="false">{{ getShopName(shop) }}</el-tag>
-                  </span>
-                </template>
-              </el-table-column>             -->
               <el-table-column
                 label="状态"
                 prop="userStatus">
@@ -110,7 +59,7 @@
         <el-col :span="24" class="text-right">
           <el-pagination
             layout="total, prev, pager, next, jumper"
-            @current-change="updatePageProducts"
+            @current-change="updatePageUsers"
             :page-size="pageSize"
             :total="total">
           </el-pagination>
@@ -124,11 +73,10 @@
   export default {
     data () {
       return {
-        products: [],
+        users: [],
         pageSize: 10,
         total: 0,
         currentPage: 1,
-        pageProducts: [],
         search_val: '',
         showLiked: false,
         options: [],
@@ -137,24 +85,6 @@
     },
     created () {
       this.getUserData()
-      // for (let i = 1; i <= 5; i++) {
-      // this.products.push({
-      //   index: 1,
-      //   name: '测试数据' + 1,
-      //   role: Math.round(Math.random() * 10),
-      //   sales: Math.round(Math.random() * 45 + 55),
-      //   userId: '员工号码',
-      //   userName: '员工名',
-      //   userImg: '',
-      //   shops: [
-      //     '1', '2', '3'
-      //   ],
-      //   userStatus: 2
-      // })
-      // }
-      // this.products[0].userName = this.$store.state.userInfo.nickname
-      // this.products[0].userImg = this.$store.state.userInfo.headimgurl
-      // this.pageProducts = this.products.slice(0, this.pageSize)
     },
     mounted () {
     },
@@ -165,19 +95,13 @@
           currentpage: this.currentPage
         }
         api.post('/api/user/pagination', {pagination}).then(res => {
-          this.products = res.data.grid
+          this.users = res.data.grid
           this.total = res.data.pagination.total
-          console.log(this.products)
         })
       },
-      updatePageProducts (currentPage) {
+      updatePageUsers (currentPage) {
         this.currentPage = currentPage
         this.getUserData()
-        // let start = (currentPage - 1) * this.pageSize
-        // let lastPageSize = this.products.length % this.pageSize
-        // let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
-        // let end = start + (isLastPage ? lastPageSize : this.pageSize)
-        // this.pageProducts = this.products.slice(start, end)
       },
       getShopName (shopId) {
         const scope = this.getShops().find(s => s.shopId === shopId)
