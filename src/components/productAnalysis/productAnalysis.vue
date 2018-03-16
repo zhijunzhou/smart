@@ -4,21 +4,13 @@
       <el-row>
         <el-col :span="24" style="padding-top: 0;">
           <chart 
-            :options="line2"
+            :options="statisticsBar"
             :init-options="initOptions"
             auto-resize
           />
-      </el-col>
+        </el-col>
       </el-row>
       <product-search :options="options" :columns="columns" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
-      <el-row class="text-right">
-        <el-pagination
-          layout="total, prev, pager, next, jumper"
-          @current-change="updatePageProducts"
-          :page-size="pageSize"
-          :total="products.length">
-        </el-pagination>
-      </el-row>
       <el-table
         show-summary
         cell-class-name="cell-class-name"
@@ -88,15 +80,7 @@
           prop="session"
           :label="LEGEND[13]">
         </el-table-column>
-      </el-table>
-      <el-row class="text-right">
-        <el-pagination
-          layout="total, prev, pager, next, jumper"
-          @current-change="updatePageProducts"
-          :page-size="pageSize"
-          :total="products.length">
-        </el-pagination>
-      </el-row>
+      </el-table>      
     </el-tab-pane>
     <el-tab-pane label="比较" name="prices">
       <el-row>
@@ -130,31 +114,16 @@ export default {
       products: [],
       pageSize: 15,
       pageProducts: [],
+      productId: this.$route.query.productId,
+      shopid: this.$route.query.shopid,
       line: {},
-      line2: {},
       dateRange: [],
       replyData: [],
       tableData: [],
       initOptions: {
         renderer: 'svg'
       },
-      columns: {
-        '价格': false,
-        '订单数量': true,
-        'Session': true,
-        'Page': false,
-        'Views': false,
-        '转化率': true,
-        '类目1排名': false,
-        '类目2排名': false,
-        '类目3排名': false,
-        'Bluetooth': false,
-        'bluetooth car adapter排名': false,
-        'Bluetooth receiver排名': false,
-        'Reviews': false,
-        'Rating': false,
-        'QA数量': false
-      },
+      currentStatistics: [],
       lineColumns: {
         '类目1排名': true,
         '类目2排名': true,
@@ -185,152 +154,15 @@ export default {
     }
   },
   created () {
-    let currentDate = moment()
-    let DateRange = []
-    let self = this
-
-    self.LEGEND = [
-      '订单数量', 'Session', '转化率', '价格', 'Page', 'Views', '类目1排名',
-      '类目2排名', '类目3排名', 'Bluetooth receiver排名', 'bluetooth car adapter排名', 'Reviews', 'Rating', 'QA数量'
-    ]
-
-    for (let i = 0; i < 50; i++) {
-      currentDate.subtract(1, 'days')
-      DateRange.push(currentDate.format('L'))
-    }
-
-    for (let i = 0; i < 14; i++) {
-      let sample = {
-        id: '分类' + i,
-        name: self.LEGEND[i],
-        description: '商品描述' + self.LEGEND[i],
-        info: []
-      }
-      DateRange.reverse().forEach((date, j) => {
-        sample.info.push({
-          label: date,
-          value: Math.ceil(Math.random() * 45 + 55),
-          rate: Math.random(),
-          session: Math.ceil(Math.random() * 1000 + 100)
-        })
-      })
-      self.replyData.push(sample)
-    }
-
-    self.line = {
-      tooltip: {
-        trigger: 'axis',
-        formatter: (params) => {
-          let res = '' + params[0].name + '</br>'
-          params.forEach(param => {
-            res = res + param.seriesName + ':' + self.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
-          })
-          return res
-        }
-      },
-      legend: {
-        data: self.replyData.map(dt => dt.name),
-        selected: self.lineColumns
-      },
-      toolbox: {
-        show: true,
-        feature: {
-          dataZoom: {
-            yAxisIndex: 'none'
-          },
-          dataView: {readOnly: false},
-          magicType: {type: ['line', 'bar']},
-          restore: {},
-          saveAsImage: {}
-        }
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        minInterval: 1,
-        data: self.replyData[0].info.map(dt => dt.label)
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: self.replyData.map(dt => {
-        let name = dt.name
-        let type = 'line'
-        let markPoint = {
-          data: [
-            {type: 'max', name: '最大值'},
-            {type: 'min', name: '最小值'}
-          ]
-        }
-        let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
-        if (self.lineColumns[name] === true) {
-          return {name, type, markPoint, data}
-        }
-      })
-    }
-
-    this.line2 = {
-      title: {
-      },
-      tooltip: {
-        trigger: 'axis',
-        formatter: (params) => {
-          let res = '' + params[0].name + '</br>'
-          params.forEach(param => {
-            res = res + param.seriesName + ':' + self.replyData[param.seriesIndex].info[param.dataIndex].value + '</br>'
-          })
-          return res
-        }
-      },
-      legend: {
-        data: self.replyData.map(dt => dt.name),
-        selected: self.columns
-      },
-      toolbox: {
-        show: true,
-        feature: {
-          dataZoom: {
-            yAxisIndex: 'none'
-          },
-          dataView: {readOnly: false},
-          magicType: {type: ['line', 'bar']},
-          restore: {},
-          saveAsImage: {}
-        }
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: self.replyData[0].info.map(dt => dt.label)
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: self.replyData.map(dt => {
-        let name = dt.name
-        let type = 'line'
-        let markPoint = {
-          data: [
-            {type: 'max', name: '最大值'},
-            {type: 'min', name: '最小值'}
-          ]
-        }
-        let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
-        return {name, type, markPoint, data}
-      })
-    }
-    self.products = self.replyData[0].info
-    self.pageProducts = self.products.slice(0, self.pageSize)
-  },
-  mounted () {
-    console.table(this.replyData)
+    this.getCurrentStatistics()
   },
   methods: {
     handleClick (tab, event) {
       console.log(tab, event)
     },
     udpateSalesChart (unit, period) {
-      this.querySales()
+      // this.querySales()
+      this.getCurrentStatistics()
     },
     processUnitChange (unit) {
       this.udpateSalesChart(unit, this.dateRange)
@@ -363,6 +195,90 @@ export default {
       let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
       let end = start + (isLastPage ? lastPageSize : this.pageSize)
       this.pageProducts = this.products.slice(start, end)
+    },
+    getCurrentStatistics () {
+      let self = this
+      let yesterday = moment().subtract(365, 'days')
+      let format = 'YYYY-MM-DD'
+      const params = {
+        period: {
+          start: yesterday.format(format),
+          end: moment().format(format)
+        },
+        unit: this.salesUnit,
+        productId: this.productId,
+        shopid: this.shopid
+      }
+
+      api.post('/api/product/statistics', params).then(res => {
+        if (res.status === 200 && res.data) {
+          self.currentStatistics = res.data
+        }
+      })
+    }
+  },
+  computed: {
+    statisticsBar () {
+      var self = this
+      if (Array.isArray(this.currentStatistics) && this.currentStatistics.length > 0) {
+        var selected = {}
+        self.currentStatistics.map((dt, index) => {
+          if (index < 3) {
+            selected[dt.name] = true
+          } else {
+            selected[dt.name] = false
+          }
+        })
+        return {
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].name + '</br>'
+              params.forEach(param => {
+                res = res + param.seriesName + ': ' + self.currentStatistics[param.seriesIndex].info[param.dataIndex].value + '</br>'
+              })
+              return res
+            }
+          },
+          legend: {
+            data: self.currentStatistics.map(dt => dt.name),
+            selected: selected
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              dataView: {readOnly: false},
+              magicType: {type: ['line', 'bar']},
+              restore: {},
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: self.currentStatistics[0].info.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: self.currentStatistics.map(dt => {
+            let name = dt.name
+            let type = 'bar'
+            let markPoint = {
+              data: [
+                {type: 'max', name: '最大值'},
+                {type: 'min', name: '最小值'}
+              ]
+            }
+            let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
+            return {name, type, markPoint, data}
+          })
+        }
+      }
     }
   },
   components: {

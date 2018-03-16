@@ -98,7 +98,7 @@
                 </el-button>
                 <br />
                 <el-button size="mini" round>
-                  <router-link :to="{path: '/main/analysis'}">分析</router-link>
+                  <router-link :to="{path: '/main/analysis', query: {shopid: scope.row.shopID, productId: scope.row.asin}}">分析</router-link>
                 </el-button>
               </template>
             </el-table-column>
