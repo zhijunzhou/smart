@@ -91,8 +91,8 @@
     methods: {
       getUserData () {
         const pagination = {
-          pagesize: this.pageSize,
-          currentpage: this.currentPage
+          pageSize: this.pageSize,
+          currentPage: this.currentPage
         }
         api.post('/api/user/pagination', {pagination}).then(res => {
           this.users = res.data.grid
