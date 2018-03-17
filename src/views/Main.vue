@@ -3,7 +3,8 @@
     <el-header
       height="60px"
       :style="{'background-color': primaryColor}">      
-      <span class="header-logo">SMART LOGO</span>
+			<span class="header-logo">$</span>
+			<!-- <span class="logo-txt">mart</span> -->
       <ul class="header-operations">    
 				<li>
 					<img :src="$store.state.userInfo.headimgurl" class="privateImage" v-if="$store.state.userInfo.headimgurl">
@@ -147,9 +148,23 @@ header::after {
     color: #409eff;
 }
 .header-logo {
-  display: inline-block;
-  vertical-align: middle;
-  color: #fff;
+	display: inline-block;
+	vertical-align: middle;
+	color: #fff;
+	height: 40px;
+	width: 40px;
+	font-weight: 800;
+	line-height: 40px;
+	text-align: center;
+	font-size: 30px;
+	border-radius: 50%;
+	background: #89b846;
+}
+.logo-txt {
+	color: #fff;
+	font-size: 22px;
+	font-style: italic;
+	font-weight: 600;
 }
 .header-operations {
 	display: inline-block;

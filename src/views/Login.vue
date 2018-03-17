@@ -172,7 +172,7 @@ export default {
           }
         // window.location.href = wxUrl
         })
-      }, 5000)
+      }, 2000)
     }
   },
   mounted () {
