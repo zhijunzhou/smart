@@ -20,8 +20,8 @@
             <el-form-item label="用户名">
               <el-input v-model="userInformation.name"></el-input>
             </el-form-item>
-            <el-form-item label="密码">
-              <el-input v-model="userInformation.password"></el-input>
+            <el-form-item label="密码" >
+              <el-input type="password" v-model="userInformation.password"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="login">登陆</el-button>
@@ -62,9 +62,9 @@ export default {
       const passWord = this.userInformation.password
       api.post('/api/user/login', {userName, passWord}).then(login => {
         this.$store.commit('setUserInfo', login.data)
-        if (this.$store.state.userInfo.openid) {
-          this.bind()
-        }
+        // if (this.$store.state.userInfo.openid) {
+        this.bind()
+        // }
         Message({
           showClose: true,
           message: '欢迎进入Smart!',
@@ -98,10 +98,12 @@ export default {
     },
     bind () {
       const userId = this.$store.state.userInfo.userId
-      const wechatId = this.$store.state.userInfo.openid | ''
+      const wechatId = this.$store.state.userInfo.openid ? this.$store.state.userInfo.openid : ''
+      const nickName = this.$store.state.userInfo.nickname
+      const headImgUrl = this.$store.state.userInfo.headimgurl
       const force = 1
       console.log(userId, wechatId, this.$store.state.userInfo)
-      api.post('/api/wechat/bind', {userId, wechatId, force}).then(login => {
+      api.post('/api/wechat/bind', {userId, wechatId, nickName, headImgUrl, force}).then(login => {
         this.$store.commit('setUserInfo', login.data)
         console.log(login)
       })
@@ -144,6 +146,7 @@ export default {
               console.log(r)
               this.$store.commit('setUserInfo', r.data)
               api.post('/api/wechat/login', {wechatId: openid}).then(login => {
+                this.$store.commit('setUserInfo', login.data)
                 this.$router.push('/main')
                 console.log(login)
               }).catch(error => {
