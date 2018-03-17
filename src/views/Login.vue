@@ -14,17 +14,21 @@
           <el-button @click="startJourney">快速体验</el-button>
         </el-col>
       </el-row>
-      <el-form label-position="right" label-width="80px" :model="userInformation">
-        <el-form-item label="用户名">
-          <el-input v-model="userInformation.name"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="userInformation.password"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="login">登陆</el-button>
-        </el-form-item>
-      </el-form>
+      <el-row>
+        <el-col :span="8" :offset="8">
+          <el-form label-position="right" label-width="80px" :model="userInformation">
+            <el-form-item label="用户名">
+              <el-input v-model="userInformation.name"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+              <el-input v-model="userInformation.password"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="login">登陆</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
     </el-main>
     <el-footer class="text-center"><small>© 2018 www.starstech.cc. All Rights Reserved</small></el-footer>
   </el-container>
@@ -34,6 +38,7 @@
 import QRCode from 'qrcode'
 import service from '@/utils/service'
 import api from '@/utils/api'
+import { Message } from 'element-ui'
 
 export default {
   data () {
@@ -57,19 +62,47 @@ export default {
       const passWord = this.userInformation.password
       api.post('/api/user/login', {userName, passWord}).then(login => {
         this.$store.commit('setUserInfo', login.data)
-        this.bind()
+        if (this.$store.state.userInfo.openid) {
+          this.bind()
+        }
+        Message({
+          showClose: true,
+          message: '欢迎进入Smart!',
+          type: 'success'
+        })
+        this.$router.push('/main')
       }).catch(error => {
-        console.log(error)
+        if (error.response) {
+          Message({
+            showClose: true,
+            message: error.response.statusText,
+            type: 'error'
+          })
+          console.log('error')
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data)
+          console.log(error.response)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message)
+        }
       })
     },
     bind () {
       const userId = this.$store.state.userInfo.userId
-      const wechatId = this.$store.state.userInfo.openid
+      const wechatId = this.$store.state.userInfo.openid | ''
       const force = 1
       console.log(userId, wechatId, this.$store.state.userInfo)
       api.post('/api/wechat/bind', {userId, wechatId, force}).then(login => {
         this.$store.commit('setUserInfo', login.data)
-        this.$router.push('/main')
         console.log(login)
       })
     },
@@ -115,7 +148,21 @@ export default {
                 console.log(login)
               }).catch(error => {
                 this.register = false
-                console.log(error)
+                if (error.response) {
+                  // The request was made and the server responded with a status code
+                  // that falls out of the range of 2xx
+                  console.log(error.response.data)
+                  console.log(error.response.status)
+                  console.log(error.response.headers)
+                } else if (error.request) {
+                  // The request was made but no response was received
+                  // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                  // http.ClientRequest in node.js
+                  console.log(error.request)
+                } else {
+                  // Something happened in setting up the request that triggered an Error
+                  console.log('Error', error.message)
+                }
               })
             })
           }

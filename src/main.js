@@ -37,6 +37,7 @@ import {
   Upload,
   Dropdown,
   DropdownItem,
+  Message,
   DropdownMenu
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
@@ -49,6 +50,7 @@ import { role } from './filter/role'
 Vue.config.productionTip = false
 
 // Vue.use(ElementUI)
+Vue.component(Message.name, Message)
 Vue.component(Container.name, Container)
 Vue.component(Header.name, Header)
 Vue.component(Footer.name, Footer)

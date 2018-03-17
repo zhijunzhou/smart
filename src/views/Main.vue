@@ -8,11 +8,16 @@
 				<li>
 					<img :src="$store.state.userInfo.headimgurl" class="privateImage" v-if="$store.state.userInfo.headimgurl">
 				</li>
+				<li>
+					<span>
+						{{$store.state.userInfo.fullName}}
+					</span>
+				</li> 
         <li>
           <span>
-						{{$store.state.userInfo.nickname}}
+						昵称: {{$store.state.userInfo.nickname}}
           </span>
-        </li>    
+				</li>
         <li>
 					<router-link to="/">
 						<span>
