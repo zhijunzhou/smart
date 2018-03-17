@@ -34,19 +34,38 @@
 					:defaultOpeneds="defaultOpeneds"
           default-active="1"
           active-text-color="#409EFF"
-          class="el-menu-vertical-d">
-          <el-menu-item index="1" :route="{ path: '/main' }">
+					class="el-menu-vertical-d">
+					<el-submenu index="1">
+							<template slot="title">
+								<i class="el-icon-menu"></i>
+								<span><b>工作管理</b></span>
+							</template>
+							<el-menu-item index="1-1" :route="{ path: '/main' }">提议</el-menu-item>
+							<el-menu-item index="1-2" :route="{ path: '/main' }">待执行</el-menu-item>
+							<el-menu-item index="1-3" :route="{ path: '/main' }">已执行</el-menu-item>
+							<el-menu-item index="1-4" :route="{ path: '/main' }">已总结</el-menu-item>
+							<el-menu-item index="1-5" :route="{ path: '/main' }">被拒绝提议</el-menu-item>
+					</el-submenu>
+          <!-- <el-menu-item index="1" :route="{ path: '/main' }">
             <i class="el-icon-menu"></i>
-            <span>推广</span>
-          </el-menu-item>
+            <span>工作管理</span>
+          </el-menu-item> -->
 					<el-menu-item index="2" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
-						<span>产品列表</span>
+						<span><b>产品列表</b></span>
 					</el-menu-item>
           <el-menu-item index="3" :route="{ path: '/main/setting' }">
             <i class="el-icon-setting"></i>
-            <span>设置</span>
-          </el-menu-item>        
+            <span><b>用户管理</b></span>
+					</el-menu-item>
+					<el-submenu index="2">
+							<template slot="title">
+								<i class="el-icon-service"></i>
+								<span><b>反馈列表</b></span>
+							</template>
+							<el-menu-item index="2-1" :route="{ path: '/main' }">反馈详情</el-menu-item>
+							<el-menu-item index="2-2" :route="{ path: '/main' }">反馈统计</el-menu-item>
+					</el-submenu>
         </el-menu>
       </el-aside>
       <el-main class="content">

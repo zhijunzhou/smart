@@ -3,7 +3,7 @@
     <el-header><h1 class="project-title text-center">{{$store.state.projectTitle}}</h1></el-header>
     <el-main>      
       <el-row>
-        <el-col :span="24">
+        <el-col :span="8" :offset="8">
           <div class="grid-content text-center">
             <canvas id="login_container"></canvas>
           </div>
@@ -15,7 +15,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8" :offset="8">
+        <el-col :span="6" :offset="9">
           <el-form label-position="right" label-width="80px" :model="userInformation">
             <el-form-item label="用户名">
               <el-input v-model="userInformation.name"></el-input>
@@ -24,7 +24,7 @@
               <el-input type="password" v-model="userInformation.password"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="login">登陆</el-button>
+              <el-button type="primary" @click="login" plain class="longbtn">登陆</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -116,6 +116,7 @@ export default {
       })
     },
     getWXCode () {
+      console.log(this.$message)
       const uid = this.guid()
       let self = this
       let $path = window.encodeURI(`http://www.starstech.cc/login?shopID=${this.$route.query.shopID}_${uid}`)
@@ -202,6 +203,10 @@ export default {
 }
 .project-title {
   line-height: 60px;
+}
+
+.longbtn {
+  width: 100%;
 }
 </style>
 
