@@ -41,11 +41,11 @@
 								<i class="el-icon-menu"></i>
 								<span><b>工作管理</b></span>
 							</template>
-							<el-menu-item index="1-1" :route="{ path: '/main' }">提议</el-menu-item>
-							<el-menu-item index="1-2" :route="{ path: '/main' }">待执行</el-menu-item>
-							<el-menu-item index="1-3" :route="{ path: '/main' }">已执行</el-menu-item>
-							<el-menu-item index="1-4" :route="{ path: '/main' }">已总结</el-menu-item>
-							<el-menu-item index="1-5" :route="{ path: '/main' }">被拒绝提议</el-menu-item>
+							<el-menu-item index="1-1" :route="{ path: '/main/workflow?status=0' }">提议</el-menu-item>
+							<el-menu-item index="1-2" :route="{ path: '/main/workflow?status=1' }">待执行</el-menu-item>
+							<el-menu-item index="1-3" :route="{ path: '/main/workflow?status=2' }">已执行</el-menu-item>
+							<el-menu-item index="1-4" :route="{ path: '/main/workflow?status=3' }">已总结</el-menu-item>
+							<el-menu-item index="1-5" :route="{ path: '/main/workflow?status=9' }">被拒绝提议</el-menu-item>
 					</el-submenu>
           <!-- <el-menu-item index="1" :route="{ path: '/main' }">
             <i class="el-icon-menu"></i>
@@ -146,25 +146,6 @@ header::after {
 }
 .el-menu-item.is-active {
     color: #409eff;
-}
-.header-logo {
-	display: inline-block;
-	vertical-align: middle;
-	color: #fff;
-	height: 40px;
-	width: 40px;
-	font-weight: 800;
-	line-height: 40px;
-	text-align: center;
-	font-size: 30px;
-	border-radius: 50%;
-	background: #89b846;
-}
-.logo-txt {
-	color: #fff;
-	font-size: 22px;
-	font-style: italic;
-	font-weight: 600;
 }
 .header-operations {
 	display: inline-block;

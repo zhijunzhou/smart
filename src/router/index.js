@@ -7,6 +7,7 @@ import Analysis from '@/views/Analysis/Analysis'
 import Products from '@/views/Products/Products'
 import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
+import WorkFlow from '@/views/workflow/workflow'
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
           path: 'edit-product',
           name: 'edit-product',
           component: AddProduct
+        },
+        {
+          path: 'workflow',
+          name: 'workflow',
+          component: WorkFlow
         },
         {
           path: 'setting',
