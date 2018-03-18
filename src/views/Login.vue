@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header><h1 class="project-title text-center">{{$store.state.projectTitle}}</h1></el-header>
+    <el-header class="login-header"><h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1></el-header>
     <el-main>      
       <el-row>
         <el-col :span="8" :offset="8">
@@ -207,6 +207,10 @@ export default {
 
 .longbtn {
   width: 100%;
+}
+
+.login-header {
+  background-color: #409EFF;
 }
 </style>
 

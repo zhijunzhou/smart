@@ -101,4 +101,27 @@ a {
 .el-popover {
   max-width: 450px;
 }
+
+.header-logo {
+	display: inline-block;
+	vertical-align: middle;
+	color: #fff;
+	height: 40px;
+	width: 40px;
+	font-weight: 800;
+	line-height: 40px;
+	text-align: center;
+	font-size: 30px;
+	border-radius: 50%;
+	background: #89b846;
+}
+.logo-txt {
+	color: #fff;
+  position: relative;
+  top: 6px;
+  left: -8px;
+	font-size: 24px;
+	font-style: italic;
+	font-weight: 600;
+}
 </style>
