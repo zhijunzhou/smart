@@ -3,7 +3,7 @@
       <el-row>
           <el-col :span="20">
             <el-checkbox-group  v-model="checkList">
-              <el-checkbox v-for="stage in STAGES" :label="stage.NAME"></el-checkbox>
+              <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.NAME"></el-checkbox>
           <!-- <el-checkbox label="复选框 B"></el-checkbox>
           <el-checkbox label="复选框 C"></el-checkbox>
           <el-checkbox label="禁用" disabled></el-checkbox>
@@ -23,11 +23,11 @@
                   <el-form label-position="left" inline class="demo-table-expand">
                     <br>
                     <el-form-item label="备注">
-                      <p v-for="cmt in props.row.comments">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
+                      <p v-for="(cmt, index) in props.row.comments" :key="index">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
                     </el-form-item>
                     <br>
                     <el-form-item label="历史">
-                        <div v-for="stage in props.row.stages">
+                        <div v-for="(stage, index) in props.row.stages" :key="index">
                           <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
                           <p>{{ stage.text }}</p>
                           <span>{{ stage.author }}</span>
