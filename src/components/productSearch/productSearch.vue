@@ -3,8 +3,8 @@
     <el-popover
       ref="showHideColumns"
       trigger="hover">
-      <el-checkbox-group v-model="checkList">
-        <el-checkbox v-for="col in cols" :key="col" :label="col" style="width: 100%;"></el-checkbox>
+      <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+        <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
       </el-checkbox-group>
     </el-popover>
     <el-form ref="form">
@@ -60,18 +60,8 @@ export default {
       lu: this.latestUnit,
       su: this.salesUnit,
       dr: this.dateRange,
-      cols: [],
-      checkList: []
+      checkedList: []
     }
-  },
-  created () {
-    for (let p in this.columns) {
-      this.cols.push(p)
-      if (this.columns[p]) {
-        this.checkList.push(p)
-      }
-    }
-    console.log(this.cols, this.checkList)
   },
   props: [
     'options',
@@ -81,7 +71,26 @@ export default {
     'dateRange',
     'processUnitChange',
     'processDateRangeChange'
-  ]
+  ],
+  methods: {
+    updateVisibleColumns () {
+      this.$emit('showHideColumns', this.checkedList)
+    }
+  },
+  created () {
+    for (var p in this.columns) {
+      this.checkedList.push(p)
+    }
+  },
+  computed: {
+    headers () {
+      let hds = []
+      for (var p in this.columns) {
+        hds.push(p)
+      }
+      return hds
+    }
+  }
 }
 </script>
 <style scoped>

@@ -23,10 +23,15 @@
           </el-col>
         </el-row> -->
       </el-tab-pane>
+      <el-tab-pane v-for="kw of keywords" :key="kw" :label="kw" :name="kw">
+
+      </el-tab-pane>
     </el-tabs>
     <product-search 
+      v-if="Object.keys(dynamicHeaders).length > 0"
+      v-on:showHideColumns="showHideColumns"
       :options="options" 
-      :columns="[]" 
+      :columns="dynamicHeaders"
       :latestUnit="latestUnit" 
       :salesUnit="salesUnit" 
       :dateRange="dateRange" 
@@ -43,7 +48,12 @@
         prop="date"
         label="日期">
       </el-table-column>
-      <el-table-column width="100%" v-for="headerName in Object.keys(dynamicHeaders)" :key="headerName" :label="headerName" show-overflow-tooltip>
+      <el-table-column 
+        width="100%" 
+        v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
+        :key="headerName + '_' + index" 
+        :label="headerName"
+        v-if="dynamicHeaders[headerName]">
         <template slot-scope="scope" v-if="scope.row.other[headerName]">
           {{scope.row.other[headerName].value}}
         </template>
@@ -73,6 +83,7 @@ export default {
       shopId: this.$route.query.shopId,
       line: {},
       categories: [],
+      keywords: [],
       dateRange: [],
       replyData: [],
       tableData: [],
@@ -117,6 +128,18 @@ export default {
     this.getStatistics()
   },
   methods: {
+    showHideColumns (newHeaders) {
+      for (let dh in this.dynamicHeaders) {
+        let found = newHeaders.find(nh => {
+          return dh === nh
+        })
+        if (found) {
+          this.dynamicHeaders[dh] = true
+        } else {
+          this.dynamicHeaders[dh] = false
+        }
+      }
+    },
     handleClick (tab, event) {},
     udpateSalesChart (unit, period) {
       this.getStatistics()
@@ -172,8 +195,12 @@ export default {
             typeof dt.name === 'string') {
             self.legends.push(dt.name)
             if (dt.name.startsWith('category:') === true) {
-              console.log(dt.name)
-              self.categories.push(dt.name.substr(10))
+              // dt.name.substr(10)
+              self.categories.push(dt.name)
+            }
+            if (dt.name.startsWith('keyword:') === true) {
+              // dt.name.substr(9)
+              self.keywords.push(dt.name)
             }
           }
         })
@@ -202,7 +229,7 @@ export default {
             productsData[io.label][dt.name] = Object.create(io)
           })
         })
-        console.log(self.dynamicHeaders)
+        // console.log(self.dynamicHeaders)
 
         // transform object to array
         self.productsData = []
@@ -218,7 +245,7 @@ export default {
           if (a.date < b.date) return 1
           return 0
         })
-        console.log(self.productsData)
+        // console.log(self.productsData)
         return productsData
       }
     }
