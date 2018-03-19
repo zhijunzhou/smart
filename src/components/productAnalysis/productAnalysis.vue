@@ -27,6 +27,7 @@
 
       </el-tab-pane>
     </el-tabs>
+
     <product-search 
       v-if="Object.keys(dynamicHeaders).length > 0"
       v-on:showHideColumns="showHideColumns"
@@ -38,6 +39,7 @@
       :processUnitChange="processUnitChange" 
       :processDateRangeChange="processDateRangeChange"
     />
+
     <el-table 
       border
       stripe
@@ -130,31 +132,22 @@ export default {
     },
     handleClick (tab, event) {},
     udpateSalesChart (unit, period) {
-      let self = this
-      let params = {
-        period: {},
-        unit: unit,
-        productId: this.productId,
-        shopId: this.shopId
-      }
+      let params
 
       if (period.length === 2) {
-        params.period = {
-          start: period[0],
-          end: period[1]
-        }
-      } else {
-        let yesterday = moment().subtract(365, 'days')
-        let format = 'YYYY-MM-DD'
-        params.period = {
-          start: yesterday.format(format),
-          end: moment().format(format)
+        params = {
+          period: {
+            start: period[0],
+            end: period[1]
+          },
+          unit: unit,
+          productId: this.productId,
+          shopId: this.shopId
         }
       }
-      self.currentStatistics = []
-      self.categories = []
-      self.keywords = []
-      self.getStatistics(params)
+      this.productsData = []
+      // this.dynamicHeaders = {}
+      this.getStatistics(params)
     },
     processUnitChange (unit) {
       this.udpateSalesChart(unit, this.dateRange)
@@ -189,7 +182,6 @@ export default {
           api.post('/api/product/competition', params).then(res1 => {
             if (res1.status === 200 && res1.data) {
               self.competitionStatistics = res1.data
-              self.parseRankingData(self.competitionStatistics)
               self.parseStatisticsTableData()
             }
           })
@@ -199,6 +191,8 @@ export default {
     parseCategories (statistics) {
       let self = this
       if (Array.isArray(statistics) && statistics.length > 0) {
+        self.categories = []
+        self.keywords = []
         statistics.map((dt, index) => {
           if (dt.name &&
             typeof dt.name === 'string') {
@@ -212,13 +206,6 @@ export default {
               self.keywords.push(dt.name)
             }
           }
-        })
-      }
-    },
-    parseRankingData (infos) {
-      if (Array.isArray(infos) && infos.length > 0) {
-        infos.map(info => {
-          console.log(info.name, info.id)
         })
       }
     },
