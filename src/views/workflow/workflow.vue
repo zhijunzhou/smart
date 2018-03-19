@@ -60,8 +60,14 @@
               <el-table-column
                 label="状态" prop="stages">
                   <template slot-scope="scope">
-                    <img :src="scope.row.stages[scope.row.stages.length-1].authorImg" class="privateImage" v-if="scope.row.stages[scope.row.stages.length-1].authorImg">
-                    {{scope.row.stages[scope.row.stages.length-1].author}} 
+                    <span v-if="scope.row.lastStageCode===99">
+                      <el-tag :hit="false" type="danger">拒绝</el-tag>
+                    </span>
+                    <span v-else>
+                      <el-tag :hit="false" type="success">正常</el-tag>
+                    </span>
+                    <!-- <img :src="scope.row.stages[scope.row.stages.length-1].authorImg" class="privateImage" v-if="scope.row.stages[scope.row.stages.length-1].authorImg">
+                    {{scope.row.stages[scope.row.stages.length-1].author}}  -->
                     
                   <!-- <span v-for="stage in scope.row.stages">
                     <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">

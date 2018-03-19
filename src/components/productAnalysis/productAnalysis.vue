@@ -296,7 +296,7 @@ export default {
           },
           series: self.currentStatistics.map(dt => {
             let name = dt.name
-            let type = 'bar'
+            let type = 'line'
             let markPoint = {
               data: [
                 {type: 'max', name: '最大值'},
