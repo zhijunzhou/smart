@@ -76,31 +76,19 @@ export default {
       activeName: 'sales',
       salesUnit: '7',
       latestUnit: '5',
-      products: [],
-      pageSize: 15,
-      pageProducts: [],
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
-      line: {},
       categories: [],
       keywords: [],
       dateRange: [],
-      replyData: [],
-      tableData: [],
-      initOptions: {
-        renderer: 'svg'
-      },
       legends: [],
       dynamicHeaders: {},
       productsData: [],
       currentStatistics: [],
       competitionStatistics: [],
-      lineColumns: {
-        '类目1排名': true,
-        '类目2排名': true,
-        '类目3排名': true
+      initOptions: {
+        renderer: 'svg'
       },
-      LEGEND: [],
       options: [
         {
           label: '周',
@@ -142,7 +130,31 @@ export default {
     },
     handleClick (tab, event) {},
     udpateSalesChart (unit, period) {
-      this.getStatistics()
+      let self = this
+      let params = {
+        period: {},
+        unit: unit,
+        productId: this.productId,
+        shopId: this.shopId
+      }
+
+      if (period.length === 2) {
+        params.period = {
+          start: period[0],
+          end: period[1]
+        }
+      } else {
+        let yesterday = moment().subtract(365, 'days')
+        let format = 'YYYY-MM-DD'
+        params.period = {
+          start: yesterday.format(format),
+          end: moment().format(format)
+        }
+      }
+      self.currentStatistics = []
+      self.categories = []
+      self.keywords = []
+      self.getStatistics(params)
     },
     processUnitChange (unit) {
       this.udpateSalesChart(unit, this.dateRange)
@@ -150,25 +162,22 @@ export default {
     processDateRangeChange (range) {
       this.udpateSalesChart(this.salesUnit, range)
     },
-    updatePageProducts (currentPage) {
-      let start = (currentPage - 1) * this.pageSize
-      let lastPageSize = this.products.length % this.pageSize
-      let isLastPage = Math.ceil(this.products.length / this.pageSize) === currentPage
-      let end = start + (isLastPage ? lastPageSize : this.pageSize)
-      this.pageProducts = this.products.slice(start, end)
-    },
-    getStatistics () {
+    getStatistics (params) {
       let self = this
-      let yesterday = moment().subtract(365, 'days')
-      let format = 'YYYY-MM-DD'
-      const params = {
-        period: {
-          start: yesterday.format(format),
-          end: moment().format(format)
-        },
-        unit: this.salesUnit,
-        productId: this.productId,
-        shopId: this.shopId
+
+      if (!params) {
+        let yesterday = moment().subtract(365, 'days')
+        let format = 'YYYY-MM-DD'
+
+        params = {
+          period: {
+            start: yesterday.format(format),
+            end: moment().format(format)
+          },
+          unit: this.salesUnit,
+          productId: this.productId,
+          shopId: this.shopId
+        }
       }
 
       api.post('/api/product/statistics', params).then(res => {
