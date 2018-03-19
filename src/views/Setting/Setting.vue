@@ -11,10 +11,17 @@
                 prop="userId">
               </el-table-column>
               <el-table-column
-                label="用户名">
+                label="用户">
                 <template slot-scope="scope">
-                  <img :src="scope.row.userImg" class="privateImage" v-if="scope.row.userImg">
-                  {{ scope.row.userName }}
+                    <el-row>
+                      <el-col :span="6">
+                        <img :src="scope.row.wechatImage" class="privateImage" v-if="scope.row.wechatImage">
+                      </el-col>
+                      <el-col :span="18">
+                        <h6>{{ scope.row.userName }}</h6>
+                        <span>昵称 {{ scope.row.wechatName }}</span>
+                      </el-col>
+                    </el-row>
                   </template>              
               </el-table-column>
               <el-table-column

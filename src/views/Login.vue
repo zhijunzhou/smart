@@ -4,7 +4,7 @@
     <el-main>      
       <el-row>
         <el-col :span="8" :offset="8">
-          <div class="grid-content text-center">
+          <div class="grid-content text-center" :style="{ display: inputMode?'none':''}">
             <canvas id="login_container"></canvas>
           </div>
         </el-col>
@@ -12,9 +12,11 @@
       <el-row>
         <el-col :span="24" class="text-center">
           <el-button @click="startJourney">快速体验</el-button>
+          <el-button v-if="inputMode" @click="switchInputMode">扫码登陆</el-button>
+          <el-button v-else @click="switchInputMode">密码登陆</el-button>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row v-if="inputMode">
         <el-col :span="6" :offset="9">
           <el-form label-position="right" label-width="80px" :model="userInformation">
             <el-form-item label="用户名">
@@ -46,6 +48,8 @@ export default {
       _code: undefined,
       timer: null,
       register: true,
+      qrMode: true,
+      inputMode: false,
       userInformation: {
         name: '',
         password: ''
@@ -57,13 +61,18 @@ export default {
       clearInterval(this.timer)
       this.$router.push('/main')
     },
+    switchInputMode () {
+      this.inputMode = !this.inputMode
+    },
     login () {
       const userName = this.userInformation.name
       const passWord = this.userInformation.password
       api.post('/api/user/login', {userName, passWord}).then(login => {
         this.$store.commit('setUserInfo', login.data)
         // if (this.$store.state.userInfo.openid) {
-        this.bind()
+        if (!this.inputMode || !this.register) {
+          this.bind()
+        }
         // }
         Message({
           showClose: true,
@@ -78,6 +87,9 @@ export default {
             message: error.response.statusText,
             type: 'error'
           })
+          if (error.response.status === 401) {
+            this.register = false
+          }
           console.log('error')
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -99,11 +111,11 @@ export default {
     bind () {
       const userId = this.$store.state.userInfo.userId
       const wechatId = this.$store.state.userInfo.openid ? this.$store.state.userInfo.openid : ''
-      const nickName = this.$store.state.userInfo.nickname
-      const headImgUrl = this.$store.state.userInfo.headimgurl
+      const wechatName = this.$store.state.userInfo.nickname ? this.$store.state.userInfo.nickname : ''
+      const wechatImage = this.$store.state.userInfo.headimgurl ? this.$store.state.userInfo.headimgurl : ''
       const force = 1
       console.log(userId, wechatId, this.$store.state.userInfo)
-      api.post('/api/wechat/bind', {userId, wechatId, nickName, headImgUrl, force}).then(login => {
+      api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(login => {
         this.$store.commit('setUserInfo', login.data)
         console.log(login)
       })
@@ -151,10 +163,18 @@ export default {
                 this.$router.push('/main')
                 console.log(login)
               }).catch(error => {
-                this.register = false
                 if (error.response) {
                   // The request was made and the server responded with a status code
                   // that falls out of the range of 2xx
+                  if (error.response.status === 401) {
+                    Message({
+                      showClose: true,
+                      message: '微信未绑定用户, 登陆后将绑定微信',
+                      type: 'error'
+                    })
+                    this.register = false
+                    this.inputMode = true
+                  }
                   console.log(error.response.data)
                   console.log(error.response.status)
                   console.log(error.response.headers)
