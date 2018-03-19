@@ -1,100 +1,55 @@
 <template>
-  <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="本产品" name="sales">
-      <el-row>
-        <el-col :span="24" style="padding-top: 0;">
-          <chart 
-            :options="statisticsBar"
-            :init-options="initOptions"
-            auto-resize
-          />
-        </el-col>
-      </el-row>
-      <product-search :options="options" :columns="[]" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
-      <el-table
-        show-summary
-        cell-class-name="cell-class-name"
-        header-row-class-name="header-row-class-name"
-        :data="pageProducts">
-        <el-table-column
-          type="selection">
-        </el-table-column>
-        <el-table-column
-          label="日期"
-          prop="label"          
-          :sort-method="sortByDate">
-        </el-table-column>
-        <el-table-column
-          prop="value"
-          :label="LEGEND[0]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[1]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[2]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[3]">
-        </el-table-column>
-        <el-table-column  
-          prop="session"
-          :label="LEGEND[4]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[5]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[6]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[7]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[8]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[9]">
-        </el-table-column>   
-        <el-table-column
-          prop="session"
-          :label="LEGEND[10]">
-        </el-table-column>     
-        <el-table-column
-          prop="session"
-          :label="LEGEND[11]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[12]">
-        </el-table-column>
-        <el-table-column
-          prop="session"
-          :label="LEGEND[13]">
-        </el-table-column>
-      </el-table>      
-    </el-tab-pane>
-    <el-tab-pane label="比较" name="prices">
-      <el-row>
-        <el-col :span="24" style="padding-top: 0;">
-          <chart 
-            :options="line"
-            :init-options="initOptions"
-            auto-resize
-          />
-        </el-col>
-      </el-row>
-      <product-search :options="options" :columns="lineColumns" :latestUnit="latestUnit" :salesUnit="salesUnit" :dateRange="dateRange" :processUnitChange="processUnitChange" :processDateRangeChange="processDateRangeChange"></product-search>
-    </el-tab-pane>
-  </el-tabs>
+  <div>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="本产品" name="sales">
+        <el-row>
+          <el-col :span="24" style="padding-top: 0;">
+            <chart 
+              :options="statisticsBar"
+              :init-options="initOptions"
+              auto-resize
+            />
+          </el-col>
+        </el-row>         
+      </el-tab-pane>
+      <el-tab-pane v-for="ca of categories" :key="ca" :label="ca" :name="ca">
+        <!-- <el-row>
+          <el-col :span="24" style="padding-top: 0;">
+            <chart 
+              :options="statisticsBar"
+              :init-options="initOptions"
+              auto-resize
+            />
+          </el-col>
+        </el-row> -->
+      </el-tab-pane>
+    </el-tabs>
+    <product-search 
+      :options="options" 
+      :columns="[]" 
+      :latestUnit="latestUnit" 
+      :salesUnit="salesUnit" 
+      :dateRange="dateRange" 
+      :processUnitChange="processUnitChange" 
+      :processDateRangeChange="processDateRangeChange"
+    />
+    <el-table 
+      border
+      stripe
+      height="500"
+      :data="productsData">
+      <el-table-column
+        sortable
+        prop="date"
+        label="日期">
+      </el-table-column>
+      <el-table-column width="100%" v-for="headerName in Object.keys(dynamicHeaders)" :key="headerName" :label="headerName" show-overflow-tooltip>
+        <template slot-scope="scope" v-if="scope.row.other[headerName]">
+          {{scope.row.other[headerName].value}}
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
 </template>
 
 <script>
@@ -117,13 +72,18 @@ export default {
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
       line: {},
+      categories: [],
       dateRange: [],
       replyData: [],
       tableData: [],
       initOptions: {
         renderer: 'svg'
       },
+      legends: [],
+      dynamicHeaders: {},
+      productsData: [],
       currentStatistics: [],
+      competitionStatistics: [],
       lineColumns: {
         '类目1排名': true,
         '类目2排名': true,
@@ -154,40 +114,18 @@ export default {
     }
   },
   created () {
-    this.getCurrentStatistics()
+    this.getStatistics()
   },
   methods: {
-    handleClick (tab, event) {
-      console.log(tab, event)
-    },
+    handleClick (tab, event) {},
     udpateSalesChart (unit, period) {
-      // this.querySales()
-      this.getCurrentStatistics()
+      this.getStatistics()
     },
     processUnitChange (unit) {
       this.udpateSalesChart(unit, this.dateRange)
     },
     processDateRangeChange (range) {
       this.udpateSalesChart(this.salesUnit, range)
-    },
-    querySales () {
-      const query = {
-        period: {
-          start: this.dateRange[0],
-          end: this.dateRange[1]
-        },
-        unit: this.salesUnit,
-        products: this.products
-      }
-
-      api.post('/stat/list', query).then(res => {
-        console.log(res.data)
-      })
-    },
-    sortByDate (a, b) {
-      let originFormat = 'MM/DD/YYYY'
-      let uiFormat = 'YYYY-MM-DD'
-      return moment(a.label, originFormat).format(uiFormat) > moment(b.label, originFormat).format(uiFormat)
     },
     updatePageProducts (currentPage) {
       let start = (currentPage - 1) * this.pageSize
@@ -196,7 +134,7 @@ export default {
       let end = start + (isLastPage ? lastPageSize : this.pageSize)
       this.pageProducts = this.products.slice(start, end)
     },
-    getCurrentStatistics () {
+    getStatistics () {
       let self = this
       let yesterday = moment().subtract(365, 'days')
       let format = 'YYYY-MM-DD'
@@ -213,14 +151,82 @@ export default {
       api.post('/api/product/statistics', params).then(res => {
         if (res.status === 200 && res.data) {
           self.currentStatistics = res.data
+          self.parseCategories(self.currentStatistics)
+          // console.log(self.currentStatistics)
+
+          api.post('/api/product/competition', params).then(res1 => {
+            if (res1.status === 200 && res1.data) {
+              self.competitionStatistics = res1.data
+              self.parseRankingData(self.competitionStatistics)
+              self.parseStatisticsTableData()
+            }
+          })
         }
       })
+    },
+    parseCategories (statistics) {
+      let self = this
+      if (Array.isArray(statistics) && statistics.length > 0) {
+        statistics.map((dt, index) => {
+          if (dt.name &&
+            typeof dt.name === 'string') {
+            self.legends.push(dt.name)
+            if (dt.name.startsWith('category:') === true) {
+              console.log(dt.name)
+              self.categories.push(dt.name.substr(10))
+            }
+          }
+        })
+      }
+    },
+    parseRankingData (infos) {
+      if (Array.isArray(infos) && infos.length > 0) {
+        infos.map(info => {
+          console.log(info.name, info.id)
+        })
+      }
+    },
+    parseStatisticsTableData () {
+      var self = this
+      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
+        var productsData = {}
+
+        self.currentStatistics.map(dt => {
+          dt.info.map((io, index) => {
+            if (!productsData[io.label]) {
+              productsData[io.label] = {}
+            }
+            if (!self.dynamicHeaders[dt.name]) {
+              self.dynamicHeaders[dt.name] = true
+            }
+            productsData[io.label][dt.name] = Object.create(io)
+          })
+        })
+        console.log(self.dynamicHeaders)
+
+        // transform object to array
+        self.productsData = []
+        for (var x in productsData) {
+          var item = productsData[x]
+          self.productsData.push({
+            date: x,
+            other: item
+          })
+        }
+        self.productsData.sort((a, b) => {
+          if (a.date > b.date) return -1
+          if (a.date < b.date) return 1
+          return 0
+        })
+        console.log(self.productsData)
+        return productsData
+      }
     }
   },
   computed: {
     statisticsBar () {
       var self = this
-      if (Array.isArray(this.currentStatistics) && this.currentStatistics.length > 0) {
+      if (Array.isArray(self.currentStatistics) && self.currentStatistics.length > 0) {
         var selected = {}
         self.currentStatistics.map((dt, index) => {
           if (index < 3) {
