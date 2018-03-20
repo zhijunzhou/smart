@@ -126,6 +126,7 @@ export default {
           this.dynamicHeaders[dh] = false
         }
       }
+      this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
     },
     handleClick (tab, event) {},
     udpateSalesChart (unit, period) {
