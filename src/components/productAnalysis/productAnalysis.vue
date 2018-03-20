@@ -256,6 +256,11 @@ export default {
             data: params.length === 0 ? [] : params[0].info
           })
         })
+        composedArry.forEach(c => {
+          c.data.forEach(d => {
+            delete d.rate
+          })
+        })
         return {
           legend: {
             data: composedArry.map(dt => dt.id)
@@ -268,18 +273,22 @@ export default {
             data: composedArry[0].data.map(dt => dt.label)
           },
           yAxis: {
+            data: composedArry[0].data.map(dt => dt.value),
             type: 'value'
+          },
+          tooltip: {
+            trigger: 'axis'
           },
           series: composedArry.map(dt => {
             let name = dt.id
-            let type = 'line'
+            let type = 'bar'
             let markPoint = {
               data: [
                 {type: 'max', name: '最大值'},
                 {type: 'min', name: '最小值'}
               ]
             }
-            let data = dt.data.map(i => parseFloat(i.rate.toFixed(4)))
+            let data = dt.data.map(i => i.value)
             return {name, type, markPoint, data}
           })
         }
