@@ -13,18 +13,26 @@
         </el-row>         
       </el-tab-pane>
       <el-tab-pane v-for="ca of categories" :key="ca" :label="ca" :name="ca">
-        <!-- <el-row>
+        <el-row>
           <el-col :span="24" style="padding-top: 0;">
             <chart 
-              :options="statisticsBar"
+              :options="categoryBar(ca)"
               :init-options="initOptions"
               auto-resize
             />
           </el-col>
-        </el-row> -->
+        </el-row>
       </el-tab-pane>
       <el-tab-pane v-for="kw of keywords" :key="kw" :label="kw" :name="kw">
-
+        <el-row>
+          <el-col :span="24" style="padding-top: 0;">
+            <chart 
+              :options="categoryBar(kw)"
+              :init-options="initOptions"
+              auto-resize
+            />
+          </el-col>
+        </el-row>
       </el-tab-pane>
     </el-tabs>
 
@@ -88,6 +96,18 @@ export default {
       competitionStatistics: [],
       initOptions: {
         renderer: 'svg'
+      },
+      toolBoxOptions: {
+        show: true,
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          dataView: {readOnly: false},
+          magicType: {type: ['line', 'bar']},
+          restore: {},
+          saveAsImage: {}
+        }
       }
     }
   },
@@ -223,6 +243,47 @@ export default {
         // console.log(self.productsData)
         return productsData
       }
+    },
+    categoryBar (tabName) {
+      // only process active tab
+      if (this.activeName === tabName) {
+        let composedArry = []
+        this.competitionStatistics.map(pro => {
+          let params = pro.info.filter(param => param.name === tabName)
+          composedArry.push({
+            id: pro.id,
+            data: params.length === 0 ? [] : params[0].info
+          })
+        })
+        return {
+          legend: {
+            data: composedArry.map(dt => dt.id)
+          },
+          toolbox: this.toolBoxOptions,
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            minInterval: 1,
+            data: composedArry[0].data.map(dt => dt.label)
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: composedArry.map(dt => {
+            let name = dt.id
+            let type = 'line'
+            let markPoint = {
+              data: [
+                {type: 'max', name: '最大值'},
+                {type: 'min', name: '最小值'}
+              ]
+            }
+            let data = dt.data.map(i => parseFloat(i.rate.toFixed(4)))
+            return {name, type, markPoint, data}
+          })
+        }
+      }
+      return {}
     }
   },
   computed: {
@@ -252,18 +313,7 @@ export default {
             data: self.currentStatistics.map(dt => dt.name),
             selected: selected
           },
-          toolbox: {
-            show: true,
-            feature: {
-              dataZoom: {
-                yAxisIndex: 'none'
-              },
-              dataView: {readOnly: false},
-              magicType: {type: ['line', 'bar']},
-              restore: {},
-              saveAsImage: {}
-            }
-          },
+          toolbox: self.toolBoxOptions,
           xAxis: {
             type: 'category',
             boundaryGap: false,
