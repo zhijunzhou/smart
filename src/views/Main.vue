@@ -97,9 +97,6 @@ export default {
 .menu {
 	width: 250px;
   height: 100%;
-}
-
-.el-aside, .el-main {
 	overflow: visible;
 }
 
