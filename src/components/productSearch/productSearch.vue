@@ -10,7 +10,7 @@
     <el-form ref="form">
       <el-col :span="8">
         <el-form-item label="单位">
-          <el-radio-group size="mini" v-model="su" @change="processUnitChange">
+          <el-radio-group size="mini" v-model="su" @change="updateUnitChange">
             <el-radio label="7">月</el-radio>
             <el-radio label="6">周</el-radio>
             <el-radio label="5">日</el-radio>
@@ -24,7 +24,7 @@
       </el-col>
       <el-col :span="5">
         <el-form-item label="最近">
-          <el-select size="mini" style="width: 150px;" v-model="lu">
+          <el-select size="mini" style="width: 150px;" v-model="lu" @change="updateLu">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -38,7 +38,7 @@
         <el-form-item>
           <el-date-picker
             v-model="dr"
-            @change="processDateRangeChange"
+            @change="updateDateRangeValue"
             type="daterange"
             size="small"
             format="yyyy-MM-dd"
@@ -54,27 +54,62 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   data () {
     return {
       lu: this.latestUnit,
       su: this.salesUnit,
       dr: this.dateRange,
-      checkedList: []
+      checkedList: [],
+      options: [
+        {
+          label: '周',
+          value: 7
+        }, {
+          label: '月',
+          value: 30
+        }, {
+          label: '季度',
+          value: 120
+        }, {
+          label: '半年',
+          value: 183
+        }, {
+          label: '一年',
+          value: 365
+        }, {
+          label: '两年',
+          value: 730
+        }
+      ]
     }
   },
   props: [
-    'options',
     'columns',
     'latestUnit',
     'salesUnit',
-    'dateRange',
-    'processUnitChange',
-    'processDateRangeChange'
+    'dateRange'
   ],
   methods: {
+    updateLu () {
+      let format = 'YYYY-MM-DD'
+      let start = moment().subtract(this.lu, 'days')
+      let end = moment()
+      this.updateDateRange([start.format(format), end.format(format)])
+    },
+    updateDateRangeValue () {
+      this.updateDateRange(this.dr)
+    },
     updateVisibleColumns () {
       this.$emit('showHideColumns', this.checkedList)
+    },
+    updateUnitChange () {
+      this.$emit('processUnitChange', this.su)
+    },
+    updateDateRange (dateRange) {
+      this.$emit('processDateRangeChange', dateRange)
     }
   },
   created () {

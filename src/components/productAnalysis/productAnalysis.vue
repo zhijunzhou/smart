@@ -31,13 +31,11 @@
     <product-search 
       v-if="Object.keys(dynamicHeaders).length > 0"
       v-on:showHideColumns="showHideColumns"
-      :options="options" 
+      v-on:processUnitChange="processUnitChange"
+      v-on:processDateRangeChange="processDateRangeChange"
       :columns="dynamicHeaders"
-      :latestUnit="latestUnit" 
       :salesUnit="salesUnit" 
-      :dateRange="dateRange" 
-      :processUnitChange="processUnitChange" 
-      :processDateRangeChange="processDateRangeChange"
+      :dateRange="dateRange"
     />
 
     <el-table 
@@ -90,28 +88,7 @@ export default {
       competitionStatistics: [],
       initOptions: {
         renderer: 'svg'
-      },
-      options: [
-        {
-          label: '周',
-          value: '6'
-        }, {
-          label: '月',
-          value: '7'
-        }, {
-          label: '季度',
-          value: '8'
-        }, {
-          label: '半年',
-          value: '9'
-        }, {
-          label: '一年',
-          value: '10'
-        }, {
-          label: '两年',
-          value: '11'
-        }
-      ]
+      }
     }
   },
   created () {
@@ -150,16 +127,18 @@ export default {
       this.getStatistics(params)
     },
     processUnitChange (unit) {
+      this.salesUnit = unit
       this.udpateSalesChart(unit, this.dateRange)
     },
     processDateRangeChange (range) {
+      this.dateRange = range
       this.udpateSalesChart(this.salesUnit, range)
     },
     getStatistics (params) {
       let self = this
 
       if (!params) {
-        let yesterday = moment().subtract(365, 'days')
+        let yesterday = moment().subtract(30, 'days')
         let format = 'YYYY-MM-DD'
 
         params = {

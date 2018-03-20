@@ -29,7 +29,7 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu">
+      <el-aside class="menu" width="400px">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
