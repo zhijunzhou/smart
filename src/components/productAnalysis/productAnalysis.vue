@@ -257,6 +257,16 @@ export default {
           })
         })
         return {
+          tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+              let res = '' + params[0].axisValue + '</br>'
+              params.forEach(param => {
+                res = res + param.seriesName + ': ' + composedArry[param.seriesIndex].data[param.dataIndex].value + '</br>'
+              })
+              return res
+            }
+          },
           legend: {
             data: composedArry.map(dt => dt.id)
           },
