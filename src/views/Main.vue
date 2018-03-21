@@ -70,6 +70,12 @@
         </el-menu>
       </el-aside>
       <el-main class="content">
+				<el-row>
+					<el-col>
+						<el-button size="mini" @click="goBack">返回</el-button>
+						<hr class="split-line" />
+					</el-col>
+				</el-row>
 				<router-view></router-view>
       </el-main>
     </el-container>    
@@ -85,6 +91,11 @@ export default {
     return {
       primaryColor: '#409eff',
       defaultOpeneds: ['2']
+    }
+  },
+  methods: {
+    goBack () {
+      this.$router.go(-1)
     }
   },
   components: {

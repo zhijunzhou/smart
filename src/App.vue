@@ -124,4 +124,9 @@ a {
 	font-style: italic;
 	font-weight: 600;
 }
+.split-line {
+  border: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 </style>
