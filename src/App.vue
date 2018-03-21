@@ -129,4 +129,7 @@ a {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+.large-icon {
+  font-size: 18px;
+}
 </style>

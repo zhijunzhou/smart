@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="7" class="text-right">
           <el-form-item>
-            <el-checkbox v-model="showLiked">只显示我关注的</el-checkbox>
+            <el-checkbox v-model="isShowLiked" @click="showHideLiked">只显示我关注的</el-checkbox>
           </el-form-item>
         </el-col>
       </el-form>
@@ -62,6 +62,7 @@
             </el-table-column>
             <el-table-column
               label="商品"
+              width="80"
               sortable>
               <template slot-scope="scope">
                 <i class="el-icon-picture"></i>
@@ -69,28 +70,36 @@
             </el-table-column>
             <el-table-column
               label="S/N码"
+              width="100"
               prop="asin">
             </el-table-column>
             <el-table-column
               label="产品名"
+              width="200"
               prop="name"
               sortable>
             </el-table-column>
             <el-table-column
               label="所属店铺"
+              width="100"
               prop="shopName"
               sortable>
             </el-table-column>            
             <el-table-column
               label="销量"
+              width="100"
               prop="orders"
               sortable>
             </el-table-column>
             <el-table-column
               label="价格"
-              prop="price">
+              width="100"
+              prop="price"
+              sortable>
             </el-table-column>
             <el-table-column
+              header-align="center"
+              align="center"
               label="操作">
               <template slot-scope="scope">
                 <router-link :to="{path: '/main/edit-product', query: scope.row}">
@@ -98,13 +107,19 @@
                     编辑
                   </el-button>
                 </router-link>
-                <br />
                 <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
                 </router-link>
               </template>
+            </el-table-column>
+            <el-table-column
+              label="关注">
+              <template slot-scope="scope">
+                <i class="el-icon-star-off large-icon" title="点击关注" v-if="isNotLike(scope.row)" @click="likeProduct(scope.row, true)"></i>
+                <i class="el-icon-star-on large-icon" title="取消关注" v-else @click="likeProduct(scope.row, false)"></i>
+              </template>              
             </el-table-column>
           </el-table>
       </el-col>
@@ -132,7 +147,8 @@ export default {
       currentPage: 1,
       pageProducts: [],
       search_val: '',
-      showLiked: false,
+      isShowLiked: false,
+      likedProducts: [],
       shopid: undefined,
       shopList: [],
       options: [{
@@ -159,6 +175,11 @@ export default {
     this.getPageProducts()
   },
   methods: {
+    isNotLike (product) {
+      return !this.likedProducts.find(p => {
+        return product.asin === p.productId
+      })
+    },
     getPageProducts () {
       const pagination = {
         pageSize: this.pageSize,
@@ -169,6 +190,7 @@ export default {
         if (res.status === 200 && res.data) {
           this.products = res.data.grid
           this.productTotal = res.data.pagination.total
+          this.listLikedProducts()
         }
       })
     },
@@ -180,6 +202,46 @@ export default {
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
+    },
+    listLikedProducts () {
+      api.get(`/api/interested`).then(res => {
+        console.log(res.data)
+        this.likedProducts = res.data
+      })
+    },
+    showHideLiked () {
+      let prods = []
+      let self = this
+      if (self.isShowLiked === true) {
+        prods = self.pageProducts.filter(pp => {
+          return self.isNotLike(pp) === true
+        })
+      } else {
+        prods = self.pageProducts.filter(pp => {
+          return self.isNotLike(pp) === false
+        })
+      }
+      console.log(prods)
+      self.pageProducts = prods
+    },
+    likeProduct (product, like) {
+      let productInfo = {
+        productId: product.asin,
+        shopId: product.shopId
+      }
+      if (like === true) {
+        api.post(`/api/interested`, productInfo).then(res => {
+          if (res && res.status === 200) {
+            console.log(res)
+            this.listLikedProducts()
+          }
+        })
+      } else {
+        let interested = this.likedProducts.find(p => p.productId === product.asin)
+        api.delete(`/api/interested/${interested.interestedId}`).then(res => {
+          this.listLikedProducts()
+        })
+      }
     }
   }
 }
