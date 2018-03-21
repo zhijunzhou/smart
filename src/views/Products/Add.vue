@@ -18,34 +18,25 @@
       <el-input type="textarea" v-model="product.name"></el-input>
     </el-form-item>
     <el-form-item label="关键字">
-      <el-select
-        v-model="product.classRanks"
-        multiple
-        filterable
-        allow-create
-        default-first-option
-        placeholder="请选择关键字"
-        class="products-keywords-select">
-        <el-option
-          v-for="item in product.classRanks"
-          :key="item.class + '_' + item.rank"
-          :label="item.class"
-          :value="item.class">
-        </el-option>
-      </el-select>
+      <div v-for="(kw, index) in keywords" :key="kw + '_' + index">
+        {{kw.keyword}} <i class="el-icon-delete" @click="deleteKeyword(kw)"></i>
+      </div>
+      <div v-if="showAddKwButton === false">
+        <el-input v-model="gKeyword.keyword" placeholder="关键字"></el-input>
+      </div>
+      <el-button size="mini" icon="el-icon-plus" v-if="showAddKwButton === true" @click="addKeyword" round>增加关键字</el-button>
+      <el-button size="mini" v-if="showAddKwButton === false" @click="saveKeyword" round>保存关键字</el-button>
     </el-form-item>
     <el-form-item label="竞品">
       <div v-for="cp in competitors" :key="cp.competitorId">
         {{cp.competitorId}} <i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
       </div>
-      <el-button size="mini" icon="el-icon-plus" v-if="showAddButton" @click="addCompetitor" round>增加竞品</el-button>
-      <el-button size="mini" v-if="!showAddButton" @click="saveCompetitor" round>保存竞品</el-button>
+      <div v-if="showAddCpButton === false">
+        <el-input v-model="competitor.competitorId" placeholder="竞品S/N"></el-input>
+      </div>
+      <el-button size="mini" icon="el-icon-plus" v-if="showAddCpButton === true" @click="addCompetitor" round>增加竞品</el-button>
+      <el-button size="mini" v-if="showAddCpButton === false" @click="saveCompetitor" round>保存竞品</el-button>
     </el-form-item>
-    <div v-if="!showAddButton">
-      <el-form-item label="竞品S/N">
-        <el-input v-model="competitor.competitorAsin"></el-input>
-      </el-form-item>
-    </div>
     <el-form-item class="text-center">
       <el-button type="primary" round>立即保存</el-button>
     </el-form-item>
@@ -60,11 +51,18 @@ export default {
     return {
       product: {},
       competitors: [],
+      keywords: [],
       labelPosition: 'right',
-      showAddButton: true,
+      showAddCpButton: true,
+      showAddKwButton: true,
       competitor: {
         productId: '',
-        competitorAsin: '',
+        competitorId: '',
+        shopId: ''
+      },
+      gKeyword: {
+        productId: '',
+        keyword: '',
         shopId: ''
       }
     }
@@ -73,6 +71,7 @@ export default {
     let self = this
     if (self.$route.query && self.$route.query.name) {
       self.product = self.$route.query
+      console.log(self.product)
       self.listCompetitor()
     }
   },
@@ -93,10 +92,34 @@ export default {
       return isJPG && isLt2M
     },
     addCompetitor () {
+      this.competitor.shopId = this.product.shopId
+      this.competitor.productId = this.product.asin
+      this.showAddCpButton = false
+    },
+    addKeyword () {
+      this.gKeyword.shopId = this.product.shopId
+      this.gKeyword.productId = this.product.asin
+      this.showAddKwButton = false
+    },
+    assignKeywords (data) {
       let self = this
-      self.competitor.shopId = self.product.shopId
-      self.competitor.productId = self.product.asin
-      self.showAddButton = false
+      self.keywords = data.map(kw => {
+        return {
+          keywordId: kw.keywordId,
+          keyword: kw.keyword
+        }
+      })
+      console.log(self.keywords)
+    },
+    clearCompetitor () {
+      this.competitor.competitorId = undefined
+      this.competitor = Object.assign({}, this.competitor)
+      this.showAddCpButton = true
+    },
+    clearGKeywork () {
+      this.gKeyword.keyword = undefined
+      this.gKeyword = Object.assign({}, this.gKeyword)
+      this.showAddCpButton = true
     },
     saveCompetitor () {
       let self = this
@@ -104,10 +127,25 @@ export default {
         self.listCompetitor()
       })
     },
+    saveKeyword () {
+      let self = this
+      api.post(`/api/product/keyword`, self.gKeyword).then(res => {
+        self.listKeywords()
+      })
+    },
     listCompetitor () {
       let self = this
       api.get(`/api/product/competitor/${self.product.shopId}/${self.product.asin}`).then(res => {
         self.competitors = res.data
+        self.listKeywords()
+        self.clearCompetitor()
+      })
+    },
+    listKeywords () {
+      let self = this
+      api.get(`/api/product/keyword/${self.product.shopId}/${self.product.asin}`).then(res => {
+        self.assignKeywords(res.data)
+        self.clearGKeywork()
       })
     },
     deleteCompetitor (id) {
@@ -115,6 +153,14 @@ export default {
         let self = this
         api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.asin}/${id}`).then(res => {
           self.listCompetitor()
+        })
+      }
+    },
+    deleteKeyword (kw) {
+      if (confirm('Do you want to delete the keyword?')) {
+        let self = this
+        api.delete(`/api/product/keyword/${self.product.shopId}/${kw.keywordId}`).then(res => {
+          self.listKeywords()
         })
       }
     }
