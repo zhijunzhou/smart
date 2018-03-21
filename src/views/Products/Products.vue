@@ -68,7 +68,11 @@
                 </template>              
             </el-table-column>
             <el-table-column
-              label="产品描述"
+              label="S/N码"
+              prop="asin">
+            </el-table-column>
+            <el-table-column
+              label="产品名"
               prop="name"
               sortable>
             </el-table-column>
@@ -83,23 +87,23 @@
               sortable>
             </el-table-column>
             <el-table-column
-              label="S/N码"
-              prop="asin">
-            </el-table-column>
-            <el-table-column
               label="价格"
               prop="price">
             </el-table-column>
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" round>
-                  <router-link :to="{path: '/main/edit-product', query: scope.row}">编辑</router-link>
-                </el-button>
+                <router-link :to="{path: '/main/edit-product', query: scope.row}">
+                  <el-button size="mini" round>
+                    编辑
+                  </el-button>
+                </router-link>
                 <br />
-                <el-button size="mini" round>
-                  <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">分析</router-link>
-                </el-button>
+                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">
+                  <el-button size="mini" round>
+                    分析
+                  </el-button>
+                </router-link>
               </template>
             </el-table-column>
           </el-table>
