@@ -77,6 +77,7 @@ import 'echarts/lib/component/markLine'
 import 'echarts/lib/component/markArea'
 import api from '@/utils/api'
 import productSearch from '@/components/productSearch/productSearch'
+import { Message } from 'element-ui'
 
 export default {
   data () {
@@ -173,6 +174,7 @@ export default {
         }
       }
 
+      this.$store.dispatch('setLoadingState', true)
       api.post('/api/product/statistics', params).then(res => {
         if (res.status === 200 && res.data) {
           self.currentStatistics = res.data
@@ -180,12 +182,27 @@ export default {
           // console.log(self.currentStatistics)
 
           api.post('/api/product/competition', params).then(res1 => {
+            this.$store.dispatch('setLoadingState', false)
             if (res1.status === 200 && res1.data) {
               self.competitionStatistics = res1.data
               self.parseStatisticsTableData()
             }
+          }).catch(err => {
+            this.$store.dispatch('setLoadingState', false)
+            Message({
+              showClose: true,
+              message: err.response.statusText,
+              type: 'error'
+            })
           })
         }
+      }).catch(err => {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+        this.$store.dispatch('setLoadingState', false)
       })
     },
     parseCategories (statistics) {

@@ -137,6 +137,7 @@
 
 <script>
 import api from '../../utils/api'
+import { Message } from 'element-ui'
 
 export default {
   data () {
@@ -186,12 +187,21 @@ export default {
         currentPage: this.currentPage
       }
 
+      this.$store.dispatch('setLoadingState', true)
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
           this.products = res.data.grid
           this.productTotal = res.data.pagination.total
           this.listLikedProducts()
         }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
       })
     },
     getShopList () {

@@ -90,6 +90,7 @@ export default {
         })
         this.$router.push('/main')
       }).catch(error => {
+        this.$store.dispatch('setLoadingState', false)
         if (error.response) {
           Message({
             showClose: true,
