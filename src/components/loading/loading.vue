@@ -14,7 +14,7 @@
 @import "../../assets/css/function";
 
 .mask {
-    position: absolute;
+    position: fixed;
     width: 100%;
     margin: 0 auto;
     top: 0;
@@ -26,7 +26,7 @@
   }
 
 .loading {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   height:30%;
