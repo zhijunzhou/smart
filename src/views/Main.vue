@@ -7,16 +7,16 @@
 			<!-- <span class="logo-txt">mart</span> -->
       <ul class="header-operations">    
 				<li>
-					<img :src="$store.state.userInfo.headimgurl" class="privateImage" v-if="$store.state.userInfo.headimgurl">
+					<img :src="userInfo.headimgurl" class="privateImage" v-if="userInfo.headimgurl">
 				</li>
 				<li>
 					<span>
-						{{$store.state.userInfo.fullName}}
+						{{userInfo.fullName}}
 					</span>
 				</li> 
         <li>
           <span>
-						昵称: {{$store.state.userInfo.nickname}}
+						昵称: {{userInfo.nickname}}
           </span>
 				</li>
         <li>
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import mainHeader from '@/components/mainHeader/mainHeader'
 
 export default {
@@ -100,6 +101,11 @@ export default {
   },
   components: {
     mainHeader
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
   }
 }
 </script>

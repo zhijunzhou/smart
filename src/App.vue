@@ -1,14 +1,26 @@
 <template>
   <div id="app">
     <main>
+      <v-loading v-show="loading"></v-loading>
       <router-view></router-view>
     </main>
   </div>
 </template>
 
 <script>
+import loading from '@/components/loading/loading'
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    'v-loading': loading
+  },
+  computed: {
+    ...mapGetters([
+      'loading'
+    ])
+  }
 }
 </script>
 

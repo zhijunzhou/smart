@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import QRCode from 'qrcode'
 import service from '@/utils/service'
 import api from '@/utils/api'
@@ -57,6 +58,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ setUserInfo: 'setUserInfo' }),
     startJourney () {
       clearInterval(this.timer)
       this.$router.push('/main')
@@ -71,12 +73,14 @@ export default {
     login () {
       const userName = this.userInformation.name
       const passWord = this.userInformation.password
+      this.$store.dispatch('setLoadingState', true)
       api.post('/api/user/login', {userName, passWord}).then(login => {
-        this.$store.commit('setUserInfo', login.data)
         // if (this.$store.state.userInfo.openid) {
         if (!this.inputMode || !this.register) {
           this.bind()
         }
+        this.$store.dispatch('setLoadingState', false)
+        this.setUserInfo(login.data)
         this.cacheToken(login.headers)
         // }
         Message({
@@ -121,7 +125,7 @@ export default {
       const force = 1
       console.log(userId, wechatId, this.$store.state.userInfo)
       api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(login => {
-        this.$store.commit('setUserInfo', login.data)
+        this.setUserInfo(login.data)
         console.log(login)
       })
     },
