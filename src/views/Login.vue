@@ -167,11 +167,13 @@ export default {
             console.log(res)
             service.get('/wepay/userinfo?openid=' + openid).then(r => {
               console.log(r)
-              this.$store.commit('setUserInfo', r.data)
+              // this.$store.commit('setUserInfo', r.data)
+              this.setUserInfo(r.data)
               api.post('/api/wechat/login', {wechatId: openid}).then(login => {
-                this.$store.commit('setUserInfo', login.data)
+                // this.$store.commit('setUserInfo', login.data)
+                this.setUserInfo(login.data)
+                console.log(this.$store.state)
                 this.$router.push('/main')
-                console.log(login)
               }).catch(error => {
                 if (error.response) {
                   // The request was made and the server responded with a status code

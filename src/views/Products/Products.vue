@@ -2,7 +2,9 @@
   <div>
     <el-row>
       <el-form ref="form">
-        <el-col :span="3" style="padding-right: 5px;">
+        <el-col :span="1" style="padding-right: 5px;">店铺
+        </el-col>
+        <el-col :span="6" style="padding-right: 5px;">
           <el-form-item>
             <el-select v-model="shopid" placeholder="选择店铺">
               <el-option
@@ -15,7 +17,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">        
-          <el-form-item label="产品类型：">
+          <!-- <el-form-item label="产品类型：">
             <el-select v-model="productType" placeholder="请选择">
               <el-option
                 v-for="item in options"
@@ -24,7 +26,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
         <el-col :span="3">
           <el-form-item>

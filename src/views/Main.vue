@@ -7,7 +7,7 @@
 			<!-- <span class="logo-txt">mart</span> -->
       <ul class="header-operations">    
 				<li>
-					<img :src="userInfo.headimgurl" class="privateImage" v-if="userInfo.headimgurl">
+					<img :src="userInfo.wechatImage" class="privateImage" v-if="userInfo.wechatImage">
 				</li>
 				<li>
 					<span>
@@ -16,7 +16,7 @@
 				</li> 
         <li>
           <span>
-						昵称: {{userInfo.nickname}}
+						昵称: {{userInfo.wechatName}}
           </span>
 				</li>
         <li>
