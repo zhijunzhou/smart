@@ -64,6 +64,10 @@ export default {
     switchInputMode () {
       this.inputMode = !this.inputMode
     },
+    cacheToken (headers) {
+      let key = 'x-auth-token'
+      window.sessionStorage.setItem(key, headers[key])
+    },
     login () {
       const userName = this.userInformation.name
       const passWord = this.userInformation.password
@@ -73,6 +77,7 @@ export default {
         if (!this.inputMode || !this.register) {
           this.bind()
         }
+        this.cacheToken(login.headers)
         // }
         Message({
           showClose: true,
