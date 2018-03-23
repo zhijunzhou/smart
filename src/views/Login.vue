@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import QRCode from 'qrcode'
 import service from '@/utils/service'
 import api from '@/utils/api'
@@ -56,6 +56,9 @@ export default {
         password: ''
       }
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
@@ -77,7 +80,7 @@ export default {
       api.post('/api/user/login', {userName, passWord}).then(login => {
         // if (this.$store.state.userInfo.openid) {
         if (!this.inputMode || !this.register) {
-          this.bind()
+          this.bind(login.data.userId)
         }
         this.$store.dispatch('setLoadingState', false)
         this.setUserInfo(login.data)
@@ -118,13 +121,12 @@ export default {
         }
       })
     },
-    bind () {
-      const userId = this.$store.state.userInfo.userId
-      const wechatId = this.$store.state.userInfo.openid ? this.$store.state.userInfo.openid : ''
-      const wechatName = this.$store.state.userInfo.nickname ? this.$store.state.userInfo.nickname : ''
-      const wechatImage = this.$store.state.userInfo.headimgurl ? this.$store.state.userInfo.headimgurl : ''
+    bind (userId) {
+      const wechatId = this.userInfo.openid ? this.userInfo.openid : ''
+      const wechatName = this.userInfo.nickname ? this.userInfo.nickname : ''
+      const wechatImage = this.userInfo.headimgurl ? this.userInfo.headimgurl : ''
       const force = 1
-      console.log(userId, wechatId, this.$store.state.userInfo)
+      console.log(userId, wechatId, this.userInfo)
       api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(login => {
         this.setUserInfo(login.data)
         console.log(login)
