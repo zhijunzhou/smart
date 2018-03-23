@@ -29,7 +29,7 @@
         </el-col>
         <el-col :span="7" class="text-right">
           <el-form-item>
-            <el-checkbox v-model="isShowLiked" @click="showHideLiked">只显示我关注的</el-checkbox>
+            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
           </el-form-item>
         </el-col>
       </el-form>
@@ -225,19 +225,12 @@ export default {
       })
     },
     showHideLiked () {
-      let prods = []
-      let self = this
-      if (self.isShowLiked === true) {
-        prods = self.pageProducts.filter(pp => {
-          return self.isNotLike(pp) === true
-        })
-      } else {
-        prods = self.pageProducts.filter(pp => {
-          return self.isNotLike(pp) === false
-        })
+      let filter = {
+        productId: this.search_val,
+        shopId: this.shopId,
+        interestedOnly: this.isShowLiked ? 1 : undefined
       }
-      console.log(prods)
-      self.pageProducts = prods
+      this.getPageProducts(filter)
     },
     likeProduct (product, like) {
       let productInfo = {
