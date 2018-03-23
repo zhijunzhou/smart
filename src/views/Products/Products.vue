@@ -2,32 +2,19 @@
   <div>
     <el-row>
       <el-form ref="form">
-        <el-col :span="1" style="padding-right: 5px;">店铺
-        </el-col>
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item>
-            <el-select v-model="shopid" placeholder="选择店铺">
+        <el-col :span="8" style="padding-right: 5px;">
+          <el-form-item label="店铺">
+            <el-select v-model="shopId" placeholder="选择店铺">
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
                 :label="shop.shopName"
-                :value="shop.shopID">
+                :value="shop.shopId">
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">        
-          <!-- <el-form-item label="产品类型：">
-            <el-select v-model="productType" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
-        </el-col>
+        <el-col :span="8"></el-col>
         <el-col :span="3">
           <el-form-item>
             <el-input
@@ -38,7 +25,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="2" style="padding-left: 5px;">
-          <el-button type="primary" icon="el-icon-search" @click="getPageProducts">搜索</el-button>
+          <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
         </el-col>
         <el-col :span="7" class="text-right">
           <el-form-item>
@@ -149,10 +136,10 @@ export default {
       productTotal: 0,
       currentPage: 1,
       pageProducts: [],
-      search_val: '',
+      search_val: undefined,
+      shopId: undefined,
       isShowLiked: false,
       likedProducts: [],
-      shopid: undefined,
       shopList: [],
       options: [{
         value: '选项1',
@@ -183,10 +170,20 @@ export default {
         return product.asin === p.productId
       })
     },
-    getPageProducts () {
-      const pagination = {
+    searchProduct () {
+      let filter = {
+        productId: this.search_val,
+        shopId: this.shopId
+      }
+      this.getPageProducts(filter)
+    },
+    getPageProducts (filter) {
+      let pagination = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
+      }
+      if (filter) {
+        pagination.filter = filter
       }
 
       this.$store.dispatch('setLoadingState', true)
