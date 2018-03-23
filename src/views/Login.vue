@@ -3,33 +3,38 @@
     <el-header class="login-header"><h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1></el-header>
     <el-main>      
       <el-row>
-        <el-col>
-          <div class="grid-content text-center" :style="{ display: inputMode?'none':''}">
+        <el-col v-show="!inputMode">
+          <div class="grid-content text-center">
             <canvas id="login_container"></canvas>
+          </div>
+          <div class="text-center">
+            <small>请打开微信扫一扫，扫描二维码登录</small>
           </div>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="24" class="text-center">
           <el-button @click="startJourney">快速体验</el-button>
-          <el-button v-if="inputMode" @click="switchInputMode">扫码登陆</el-button>
+          <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button>
           <el-button v-else @click="switchInputMode">密码登陆</el-button>
         </el-col>
       </el-row>
       <el-row v-if="inputMode">
-        <el-col :span="6" :offset="9">
-          <el-form label-position="right" label-width="80px" :model="userInformation">
-            <el-form-item label="用户名">
-              <el-input v-model="userInformation.name"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" >
-              <el-input type="password" v-model="userInformation.password"></el-input>
+        <el-col :span="9">&nbsp;</el-col>
+        <el-col :span="6" class="text-center">
+          <el-form :model="userInformation">
+            <el-form-item>
+              <el-input v-model="userInformation.name" placeholder="用户名"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="login" plain class="longbtn">登陆</el-button>
+              <el-input type="password" v-model="userInformation.password" placeholder="密码"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="login" class="longbtn">登录</el-button>
             </el-form-item>
           </el-form>
         </el-col>
+        <el-col :span="9">&nbsp;</el-col>
       </el-row>
     </el-main>
     <el-footer class="text-center"><small>© 2018 www.starstech.cc. All Rights Reserved</small></el-footer>
