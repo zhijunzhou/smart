@@ -104,6 +104,7 @@
               </template>
             </el-table-column>
             <el-table-column
+              width="80"
               label="关注">
               <template slot-scope="scope">
                 <i class="el-icon-star-off large-icon" title="点击关注" v-if="isNotLike(scope.row)" @click="likeProduct(scope.row, true)"></i>
