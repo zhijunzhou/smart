@@ -20,8 +20,8 @@
         </el-col>
       </el-row>
       <el-row v-if="inputMode">
-        <el-col :span="9">&nbsp;</el-col>
-        <el-col :span="6" class="text-center">
+        <el-col :lg="9" :md="8" :sm="6" :xs="3">&nbsp;</el-col>
+        <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
           <el-form :model="userInformation">
             <el-form-item>
               <el-input v-model="userInformation.name" placeholder="用户名"></el-input>
@@ -34,7 +34,7 @@
             </el-form-item>
           </el-form>
         </el-col>
-        <el-col :span="9">&nbsp;</el-col>
+        <el-col :lg="9" :md="8" :sm="6" :xs="3">&nbsp;</el-col>
       </el-row>
     </el-main>
     <el-footer class="text-center"><small>© 2018 www.starstech.cc. All Rights Reserved</small></el-footer>
