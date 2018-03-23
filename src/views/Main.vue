@@ -6,18 +6,13 @@
 			<span class="header-logo">$</span>
 			<!-- <span class="logo-txt">mart</span> -->
       <ul class="header-operations">    
-				<li>
-					<img :src="userInfo.wechatImage" class="privateImage" v-if="userInfo.wechatImage">
+				<li v-if="userInfo.wechatImage">
+					<img :src="userInfo.wechatImage" class="privateImage">
 				</li>
-				<li>
+				<li v-else>
 					<span>
 						{{userInfo.fullName}}
 					</span>
-				</li> 
-        <li>
-          <span>
-						昵称: {{userInfo.wechatName}}
-          </span>
 				</li>
         <li>
 					<router-link to="/">
