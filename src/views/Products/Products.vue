@@ -59,11 +59,16 @@
             </el-table-column>
             <el-table-column
               label="S/N码"
-              width="100"
-              prop="asin">
+              width="120">
+              <template slot-scope="scope">
+                <b>{{scope.row.asin}}</b>
+                <div v-for="cp in scope.row.competitors" :key="cp">
+                  {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
+                </div>
+              </template>
             </el-table-column>
             <el-table-column
-              label="产品名"
+              label="商品描述"
               width="200"
               prop="name"
               sortable>
