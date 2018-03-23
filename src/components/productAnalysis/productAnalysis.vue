@@ -290,7 +290,7 @@ export default {
             data: composedArry[0].data.map(dt => dt.label)
           },
           yAxis: {
-            data: composedArry[0].data.map(dt => dt.value),
+            inverse: true,
             type: 'value'
           },
           tooltip: {
@@ -359,7 +359,7 @@ export default {
                 {type: 'min', name: '最小值'}
               ]
             }
-            let data = dt.info.map(i => parseFloat(i.rate.toFixed(4)))
+            let data = dt.info.map(i => i.rate)
             return {name, type, markPoint, data}
           })
         }
