@@ -298,7 +298,7 @@ export default {
           },
           series: composedArry.map(dt => {
             let name = dt.id
-            let type = 'bar'
+            let type = 'line'
             let markPoint = {
               data: [
                 {type: 'max', name: '最大值'},
