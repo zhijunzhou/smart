@@ -9,6 +9,8 @@
           </div>
           <div class="text-center">
             <small>请打开微信扫一扫，扫描二维码登录</small>
+            <br>
+            <small>5分钟后本页面自动关闭</small>
           </div>
         </el-col>
       </el-row>
@@ -56,6 +58,7 @@ export default {
       register: true,
       qrMode: true,
       inputMode: false,
+      count: 0,
       userInformation: {
         name: '',
         password: ''
@@ -165,6 +168,11 @@ export default {
       })
       const infoUrl = '/getUserInfo?uid=' + uid
       this.timer = setInterval(() => {
+        this.count += 1
+        if (this.count > 150) {
+          clearInterval(this.timer)
+          window.close()
+        }
         service.get(infoUrl).then(res => {
           // let wxUrl = res.data
           console.log(res)

@@ -59,7 +59,7 @@
             </el-table-column>
             <el-table-column
               label="S/N码"
-              width="120">
+              width="180">
               <template slot-scope="scope">
                 <b>{{scope.row.asin}}</b>
                 <div v-for="cp in scope.row.competitors" :key="cp">
