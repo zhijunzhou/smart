@@ -12,7 +12,7 @@
           </el-col>
         </el-row>         
       </el-tab-pane>
-      <el-tab-pane v-for="ca of categories" :key="ca" :label="ca" :name="ca">
+      <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
         <el-row>
           <el-col :span="24" style="padding-top: 0;">
             <chart 
@@ -23,7 +23,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane v-for="kw of keywords" :key="kw" :label="kw" :name="kw">
+      <el-tab-pane v-for="kw of keywords" :key="kw" :label="getTabName(kw)" :name="kw">
         <el-row>
           <el-col :span="24" style="padding-top: 0;">
             <chart 
@@ -95,6 +95,7 @@ export default {
       productsData: [],
       currentStatistics: [],
       competitionStatistics: [],
+      chartTitle: '',
       initOptions: {
         renderer: 'svg'
       },
@@ -129,7 +130,21 @@ export default {
       }
       this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
     },
-    handleClick (tab, event) {},
+    handleClick (tab, event) {
+      this.chartTitle = tab.name
+      console.log(tab, event)
+    },
+    getTabName (name) {
+      const arr = name.split(' > ')
+      let txt1 = ''
+      if (name.substring(0, 8) === 'category') {
+        txt1 = '类目'
+      } else {
+        txt1 = '关键字'
+      }
+      console.log('name', name, arr)
+      return txt1 + arr.length
+    },
     udpateSalesChart (unit, period) {
       let params
 
@@ -279,7 +294,12 @@ export default {
           })
         })
         return {
+          title: {
+            text: this.chartTitle,
+            top: 0
+          },
           legend: {
+            top: 24,
             data: composedArry.map(dt => dt.id)
           },
           toolbox: this.toolBoxOptions,
