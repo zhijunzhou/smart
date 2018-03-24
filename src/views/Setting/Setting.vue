@@ -55,7 +55,7 @@
               <el-table-column
                 label="操作">
                 <template slot-scope="scope">
-                  <el-button size="mini" round>编辑</el-button>
+                  <el-button size="mini" round @click="edit">编辑</el-button>
                   <el-button size="mini" round>
                     <router-link :to="{path: '/main/analysis'}">删除</router-link>
                   </el-button>
@@ -72,6 +72,30 @@
           </el-pagination>
         </el-col>
       </el-row>
+      <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+          <el-form :model="form">
+            <el-form-item label="工号" :label-width="formLabelWidth">
+              {{form.id}}
+            </el-form-item>
+            <el-form-item label="姓名" :label-width="formLabelWidth">
+              <el-input v-model="form.name" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="电话" :label-width="formLabelWidth">
+              <el-input v-model="form.cellPhone" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="邮件" :label-width="formLabelWidth">
+              <el-input v-model="form.email" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="角色" :label-width="formLabelWidth">
+              </el-form-item>
+            <el-form-item label="所属店铺" :label-width="formLabelWidth">
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -87,7 +111,24 @@
         search_val: '',
         showLiked: false,
         options: [],
-        productType: ''
+        dialogFormVisible: false,
+        productType: '',
+        formLabelWidth: '120px',
+        form: {
+          id: '',
+          name: '',
+          cellPhone: '',
+          email: '',
+          role: [],
+          shops: [],
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        }
       }
     },
     created () {
@@ -96,6 +137,9 @@
     mounted () {
     },
     methods: {
+      edit () {
+        this.dialogFormVisible = true
+      },
       getUserData () {
         const pagination = {
           pageSize: this.pageSize,
