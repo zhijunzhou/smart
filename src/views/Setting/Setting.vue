@@ -55,7 +55,7 @@
               <el-table-column
                 label="操作">
                 <template slot-scope="scope">
-                  <el-button size="mini" round @click="edit">编辑</el-button>
+                  <el-button size="mini" round @click="edit(scope.row)">编辑</el-button>
                   <el-button size="mini" round>
                     <router-link :to="{path: '/main/analysis'}">删除</router-link>
                   </el-button>
@@ -72,13 +72,13 @@
           </el-pagination>
         </el-col>
       </el-row>
-      <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+      <el-dialog title="用户详情" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item label="工号" :label-width="formLabelWidth">
-              {{form.id}}
+              {{form.userId}}
             </el-form-item>
             <el-form-item label="姓名" :label-width="formLabelWidth">
-              <el-input v-model="form.name" auto-complete="off"></el-input>
+              <el-input v-model="form.userName" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="电话" :label-width="formLabelWidth">
               <el-input v-model="form.cellPhone" auto-complete="off"></el-input>
@@ -87,7 +87,10 @@
               <el-input v-model="form.email" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="角色" :label-width="formLabelWidth">
-              </el-form-item>
+              <el-checkbox-group v-model="roleList" >
+                <el-checkbox v-for="role of allRoles" :label="role.roleId" :disabled="hasSales(role.roleId)">{{role.roleName}}</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
             <el-form-item label="所属店铺" :label-width="formLabelWidth">
             </el-form-item>
           </el-form>
@@ -113,21 +116,21 @@
         options: [],
         dialogFormVisible: false,
         productType: '',
+        roleList: [],
         formLabelWidth: '120px',
+        allRoles: [
+          { roleId: 4, roleName: '项目执行人' },
+          { roleId: 3, roleName: '项目创建人' },
+          { roleId: 5, roleName: '销售' },
+          { roleId: 6, roleName: '销售总监' }
+        ],
         form: {
-          id: '',
-          name: '',
+          userId: '',
+          userName: '',
           cellPhone: '',
           email: '',
           role: [],
-          shops: [],
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          shops: []
         }
       }
     },
@@ -137,7 +140,27 @@
     mounted () {
     },
     methods: {
-      edit () {
+      // changeRole (ev) {
+      //   console.log(this.roleList)
+      //   console.log(ev)
+      // },
+      hasSales (id) {
+        let res = false
+        switch (id) {
+          case 5:
+            res = (this.roleList.indexOf(6) > -1)
+            console.log(id, res)
+            break
+          case 6:
+            res = (this.roleList.indexOf(5) > -1)
+            console.log(id, res)
+            break
+        }
+        return res
+      },
+      edit (user) {
+        this.form = user
+        console.log(user)
         this.dialogFormVisible = true
       },
       getUserData () {

@@ -75,7 +75,8 @@ export default {
       this.$router.push('/main')
     },
     switchInputMode () {
-      this.inputMode = !this.inputMode
+      this.inputMode = true
+      clearInterval(this.timer)
     },
     cacheToken (headers) {
       let key = 'x-auth-token'
