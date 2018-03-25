@@ -88,18 +88,18 @@
             </el-form-item>
             <el-form-item label="角色" :label-width="formLabelWidth">
               <el-checkbox-group v-model="roleSelected" >
-                <el-checkbox v-for="role of roleList" :label="role.roleId" :disabled="hasSales(role.roleId)">{{role.roleName}}</el-checkbox>
+                <el-checkbox v-for="role of roleList" :label="role.roleId" :key="role.roleId" :disabled="hasSales(role.roleId)">{{role.roleName}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="所属店铺" :label-width="formLabelWidth">
               <el-checkbox-group v-model="shopSelected" >
-                <el-checkbox v-for="shop of shopList" :label="shop.shopId">{{shop.shopName}}</el-checkbox>
+                <el-checkbox v-for="shop of shopList" :label="shop.shopId" :key="shop.shopId">{{shop.shopName}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="saveUser">确 定</el-button>
           </div>
         </el-dialog>
     </div>
@@ -107,6 +107,7 @@
 <script>
   // import { ROLE } from '../../../static/enum.js'
   import api from '../../utils/api'
+  import { Message } from 'element-ui'
   export default {
     data () {
       return {
@@ -134,7 +135,7 @@
           userName: '',
           cellPhone: '',
           email: '',
-          role: [],
+          roles: [],
           shops: []
         }
       }
@@ -150,6 +151,25 @@
       //   console.log(this.roleSelected)
       //   console.log(ev)
       // },
+      saveUser () {
+        this.dialogFormVisible = false
+        const fullName = this.form.userName
+        const email = this.form.email | ''
+        const phone = this.form.cellPhone | ''
+        const roles = this.roleSelected
+        const shops = this.shopSelected
+        api.post('/api/user/' + this.form.userId, {
+          fullName, email, phone, roles, shops
+        }).then(res => {
+          Message({
+            showClose: true,
+            message: '更新成功!',
+            type: 'success'
+          })
+          this.getUserData()
+          console.log(res)
+        })
+      },
       getShopList () {
         api.get('/api/shop').then(res => {
           this.shopList = res.data
@@ -171,6 +191,7 @@
       },
       edit (user) {
         this.form = user
+        this.roleSelected = user.roles.map(u => u.roleId)
         console.log(user)
         this.dialogFormVisible = true
       },
