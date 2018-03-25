@@ -87,11 +87,14 @@
               <el-input v-model="form.email" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="角色" :label-width="formLabelWidth">
-              <el-checkbox-group v-model="roleList" >
-                <el-checkbox v-for="role of allRoles" :label="role.roleId" :disabled="hasSales(role.roleId)">{{role.roleName}}</el-checkbox>
+              <el-checkbox-group v-model="roleSelected" >
+                <el-checkbox v-for="role of roleList" :label="role.roleId" :disabled="hasSales(role.roleId)">{{role.roleName}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="所属店铺" :label-width="formLabelWidth">
+              <el-checkbox-group v-model="shopSelected" >
+                <el-checkbox v-for="shop of shopList" :label="shop.shopId">{{shop.shopName}}</el-checkbox>
+              </el-checkbox-group>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -116,9 +119,11 @@
         options: [],
         dialogFormVisible: false,
         productType: '',
-        roleList: [],
+        roleSelected: [],
+        shopList: [],
+        shopSelected: [],
         formLabelWidth: '120px',
-        allRoles: [
+        roleList: [
           { roleId: 4, roleName: '项目执行人' },
           { roleId: 3, roleName: '项目创建人' },
           { roleId: 5, roleName: '销售' },
@@ -136,23 +141,29 @@
     },
     created () {
       this.getUserData()
+      this.getShopList()
     },
     mounted () {
     },
     methods: {
       // changeRole (ev) {
-      //   console.log(this.roleList)
+      //   console.log(this.roleSelected)
       //   console.log(ev)
       // },
+      getShopList () {
+        api.get('/api/shop').then(res => {
+          this.shopList = res.data
+        })
+      },
       hasSales (id) {
         let res = false
         switch (id) {
           case 5:
-            res = (this.roleList.indexOf(6) > -1)
+            res = (this.roleSelected.indexOf(6) > -1)
             console.log(id, res)
             break
           case 6:
-            res = (this.roleList.indexOf(5) > -1)
+            res = (this.roleSelected.indexOf(5) > -1)
             console.log(id, res)
             break
         }
