@@ -1,6 +1,14 @@
 <template>
     <div>
       <el-row>
+        <el-col :span="2">
+          用户状态:
+        </el-col>
+        <el-col :span="4">
+          <el-checkbox-group v-model="userStatusSelected" @change="userStatusChange" :min="1">
+            <el-checkbox v-for="status of userStatusList" :label="status.id" :key="status.id" >{{status.value}}</el-checkbox>
+          </el-checkbox-group>
+        </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="24">
@@ -18,11 +26,19 @@
                         <img :src="scope.row.wechatImage" class="privateImage" v-if="scope.row.wechatImage">
                       </el-col>
                       <el-col :span="18">
-                        <h6>{{ scope.row.userName }}</h6>
+                        <h6>{{ scope.row.fullName }}</h6>
                         <span>昵称 {{ scope.row.wechatName }}</span>
                       </el-col>
                     </el-row>
                   </template>              
+              </el-table-column>
+              <el-table-column
+                label="邮件"
+                prop="email">
+              </el-table-column>
+              <el-table-column
+                label="电话"
+                prop="phone">
               </el-table-column>
               <el-table-column
                 label="角色"
@@ -78,10 +94,10 @@
               {{form.userId}}
             </el-form-item>
             <el-form-item label="姓名" :label-width="formLabelWidth">
-              <el-input v-model="form.userName" auto-complete="off"></el-input>
+              <el-input v-model="form.fullName" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="电话" :label-width="formLabelWidth">
-              <el-input v-model="form.cellPhone" auto-complete="off"></el-input>
+              <el-input v-model="form.phone" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="邮件" :label-width="formLabelWidth">
               <el-input v-model="form.email" auto-complete="off"></el-input>
@@ -124,16 +140,26 @@
         shopList: [],
         shopSelected: [],
         formLabelWidth: '120px',
+        filter: {
+          userName: '',
+          userStatus: ''
+        },
         roleList: [
           { roleId: 4, roleName: '项目执行人' },
           { roleId: 3, roleName: '项目创建人' },
           { roleId: 5, roleName: '销售' },
           { roleId: 6, roleName: '销售总监' }
         ],
+        userStatusList: [
+          { id: 'active', value: '正常' },
+          { id: 'disabled', value: '禁用' }
+        ],
+        userStatusSelected: ['active', 'disabled'],
         form: {
           userId: '',
           userName: '',
-          cellPhone: '',
+          fullName: '',
+          phone: '',
           email: '',
           roles: [],
           shops: []
@@ -151,11 +177,16 @@
       //   console.log(this.roleSelected)
       //   console.log(ev)
       // },
+      userStatusChange () {
+        console.log(this.userStatusSelected)
+        this.filter.userStatus = this.userStatusSelected.length === 1 ? this.userStatusSelected[0] : ''
+        this.getUserData()
+      },
       saveUser () {
         this.dialogFormVisible = false
-        const fullName = this.form.userName
+        const fullName = this.form.fullName
         const email = this.form.email | ''
-        const phone = this.form.cellPhone | ''
+        const phone = this.form.phone | ''
         const roles = this.roleSelected
         const shops = this.shopSelected
         api.post('/api/user/' + this.form.userId, {
@@ -198,7 +229,8 @@
       getUserData () {
         const pagination = {
           pageSize: this.pageSize,
-          currentPage: this.currentPage
+          currentPage: this.currentPage,
+          filter: this.filter
         }
         api.post('/api/user/pagination', {pagination}).then(res => {
           this.users = res.data.grid
