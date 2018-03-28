@@ -91,17 +91,16 @@
                 width="300">
                 <template slot-scope="scope">
                   <el-button size="mini" round @click="edit(scope.row)" icon="el-icon-edit">编辑</el-button>
-                  <el-popover
+                  <el-popover :style="{ color: scope.row.changePasswordFlag ? 'red':'blue' }"
                     ref="changePassWord"
                     placement="top"
                     width="160"
-                    :value="scope.row.changePasswordFlag">
-                    <p><b>新的密码</b></p>
+                    v-model="scope.row.changePasswordFlag">
+                    <p><b>{{scope.row.fullName}}的新密码</b></p>
                     <el-input v-model="newPassword" placeholder="请输入密码"></el-input>
                     <p>&nbsp;</p>
                     <div style="text-align: right; margin: 0">
-                      <el-button size="mini" type="text" @click="scope.row.changePasswordFlag=false;cancelChangePassword(scope.row)">取消</el-button>
-                      <el-button type="primary" size="mini" @click=" confirmChangePassword(scope.row)">确定</el-button>
+                      <el-button type="primary" size="mini" disabled="!newPassword" @click="confirmChangePassword(scope.row)">确定</el-button>
                     </div>
                   </el-popover>
                   <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
@@ -221,9 +220,9 @@
       },
       cancelChangePassword (row) {
         console.log(row)
-        row.changePasswordFlag = false
+        row.changePasswordFlag = true
         setTimeout(() => {
-          row.changePasswordFlag = false
+          row.changePasswordFlag = true
         }, 0)
         // this.users = this.users.map(u => {
         //   u.changePasswordFlag = false
