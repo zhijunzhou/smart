@@ -31,6 +31,7 @@
             :data="users">
               <el-table-column
                 label="用户编号"
+                width="100"
                 prop="userId">
               </el-table-column>
               <el-table-column
@@ -53,6 +54,7 @@
               </el-table-column>
               <el-table-column
                 label="电话"
+                width="100"
                 prop="phone">
               </el-table-column>
               <el-table-column
@@ -68,6 +70,7 @@
               </el-table-column>
               <el-table-column
                 label="状态"
+                width="80"
                 prop="userStatus">
                 <template slot-scope="scope">
                   <span v-if="scope.row.userStatus==='active'">
@@ -84,12 +87,26 @@
                 </template>
               </el-table-column>
               <el-table-column
-                label="操作">
+                label="操作"
+                width="300">
                 <template slot-scope="scope">
-                  <el-button size="mini" round @click="edit(scope.row)">编辑</el-button>
-                  <el-button size="mini" round>
-                    <router-link :to="{path: '/main/analysis'}">删除</router-link>
-                  </el-button>
+                  <el-button size="mini" round @click="edit(scope.row)" icon="el-icon-edit">编辑</el-button>
+                  <el-popover
+                    ref="changePassWord"
+                    placement="top"
+                    width="160"
+                    :value="scope.row.changePasswordFlag">
+                    <p><b>新的密码</b></p>
+                    <el-input v-model="newPassword" placeholder="请输入密码"></el-input>
+                    <p>&nbsp;</p>
+                    <div style="text-align: right; margin: 0">
+                      <el-button size="mini" type="text" @click="scope.row.changePasswordFlag=false;cancelChangePassword(scope.row)">取消</el-button>
+                      <el-button type="primary" size="mini" @click=" confirmChangePassword(scope.row)">确定</el-button>
+                    </div>
+                  </el-popover>
+                  <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
+                  <el-button v-if="scope.row.userStatus==='disabled'" type="success" icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
+                  <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" type="danger">禁用</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -151,12 +168,14 @@
         currentPage: 1,
         search_val: '',
         showLiked: false,
+        newPassword: '',
         searchFullName: '',
         options: [],
         dialogFormVisible: false,
         productType: '',
         roleSelected: [],
         shopList: [],
+        changePasswordFlag: true,
         shopSelected: [],
         formLabelWidth: '120px',
         filter: {
@@ -193,10 +212,45 @@
     mounted () {
     },
     methods: {
-      // changeRole (ev) {
-      //   console.log(this.roleSelected)
-      //   console.log(ev)
-      // },
+      getBoolen (value) {
+        console.log(value)
+        return value
+      },
+      changePassword (row) {
+        row.changePasswordFlag = true
+      },
+      cancelChangePassword (row) {
+        console.log(row)
+        row.changePasswordFlag = false
+        setTimeout(() => {
+          row.changePasswordFlag = false
+        }, 0)
+        // this.users = this.users.map(u => {
+        //   u.changePasswordFlag = false
+        //   return u
+        // })
+        this.newPassword = ''
+      },
+      confirmChangePassword (row) {
+        const userId = row.userId
+        const passWord = this.newPassword
+        api.post(`/api/user/password`, {userId, passWord}).then(res => {
+          Message({
+            showClose: true,
+            message: '操作成功!',
+            type: 'success'
+          })
+          this.newPassword = ''
+          row.changePasswordFlag = false
+        }).catch(err => {
+          row.changePasswordFlag = false
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
+      },
       searchFullNameChange () {
         this.filter.userName = this.searchFullName
         this.getUserData()
@@ -206,6 +260,22 @@
         console.log(this.userStatusSelected)
         this.filter.userStatus = this.userStatusSelected.length === 1 ? this.userStatusSelected[0] : ''
         this.getUserData()
+      },
+      switchStatus (userId, status) {
+        api.post(`/api/user/status`, {userId, status}).then(res => {
+          Message({
+            showClose: true,
+            message: '操作成功!',
+            type: 'success'
+          })
+          this.getUserData()
+        }).catch(err => {
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
       },
       saveUser () {
         this.dialogFormVisible = false
@@ -281,6 +351,9 @@
         }
         api.post('/api/user/pagination', {pagination}).then(res => {
           this.users = res.data.grid
+          this.users.forEach(u => {
+            u.changePasswordFlag = false
+          })
           this.total = res.data.pagination.total
         })
       },

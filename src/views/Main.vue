@@ -67,7 +67,7 @@
       <el-main class="content">
 				<el-row>
 					<el-col>
-						<el-button size="mini" @click="goBack">返回</el-button>
+						<el-button size="mini" icon="el-icon-arrow-left" @click="goBack">返回</el-button>
 						<hr class="split-line" />
 					</el-col>
 				</el-row>
