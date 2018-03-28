@@ -188,6 +188,7 @@ export default {
               api.post('/api/wechat/login', {wechatId: openid}).then(login => {
                 // this.$store.commit('setUserInfo', login.data)
                 this.setUserInfo(login.data)
+                this.cacheToken(login.headers)
                 console.log(this.$store.state)
                 this.$router.push('/main')
               }).catch(error => {

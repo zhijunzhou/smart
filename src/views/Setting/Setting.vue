@@ -1,13 +1,28 @@
 <template>
     <div>
       <el-row>
-        <el-col :span="2">
+          <el-col :span="8">
+          <el-input
+            placeholder="请输入用户名"
+            v-model="searchFullName"
+            @clear="searchFullNameChange"
+            clearable>
+            <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange"></el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="8">
+          &nbsp;
+        </el-col>
+        <el-col :span="2" class="header-content">
           用户状态:
         </el-col>
-        <el-col :span="4">
+        <el-col :span="4" class="header-content">
           <el-checkbox-group v-model="userStatusSelected" @change="userStatusChange" :min="1">
             <el-checkbox v-for="status of userStatusList" :label="status.id" :key="status.id" >{{status.value}}</el-checkbox>
           </el-checkbox-group>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-plus" round @click="add">新增用户</el-button>
         </el-col>
       </el-row>
       <el-row :gutter="20">
@@ -90,9 +105,12 @@
       </el-row>
       <el-dialog title="用户详情" :visible.sync="dialogFormVisible">
           <el-form :model="form">
-            <el-form-item label="工号" :label-width="formLabelWidth">
+            <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
             </el-form-item>
+            <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
+                <el-input v-model="form.userName" auto-complete="off"></el-input>
+              </el-form-item>
             <el-form-item label="姓名" :label-width="formLabelWidth">
               <el-input v-model="form.fullName" auto-complete="off"></el-input>
             </el-form-item>
@@ -133,6 +151,7 @@
         currentPage: 1,
         search_val: '',
         showLiked: false,
+        searchFullName: '',
         options: [],
         dialogFormVisible: false,
         productType: '',
@@ -155,6 +174,7 @@
           { id: 'disabled', value: '禁用' }
         ],
         userStatusSelected: ['active', 'disabled'],
+        modalType: 'edit',
         form: {
           userId: '',
           userName: '',
@@ -177,6 +197,11 @@
       //   console.log(this.roleSelected)
       //   console.log(ev)
       // },
+      searchFullNameChange () {
+        this.filter.userName = this.searchFullName
+        this.getUserData()
+        console.log('searchFullNameChange', this.searchFullName)
+      },
       userStatusChange () {
         console.log(this.userStatusSelected)
         this.filter.userStatus = this.userStatusSelected.length === 1 ? this.userStatusSelected[0] : ''
@@ -187,18 +212,25 @@
         const fullName = this.form.fullName
         const email = this.form.email | ''
         const phone = this.form.phone | ''
+        const userName = this.form.userName
         const roles = this.roleSelected
         const shops = this.shopSelected
-        api.post('/api/user/' + this.form.userId, {
-          fullName, email, phone, roles, shops
-        }).then(res => {
+        const body = this.modalType === 'edit' ? {fullName, email, phone, roles, shops} : {userName, fullName, email, phone, roles, shops}
+        const url = this.modalType === 'edit' ? `/${this.form.userId}` : ''
+        api.post(`/api/user${url}`, body).then(res => {
           Message({
             showClose: true,
-            message: '更新成功!',
+            message: '操作成功!',
             type: 'success'
           })
           this.getUserData()
-          console.log(res)
+        }).catch(err => {
+          console.log(err)
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
         })
       },
       getShopList () {
@@ -221,9 +253,24 @@
         return res
       },
       edit (user) {
+        this.modalType = 'edit'
         this.form = user
         this.roleSelected = user.roles.map(u => u.roleId)
         console.log(user)
+        this.dialogFormVisible = true
+      },
+      add () {
+        this.modalType = 'add'
+        this.form = {
+          userId: '',
+          userName: '',
+          fullName: '',
+          phone: '',
+          email: '',
+          roles: [],
+          shops: []
+        }
+        this.roleSelected = []
         this.dialogFormVisible = true
       },
       getUserData () {
@@ -264,6 +311,10 @@
 }
 .role-txt {
   margin: 5px;
+}
+.header-content {
+  height: 40px;
+  line-height: 40px;
 }
 </style>
   
