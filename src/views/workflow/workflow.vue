@@ -89,7 +89,18 @@
             <el-table-column
               label="状态">
                 <template slot-scope="scope">
-                  <el-tag type="warning">{{typeReverseMapping[scope.row.status]}}</el-tag>
+                  <el-popover
+                    ref="popoverStatus"                    
+                    trigger="hover">
+                    <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
+                      <el-step title="建议"></el-step>
+                      <el-step title="待执行"></el-step>
+                      <el-step title="已执行"></el-step>                      
+                      <el-step title="已总结" v-if="scope.row.status !== 'rejected'"></el-step>
+                      <el-step title="被拒绝" v-else></el-step>
+                    </el-steps>
+                  </el-popover>
+                  <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
                 </template>              
             </el-table-column>
             <el-table-column
@@ -137,6 +148,7 @@
     </el-dialog>
   </div>
 </template>
+
 <script>
   import { Message } from 'element-ui'
   import api from '../../utils/api'
@@ -268,20 +280,26 @@
             type: 'error'
           })
         })
+      },
+      getActiveStep (name) {
+        switch (name) {
+          case 'issued': return 1
+          case 'permitted': return 2
+          case 'finished': return 3
+          case 'summed': return 4
+          case 'rejected': return 5
+        }
+        return 1
+      },
+      getTagType (name) {
+        switch (name) {
+          case 'summed': return 'success'
+          case 'rejected': return 'error'
+        }
+        return 'warning'
       }
     }
   }
 </script>
-<style>
-.privateImage{
-	display:inline-block;
-	border-radius:50%;
-	height: 40px;
-	vertical-align:middle;
-}
-.role-txt {
-  margin: 5px;
-}
-</style>
-  
+ 
   

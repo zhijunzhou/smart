@@ -112,6 +112,7 @@ a {
 }
 .el-popover {
   max-width: 450px;
+  min-width: 300px;
 }
 
 .header-logo {
