@@ -30,22 +30,11 @@
 					:defaultOpeneds="defaultOpeneds"
           default-active="1"
           active-text-color="#409EFF"
-					class="el-menu-vertical-d">
-					<el-submenu index="1">
-							<template slot="title">
-								<i class="el-icon-menu"></i>
-								<span><b>工作管理</b></span>
-							</template>
-							<el-menu-item index="1-1" :route="{ path: '/main/workflow?status=0' }">提议</el-menu-item>
-							<el-menu-item index="1-2" :route="{ path: '/main/workflow?status=1' }">待执行</el-menu-item>
-							<el-menu-item index="1-3" :route="{ path: '/main/workflow?status=2' }">已执行</el-menu-item>
-							<el-menu-item index="1-4" :route="{ path: '/main/workflow?status=3' }">已总结</el-menu-item>
-							<el-menu-item index="1-5" :route="{ path: '/main/workflow?status=9' }">被拒绝提议</el-menu-item>
-					</el-submenu>
-          <!-- <el-menu-item index="1" :route="{ path: '/main' }">
+					class="el-menu-vertical-d">					
+          <el-menu-item index="1" :route="{ path: '/main/workflow' }">
             <i class="el-icon-menu"></i>
             <span>工作管理</span>
-          </el-menu-item> -->
+          </el-menu-item>
 					<el-menu-item index="2" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
 						<span><b>产品列表</b></span>
