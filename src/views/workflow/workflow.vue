@@ -1,109 +1,122 @@
 <template>
-    <div>
-      <el-row>
-          <el-col :span="20">
-            <el-checkbox-group  v-model="checkList">
-              <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.NAME"></el-checkbox>
-          <!-- <el-checkbox label="复选框 B"></el-checkbox>
-          <el-checkbox label="复选框 C"></el-checkbox>
-          <el-checkbox label="禁用" disabled></el-checkbox>
-          <el-checkbox label="选中且禁用" disabled></el-checkbox> -->
-            </el-checkbox-group>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" icon="el-icon-plus">新增</el-button>
-          </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <el-table
-            :data="workflow">
-              <el-table-column type="expand">
-                <template slot-scope="props">
-                  <el-form label-position="left" inline class="demo-table-expand">
-                    <br>
-                    <el-form-item label="备注">
-                      <p v-for="(cmt, index) in props.row.comments" :key="index">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
-                    </el-form-item>
-                    <br>
-                    <el-form-item label="历史">
-                        <div v-for="(stage, index) in props.row.stages" :key="index">
-                          <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
-                          <p>{{ stage.text }}</p>
-                          <span>{{ stage.author }}</span>
-                          <span>{{ stage.time }}</span>
-                        </div> 
-                    </el-form-item>
-                  </el-form>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="工作编号"
-                prop="id">
-              </el-table-column>
-              <el-table-column
-                label="商品S/N"
-                prop="productId">
-              </el-table-column>
-              <el-table-column
-                label="商品名称"
-                prop="name">
-              </el-table-column>
-              <el-table-column
-                label="店铺名"
-                prop="shopName">
-              </el-table-column>
-              <el-table-column
-                label="建议类型"
-                prop="adviceType">
-              </el-table-column>
-              <el-table-column
-                label="状态" prop="stages">
-                  <template slot-scope="scope">
-                    <span v-if="scope.row.lastStageCode===99">
-                      <el-tag :hit="false" type="danger">拒绝</el-tag>
-                    </span>
-                    <span v-else>
-                      <el-tag :hit="false" type="success">正常</el-tag>
-                    </span>
-                    <!-- <img :src="scope.row.stages[scope.row.stages.length-1].authorImg" class="privateImage" v-if="scope.row.stages[scope.row.stages.length-1].authorImg">
-                    {{scope.row.stages[scope.row.stages.length-1].author}}  -->
-                    
-                  <!-- <span v-for="stage in scope.row.stages">
-                    <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
-                    {{ stage.author }}
-                  </span>
-                  <span v-for="stage in scope.row.stages">
-                    <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
-                    {{ stage.author }}
-                  </span> -->
-                </template>              
-              </el-table-column>
-              <el-table-column
-                label="操作">
+  <div>
+    <el-row>
+      <el-col :span="20">
+        <el-checkbox-group  v-model="checkList">
+          <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.NAME"></el-checkbox>
+      <!-- <el-checkbox label="复选框 B"></el-checkbox>
+      <el-checkbox label="复选框 C"></el-checkbox>
+      <el-checkbox label="禁用" disabled></el-checkbox>
+      <el-checkbox label="选中且禁用" disabled></el-checkbox> -->
+        </el-checkbox-group>
+      </el-col>
+      <el-col :span="4">
+        <el-button type="primary" icon="el-icon-plus" @click="add">新增</el-button>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-table
+          :data="workflow">
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <br>
+                  <el-form-item label="备注">
+                    <p v-for="(cmt, index) in props.row.comments" :key="index">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
+                  </el-form-item>
+                  <br>
+                  <el-form-item label="历史">
+                      <div v-for="(stage, index) in props.row.stages" :key="index">
+                        <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
+                        <p>{{ stage.text }}</p>
+                        <span>{{ stage.author }}</span>
+                        <span>{{ stage.time }}</span>
+                      </div> 
+                  </el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="工作编号"
+              prop="id">
+            </el-table-column>
+            <el-table-column
+              label="商品S/N"
+              prop="productId">
+            </el-table-column>
+            <el-table-column
+              label="商品名称"
+              prop="name">
+            </el-table-column>
+            <el-table-column
+              label="店铺名"
+              prop="shopName">
+            </el-table-column>
+            <el-table-column
+              label="建议类型"
+              prop="adviceType">
+            </el-table-column>
+            <el-table-column
+              label="状态" prop="stages">
                 <template slot-scope="scope">
-                  <el-button size="mini" round>编辑</el-button>
-                  <el-button size="mini" round>
-                    <router-link :to="{path: '/main/analysis'}">删除</router-link>
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-        </el-col>
-        <el-col :span="24" class="text-right">
-          <el-pagination
-            layout="total, prev, pager, next, jumper"
-            @current-change="updatePageUsers"
-            :page-size="pageSize"
-            :total="total">
-          </el-pagination>
-        </el-col>
-      </el-row>
-    </div>
+                  <span v-if="scope.row.lastStageCode===99">
+                    <el-tag :hit="false" type="danger">拒绝</el-tag>
+                  </span>
+                  <span v-else>
+                    <el-tag :hit="false" type="success">正常</el-tag>
+                  </span>
+              </template>              
+            </el-table-column>
+            <el-table-column
+              label="操作">
+              <template slot-scope="scope">
+                <el-button size="mini" round>编辑</el-button>
+                <el-button size="mini" round>
+                  <router-link :to="{path: '/main/analysis'}">删除</router-link>
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+      </el-col>
+      <el-col :span="24" class="text-right">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageUsers"
+          :page-size="pageSize"
+          :total="total">
+        </el-pagination>
+      </el-col>
+    </el-row>
+    <el-dialog title="工作流" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="产品" :label-width="formLabelWidth">
+          <el-input v-model="form.productId"></el-input>
+        </el-form-item>
+        <el-form-item label="所属店铺" :label-width="formLabelWidth">
+          <el-input type="number" v-model="form.shopId"></el-input>
+        </el-form-item>
+        <el-form-item label="产品名" :label-width="formLabelWidth">
+          <el-input v-model="form.productName"></el-input>
+        </el-form-item>
+        <el-form-item label="优化类型" :label-width="formLabelWidth">
+          <el-input v-model="form.optimizationType"></el-input>
+        </el-form-item>
+        <el-form-item label="建议" :label-width="formLabelWidth">
+          <el-input v-model="form.suggestion"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveWork">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 <script>
-  // import { ROLE } from '../../../static/enum.js'
-  // import api from '../../utils/api'
+  import { Message } from 'element-ui'
+  import api from '../../utils/api'
+
   export default {
     data () {
       return {
@@ -112,7 +125,9 @@
         total: 0,
         currentPage: 1,
         search_val: '',
+        formLabelWidth: '120px',
         showLiked: false,
+        dialogFormVisible: false,
         options: [],
         productType: '',
         checkList: [],
@@ -122,7 +137,14 @@
           {CODE: 20, NAME: '已执行'},
           {CODE: 30, NAME: '已总结'},
           {CODE: 99, NAME: '被拒绝'}
-        ]
+        ],
+        form: {
+          productId: '',
+          shopId: undefined,
+          productName: '',
+          optimizationType: '',
+          suggestion: ''
+        }
       }
     },
     created () {
@@ -172,6 +194,26 @@
   
           }
         ]
+      },
+      add () {
+        this.modalType = 'add'
+        this.dialogFormVisible = true
+      },
+      saveWork () {
+        console.log(this.form)
+        api.post(`/api/suggestion`, this.form).then(res => {
+          Message({
+            showClose: true,
+            message: '操作成功!',
+            type: 'success'
+          })
+        }).catch(err => {
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
       },
       updatePageUsers (currentPage) {
         this.currentPage = currentPage
