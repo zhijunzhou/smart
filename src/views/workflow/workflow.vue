@@ -100,10 +100,10 @@
                       <el-step title="被拒绝" v-else></el-step>
                     </el-steps>
                     <div class="btn-sug-group text-center">
-                      <el-button type="primary" size="mini" v-if="scope.row.status === 'issued'" round>批准</el-button>
-                      <el-button type="primary" size="mini" v-else-if="scope.row.status === 'permitted'" round>完成</el-button>
-                      <el-button type="primary" size="mini" v-else-if="scope.row.status === 'finished'" round>总结</el-button>
-                      <el-button type="danger" size="mini" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'" round>拒绝</el-button>
+                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'permitted')" v-if="scope.row.status === 'issued'" round>批准</el-button>
+                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'finished')" v-else-if="scope.row.status === 'permitted'" round>完成</el-button>
+                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'summed')" v-else-if="scope.row.status === 'finished'" round>总结</el-button>
+                      <el-button type="danger" size="mini" @click="processSuggest(scope.row.suggestionId, 'rejected')" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'" round>拒绝</el-button>
                     </div>
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
@@ -299,13 +299,33 @@
       },
       getTagType (name) {
         switch (name) {
+          case 'permitted': return 'info'
+          case 'finished': return 'primary'
           case 'summed': return 'success'
           case 'rejected': return 'error'
         }
         return 'warning'
       },
-      processSuggest (name) {
-        console.log(name)
+      processSuggest (id, nextStatus) {
+        const params = {
+          suggestionId: id,
+          status: nextStatus,
+          message: nextStatus
+        }
+        api.post(`/api/suggestion/status`, params).then(res => {
+          Message({
+            showClose: true,
+            message: '操作成功!',
+            type: 'success'
+          })
+          this.getPageWorkflows()
+        }).catch(err => {
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
       }
     }
   }
