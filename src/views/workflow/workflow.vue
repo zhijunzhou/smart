@@ -99,6 +99,12 @@
                       <el-step title="已总结" v-if="scope.row.status !== 'rejected'"></el-step>
                       <el-step title="被拒绝" v-else></el-step>
                     </el-steps>
+                    <div class="btn-sug-group text-center">
+                      <el-button type="primary" size="mini" v-if="scope.row.status === 'issued'" round>批准</el-button>
+                      <el-button type="primary" size="mini" v-else-if="scope.row.status === 'permitted'" round>完成</el-button>
+                      <el-button type="primary" size="mini" v-else-if="scope.row.status === 'finished'" round>总结</el-button>
+                      <el-button type="danger" size="mini" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'" round>拒绝</el-button>
+                    </div>
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
                 </template>              
@@ -297,9 +303,19 @@
           case 'rejected': return 'error'
         }
         return 'warning'
+      },
+      processSuggest (name) {
+        console.log(name)
       }
     }
   }
 </script>
+
+<style scoped>
+.btn-sug-group {
+  margin-top: 20px;
+}
+</style>
+
  
   
