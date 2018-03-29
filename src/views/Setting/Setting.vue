@@ -97,6 +97,7 @@
                     width="160"
                     v-model="scope.row.changePasswordFlag">
                     <p><b>{{scope.row.fullName}}的新密码</b></p>
+                    <p>注意: 修改密码会同时解绑微信</p>
                     <el-input v-model="newPassword" placeholder="请输入密码"></el-input>
                     <p>&nbsp;</p>
                     <div style="text-align: right; margin: 0">
@@ -211,6 +212,15 @@
     mounted () {
     },
     methods: {
+      unbind (userId) {
+        const wechatId = null
+        const wechatName = ''
+        const wechatImage = ''
+        const force = 1
+        api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(res => {
+          this.setUserInfo(res.data)
+        })
+      },
       getBoolen (value) {
         console.log(value)
         return value
@@ -240,6 +250,7 @@
             type: 'success'
           })
           this.newPassword = ''
+          this.unbind(userId)
           row.changePasswordFlag = false
         }).catch(err => {
           row.changePasswordFlag = false

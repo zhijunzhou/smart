@@ -5,11 +5,31 @@
       :style="{'background-color': primaryColor}">      
 			<span class="header-logo">$</span>
 			<!-- <span class="logo-txt">mart</span> -->
+			<el-popover
+				ref="userDetail"
+				placement="top-start"
+				title="用户信息"
+				width="200"
+				trigger="hover"
+				>
+				<el-card class="box-card">
+					<div class="text item">
+						邮件: {{userInfo.email}}
+					</div>
+					<div class="text item">
+						电话: {{userInfo.phone}}
+					</div>
+					<div slot="header" class="clearfix" v-if="userInfo.wechatId">
+						<span>昵称: {{userInfo.wechatName}}</span>
+						<el-button style="float: right; padding: 3px 0" type="text" @click="unbind(userInfo.userId)">微信解绑</el-button>
+					</div>
+				</el-card>
+			</el-popover>
       <ul class="header-operations">    
-				<li v-if="userInfo.wechatImage">
+				<li v-if="userInfo.wechatImage" v-popover:userDetail>
 					<img :src="userInfo.wechatImage" class="privateImage">
 				</li>
-				<li v-else>
+				<li v-else v-popover:userDetail>
 					<span>
 						{{userInfo.fullName}}
 					</span>
@@ -68,8 +88,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import mainHeader from '@/components/mainHeader/mainHeader'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -79,8 +100,18 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ setUserInfo: 'setUserInfo' }),
     goBack () {
       this.$router.go(-1)
+    },
+    unbind (userId) {
+      const wechatId = null
+      const wechatName = ''
+      const wechatImage = ''
+      const force = 1
+      api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(res => {
+        this.setUserInfo(res.data)
+      })
     }
   },
   components: {
