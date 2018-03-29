@@ -1,23 +1,47 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="20">
-        <el-checkbox-group  v-model="checkList">
-          <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.NAME"></el-checkbox>
-      <!-- <el-checkbox label="复选框 B"></el-checkbox>
-      <el-checkbox label="复选框 C"></el-checkbox>
-      <el-checkbox label="禁用" disabled></el-checkbox>
-      <el-checkbox label="选中且禁用" disabled></el-checkbox> -->
-        </el-checkbox-group>
-      </el-col>
-      <el-col :span="4">
-        <el-button type="primary" icon="el-icon-plus" @click="add">新增</el-button>
-      </el-col>
+      <el-form ref="form">
+        <el-col :span="24">
+          <el-form-item label="状态">
+            <el-checkbox-group  v-model="checkList">
+              <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="店铺">
+            <el-select v-model="shopId" placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="3">
+          <el-form-item>
+            <el-input
+              placeholder="产品名"
+              prefix-icon="el-icon-search"
+              v-model="search_val">
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2" style="padding-left: 5px;">
+          <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+        </el-col>
+        <el-col :span="11" class="text-right">
+          <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button>
+        </el-col>        
+      </el-form>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
-          :data="workflow">
+          :data="workflows">
             <el-table-column type="expand">
               <template slot-scope="props">
                 <el-form label-position="left" inline class="demo-table-expand">
@@ -39,34 +63,34 @@
             </el-table-column>
             <el-table-column
               label="工作编号"
-              prop="id">
+              width="80"
+              prop="suggestionId">
             </el-table-column>
             <el-table-column
               label="商品S/N"
+              width="180"
               prop="productId">
             </el-table-column>
             <el-table-column
+              width="200"
               label="商品名称"
               prop="name">
             </el-table-column>
             <el-table-column
+              width="100"
               label="店铺名"
-              prop="shopName">
+              prop="shopId">
             </el-table-column>
             <el-table-column
               label="建议类型"
-              prop="adviceType">
+              width="100"
+              prop="suggestType">
             </el-table-column>
             <el-table-column
-              label="状态" prop="stages">
+              label="状态">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.lastStageCode===99">
-                    <el-tag :hit="false" type="danger">拒绝</el-tag>
-                  </span>
-                  <span v-else>
-                    <el-tag :hit="false" type="success">正常</el-tag>
-                  </span>
-              </template>              
+                  <el-tag type="warning">{{typeReverseMapping[scope.row.status]}}</el-tag>
+                </template>              
             </el-table-column>
             <el-table-column
               label="操作">
@@ -82,7 +106,7 @@
       <el-col :span="24" class="text-right">
         <el-pagination
           layout="total, prev, pager, next, jumper"
-          @current-change="updatePageUsers"
+          @current-change="updatePageWorkflow"
           :page-size="pageSize"
           :total="total">
         </el-pagination>
@@ -120,24 +144,40 @@
   export default {
     data () {
       return {
-        workflow: [],
-        pageSize: 10,
-        total: 0,
+        workflows: [],
+        pageSize: 15,
         currentPage: 1,
-        search_val: '',
+        total: 0,
+        search_val: undefined,
         formLabelWidth: '120px',
         showLiked: false,
         dialogFormVisible: false,
         options: [],
         productType: '',
+        shopList: [],
         checkList: [],
+        shopId: undefined,
         STAGES: [
-          {CODE: 0, NAME: '建议'},
-          {CODE: 10, NAME: '待执行'},
-          {CODE: 20, NAME: '已执行'},
-          {CODE: 30, NAME: '已总结'},
-          {CODE: 99, NAME: '被拒绝'}
+          {value: 'issued', name: '建议'},
+          {value: 'permitted', name: '待执行'},
+          {value: 'finished', name: '已执行'},
+          {value: 'summed', name: '已总结'},
+          {value: 'rejected', name: '被拒绝'}
         ],
+        typeMapping: {
+          '建议': 'issued',
+          '待执行': 'permitted',
+          '已执行': 'finished',
+          '已总结': 'summed',
+          '被拒绝': 'rejected'
+        },
+        typeReverseMapping: {
+          'issued': '建议',
+          'permitted': '待执行',
+          'finished': '已执行',
+          'summed': '已总结',
+          'rejected': '被拒绝'
+        },
         form: {
           productId: '',
           shopId: undefined,
@@ -148,65 +188,34 @@
       }
     },
     created () {
-      this.getUserData()
+      this.getShopList()
+      this.getPageWorkflows()
     },
     mounted () {
     },
-    methods: {
-      getUserData () {
-        // const pagination = {
-        //   pageSize: this.pageSize,
-        //   currentPage: this.currentPage
-        // }
-        // api.post('/api/user/pagination', {pagination}).then(res => {
-        //   this.workflow = res.data.grid
-        //   this.total = res.data.pagination.total
-        // })
-        this.workflow = [
-          {
-            id: '建议id',
-            productId: '商品SN',
-            name: '商品名称',
-            description: '商品描述',
-            img: '商品图片url',
-            price: 66.50,
-            sales: 1300, /* 销量 */
-            shopId: '店铺id',
-            shopName: '店铺名称',
-            adviceType: '建议类型',
-            adviceTime: '2018-01-01 08:00:59',
-            execPeriod: {
-              start: '2018-02-01 08:00:59',
-              end: ''
-            },
-            comments: [
-              {author: '备注人', authorImg: '备注人头像', text: '备注内容', time: '2018-01-01 08:00:59'},
-              {author: '备注人2', authorImg: '备注人头像', text: '备注2内容', time: '2018-01-01 18:00:59'}
-            ],
-            lastStageCode: 99,
-            stages: [
-              {code: 0, author: '建议人', authorImg: '建议人头像', text: '建议内容', time: '2018-01-01 08:00:59'},
-              {code: 10, author: '审批人', authorImg: '审批人头像', text: '建议内容', time: '2018-01-02 08:00:59'},
-              {code: 20, author: '执行人', authorImg: '执行人头像', text: '执行内容', time: '2018-01-04 08:00:59'},
-              {code: 30, author: '总结人', authorImg: '总结人头像', text: '总结内容', time: '2018-01-05 08:00:59'},
-              {code: 99, author: '拒绝人', authorImg: '拒绝人头像', text: '拒绝内容', time: '2018-01-06 08:00:59'}
-            ]
-  
+    computed: {
+      getStatus () {
+        return this.checkList.map(ck => {
+          if (ck && this.typeMapping[ck]) {
+            return this.typeMapping[ck]
           }
-        ]
-      },
+        })
+      }
+    },
+    methods: {
       add () {
         this.modalType = 'add'
         this.dialogFormVisible = true
       },
       saveWork () {
-        console.log(this.form)
         api.post(`/api/suggestion`, this.form).then(res => {
           Message({
             showClose: true,
-            message: '操作成功!',
+            message: '更新成功!',
             type: 'success'
           })
+          this.dialogFormVisible = false
+          this.getPageWorkflows(true)
         }).catch(err => {
           Message({
             showClose: true,
@@ -215,26 +224,56 @@
           })
         })
       },
-      updatePageUsers (currentPage) {
+      updatePageWorkflow (currentPage) {
         this.currentPage = currentPage
-        this.getUserData()
+        this.getPageWorkflows()
+      },
+      searchWorkflow () {
+        this.getPageWorkflows()
       },
       getShopName (shopId) {
         const scope = this.getShops().find(s => s.shopId === shopId)
         return scope ? scope.shopName : ''
       },
-      getShops () {
-        return [
-          { shopId: '1', shopName: '店铺A' },
-          { shopId: '2', shopName: '店铺B' },
-          { shopId: '3', shopName: '店铺C' }
-        ]
+      getShopList () {
+        api.get('/api/shop').then(res => {
+          this.shopList = res.data
+        })
+      },
+      getPageWorkflows (hideWorkingDialog) {
+        const params = {
+          pagination: {
+            pageSize: this.pageSize,
+            currentPage: this.currentPage,
+            filter: {
+              shopId: this.shopId,
+              productId: this.search_val,
+              status: this.getStatus
+            }
+          }
+        }
+
+        this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
+        api.post(`/api/suggestion/pagination`, params).then(res => {
+          if (res.status === 200 && res.data) {
+            this.workflows = res.data.grid
+            this.total = res.data.pagination.total
+          }
+          this.$store.dispatch('setLoadingState', false)
+        }).catch(err => {
+          this.$store.dispatch('setLoadingState', false)
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
       }
     }
   }
 </script>
 <style>
-    .privateImage{
+.privateImage{
 	display:inline-block;
 	border-radius:50%;
 	height: 40px;

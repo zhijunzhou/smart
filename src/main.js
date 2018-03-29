@@ -38,7 +38,9 @@ import {
   Dropdown,
   DropdownItem,
   Message,
-  DropdownMenu
+  DropdownMenu,
+  Steps,
+  Step
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -86,6 +88,8 @@ Vue.component(Tooltip.name, Tooltip)
 Vue.component(Dropdown.name, Dropdown)
 Vue.component(DropdownItem.name, DropdownItem)
 Vue.component(DropdownMenu.name, DropdownMenu)
+Vue.component(Steps.name, Steps)
+Vue.component(Step.name, Step)
 
 Vue.component('chart', ECharts)
 
