@@ -48,6 +48,13 @@
                   <br>
                   <el-form-item label="备注">
                     <p v-for="(cmt, index) in props.row.comments" :key="index">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
+                    <el-input
+                      type="textarea"
+                      :rows="2"
+                      placeholder="添加注释..."
+                      v-model="sugComment">
+                    </el-input>
+                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(props.row.suggestionId)">添加注释</el-button>
                   </el-form-item>
                   <br>
                   <el-form-item label="历史">
@@ -113,9 +120,7 @@
               label="操作">
               <template slot-scope="scope">
                 <el-button size="mini" round>编辑</el-button>
-                <el-button size="mini" round>
-                  <router-link :to="{path: '/main/analysis'}">删除</router-link>
-                </el-button>
+                <el-button size="mini" round>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -167,6 +172,7 @@
         currentPage: 1,
         total: 0,
         search_val: undefined,
+        sugComment: undefined,
         formLabelWidth: '120px',
         showLiked: false,
         dialogFormVisible: false,
@@ -320,6 +326,28 @@
           })
           this.getPageWorkflows()
         }).catch(err => {
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
+      },
+      addComment (id) {
+        const params = {
+          suggestionId: id,
+          message: this.sugComment
+        }
+
+        api.post(`/api/suggestion/comments`, params).then(res => {
+          Message({
+            showClose: true,
+            message: '操作成功!',
+            type: 'success'
+          })
+          this.sugComment = ''
+        }).catch(err => {
+          this.sugComment = ''
           Message({
             showClose: true,
             message: err.response.statusText,
