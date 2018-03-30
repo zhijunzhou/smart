@@ -144,7 +144,14 @@
           <el-input v-model="form.productId"></el-input>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
-          <el-input type="number" v-model="form.shopId"></el-input>
+          <el-select v-model="form.shopId" placeholder="选择店铺">
+            <el-option
+              v-for="shop in shopList"
+              :key="shop.value"
+              :label="shop.shopName"
+              :value="shop.shopId">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="产品名" :label-width="formLabelWidth">
           <el-input v-model="form.productName"></el-input>
