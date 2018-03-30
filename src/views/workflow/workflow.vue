@@ -99,13 +99,18 @@
                   <el-popover
                     ref="popoverStatus"                    
                     trigger="hover">
-                    <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
-                      <el-step title="建议"></el-step>
-                      <el-step title="待执行"></el-step>
-                      <el-step title="已执行"></el-step>                      
-                      <el-step title="已总结" v-if="scope.row.status !== 'rejected'"></el-step>
-                      <el-step title="被拒绝" v-else></el-step>
-                    </el-steps>
+                    <div class="text-center">
+                      <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
+                        <el-step title="提出建议"></el-step>
+                        <el-step title="已批准" v-if="scope.row.status !== 'rejected'"></el-step>
+                        <el-step title="已完成" v-if="scope.row.status !== 'rejected'"></el-step>
+                        <el-step title="完结" v-if="scope.row.status !== 'rejected'"></el-step>
+                        <el-step title="被拒绝" v-else></el-step>
+                      </el-steps>
+                    </div>
+                    <div class="sug-description text-center" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'">
+                      <el-input size="mini" placeholder="输入描述文字" v-model="sugDescription"></el-input>
+                    </div>
                     <div class="btn-sug-group text-center">
                       <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'permitted')" v-if="scope.row.status === 'issued'" round>批准</el-button>
                       <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'finished')" v-else-if="scope.row.status === 'permitted'" round>完成</el-button>
@@ -173,6 +178,7 @@
         total: 0,
         search_val: undefined,
         sugComment: undefined,
+        sugDescription: undefined,
         formLabelWidth: '120px',
         showLiked: false,
         dialogFormVisible: false,
@@ -184,24 +190,24 @@
         currentSugId: undefined,
         modalType: undefined,
         STAGES: [
-          {value: 'issued', name: '建议'},
+          {value: 'issued', name: '待审核'},
           {value: 'permitted', name: '待执行'},
-          {value: 'finished', name: '已执行'},
-          {value: 'summed', name: '已总结'},
+          {value: 'finished', name: '待总结'},
+          {value: 'summed', name: '完结'},
           {value: 'rejected', name: '被拒绝'}
         ],
         typeMapping: {
-          '建议': 'issued',
+          '待审核': 'issued',
           '待执行': 'permitted',
-          '已执行': 'finished',
-          '已总结': 'summed',
+          '待总结': 'finished',
+          '完结': 'summed',
           '被拒绝': 'rejected'
         },
         typeReverseMapping: {
-          'issued': '建议',
+          'issued': '待审核',
           'permitted': '待执行',
-          'finished': '已执行',
-          'summed': '已总结',
+          'finished': '待总结',
+          'summed': '完结',
           'rejected': '被拒绝'
         },
         form: {
@@ -259,19 +265,7 @@
           this.dialogFormVisible = false
           this.getPageWorkflows(true)
         }).catch(err => {
-          if (err.request.status === 403) {
-            Message({
-              showClose: true,
-              message: '当前用户权限不足',
-              type: 'error'
-            })
-          } else {
-            Message({
-              showClose: true,
-              message: err.response.statusText,
-              type: 'error'
-            })
-          }
+          this.errorHandler(err)
         })
       },
       updateWork () {
@@ -284,19 +278,7 @@
           this.dialogFormVisible = false
           this.getPageWorkflows(true)
         }).catch(err => {
-          if (err.request.status === 403) {
-            Message({
-              showClose: true,
-              message: '当前用户权限不足',
-              type: 'error'
-            })
-          } else {
-            Message({
-              showClose: true,
-              message: err.response.statusText,
-              type: 'error'
-            })
-          }
+          this.errorHandler(err)
         })
       },
       updatePageWorkflow (currentPage) {
@@ -367,7 +349,7 @@
         const params = {
           suggestionId: id,
           status: nextStatus,
-          message: nextStatus
+          message: this.sugDescription || nextStatus
         }
         api.post(`/api/suggestion/status`, params).then(res => {
           Message({
@@ -376,12 +358,9 @@
             type: 'success'
           })
           this.getPageWorkflows()
+          this.sugDescription = undefined
         }).catch(err => {
-          Message({
-            showClose: true,
-            message: err.response.statusText,
-            type: 'error'
-          })
+          this.errorHandler(err)
         })
       },
       addComment (id) {
@@ -399,12 +378,23 @@
           this.sugComment = ''
         }).catch(err => {
           this.sugComment = ''
+          this.errorHandler(err)
+        })
+      },
+      errorHandler (err) {
+        if (err.request.status === 403) {
+          Message({
+            showClose: true,
+            message: '当前用户权限不足',
+            type: 'error'
+          })
+        } else {
           Message({
             showClose: true,
             message: err.response.statusText,
             type: 'error'
           })
-        })
+        }
       }
     }
   }
@@ -413,6 +403,9 @@
 <style scoped>
 .btn-sug-group {
   margin-top: 20px;
+}
+.sug-description {
+  padding: 15px 10px 2px 10px;
 }
 </style>
 
