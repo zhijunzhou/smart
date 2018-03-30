@@ -4,7 +4,7 @@
       <el-form ref="form">
         <el-col :span="24">
           <el-form-item label="状态">
-            <el-checkbox-group  v-model="checkList">
+            <el-checkbox-group  v-model="checkList" @change="searchWorkflow">
               <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -359,7 +359,7 @@
           case 'permitted': return 'info'
           case 'finished': return 'primary'
           case 'summed': return 'success'
-          case 'rejected': return 'error'
+          case 'rejected': return 'danger'
         }
         return 'warning'
       },
