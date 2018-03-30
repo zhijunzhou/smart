@@ -119,8 +119,7 @@
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" round>编辑</el-button>
-                <el-button size="mini" round>删除</el-button>
+                <el-button size="mini" @click="edit(scope.row)" round>编辑</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -134,7 +133,7 @@
         </el-pagination>
       </el-col>
     </el-row>
-    <el-dialog title="工作流" :visible.sync="dialogFormVisible">
+    <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="产品" :label-width="formLabelWidth">
           <el-input v-model="form.productId"></el-input>
@@ -153,8 +152,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveWork">确 定</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>        
+        <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
+        <el-button type="primary" @click="updateWork" v-else>更  新</el-button>
       </div>
     </el-dialog>
   </div>
@@ -181,6 +181,8 @@
         shopList: [],
         checkList: [],
         shopId: undefined,
+        currentSugId: undefined,
+        modalType: undefined,
         STAGES: [
           {value: 'issued', name: '建议'},
           {value: 'permitted', name: '待执行'},
@@ -230,6 +232,22 @@
       add () {
         this.modalType = 'add'
         this.dialogFormVisible = true
+        this.form.productId = undefined
+        this.form.shopId = undefined
+        this.form.productName = undefined
+        this.form.optimizationType = undefined
+        this.form.suggestion = undefined
+      },
+      edit (row) {
+        this.modalType = 'edit'
+        this.dialogFormVisible = true
+        this.currentSugId = row.suggestionId
+
+        this.form.productId = row.productId
+        this.form.shopId = row.shopId
+        this.form.productName = row.name
+        this.form.optimizationType = row.suggestType
+        this.form.suggestion = row.suggestion
       },
       saveWork () {
         api.post(`/api/suggestion`, this.form).then(res => {
@@ -241,11 +259,44 @@
           this.dialogFormVisible = false
           this.getPageWorkflows(true)
         }).catch(err => {
+          if (err.request.status === 403) {
+            Message({
+              showClose: true,
+              message: '当前用户权限不足',
+              type: 'error'
+            })
+          } else {
+            Message({
+              showClose: true,
+              message: err.response.statusText,
+              type: 'error'
+            })
+          }
+        })
+      },
+      updateWork () {
+        api.put(`/api/suggestion/${this.currentSugId}`, this.form).then(res => {
           Message({
             showClose: true,
-            message: err.response.statusText,
-            type: 'error'
+            message: '更新成功!',
+            type: 'success'
           })
+          this.dialogFormVisible = false
+          this.getPageWorkflows(true)
+        }).catch(err => {
+          if (err.request.status === 403) {
+            Message({
+              showClose: true,
+              message: '当前用户权限不足',
+              type: 'error'
+            })
+          } else {
+            Message({
+              showClose: true,
+              message: err.response.statusText,
+              type: 'error'
+            })
+          }
         })
       },
       updatePageWorkflow (currentPage) {
