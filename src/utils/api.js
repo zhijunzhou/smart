@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const isProduction = !!(process.env.NODE_ENV === 'production')
-const baseURL = isProduction ? 'http://59.175.25.0:7777' : 'http://59.175.25.0:7777'
+const baseURL = isProduction ? 'http://59.175.25.0:7777' : 'http://58.48.199.131:7777'
 const tokenKey = 'x-auth-token'
 
 // smart service
