@@ -46,15 +46,14 @@
               <template slot-scope="props">
                 <el-form label-position="left" inline class="demo-table-expand">
                   <br>
-                  <el-form-item label="备注">
-                    <p v-for="(cmt, index) in props.row.comments" :key="index">{{ cmt.author }} {{ cmt.authorImg }} {{ cmt.text }} {{ cmt.time }}</p>
+                  <el-form-item label="备注">                    
                     <el-input
                       type="textarea"
                       :rows="2"
                       placeholder="添加注释..."
-                      v-model="sugComment">
+                      v-model="props.row.comments">
                     </el-input>
-                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(props.row.suggestionId)">添加注释</el-button>
+                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(props.row.suggestionId, props.row.comments)">保存注释</el-button>
                   </el-form-item>
                   <br>
                   <el-form-item label="历史">
@@ -370,10 +369,10 @@
           this.errorHandler(err)
         })
       },
-      addComment (id) {
+      addComment (id, message) {
         const params = {
           suggestionId: id,
-          message: this.sugComment
+          message: message
         }
 
         api.post(`/api/suggestion/comments`, params).then(res => {
