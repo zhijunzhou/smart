@@ -107,7 +107,7 @@
                       <el-input size="mini" placeholder="输入描述文字" v-model="sugDescription"></el-input>
                     </div>
                     <div class="btn-sug-group text-center">
-                      <el-button v-for="(oper,index) of getNextOpers(scope.row.status)" :key="'oper_' + index" size="mini" round>{{operMapping[oper]}}</el-button>                      
+                      <el-button v-for="(oper,index) of getNextOpers(scope.row.status)" :key="'oper_' + index" size="mini" @click="processSuggest(scope.row, oper)" round>{{operMapping[oper]}}</el-button>                      
                     </div>
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
@@ -430,10 +430,11 @@
         }
         return opers
       },
-      processSuggest (id, nextStatus) {
+      processSuggest (row, nextStatus) {
         const params = {
-          suggestionId: id,
+          suggestionId: row.suggestionId,
           status: nextStatus,
+          sn: row.sn,
           message: this.sugDescription || nextStatus
         }
         api.post(`/api/suggestion/status`, params).then(res => {
@@ -473,6 +474,15 @@
             message: '当前用户权限不足',
             type: 'error'
           })
+        } else if (err.request.status === 409) {
+          Message({
+            showClose: true,
+            message: '数据提交冲突',
+            type: 'error'
+          })
+          if (confirm('系统检测到其他人正在修改此记录，点击确定重新加载数据')) {
+            this.getPageWorkflows()
+          }
         } else {
           Message({
             showClose: true,
