@@ -40,6 +40,7 @@ import {
   Message,
   DropdownMenu,
   Steps,
+  Card,
   Step
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
@@ -90,6 +91,7 @@ Vue.component(DropdownItem.name, DropdownItem)
 Vue.component(DropdownMenu.name, DropdownMenu)
 Vue.component(Steps.name, Steps)
 Vue.component(Step.name, Step)
+Vue.component(Card.name, Card)
 
 Vue.component('chart', ECharts)
 
