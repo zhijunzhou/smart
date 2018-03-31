@@ -279,6 +279,10 @@ export default {
     },
     categoryBar (tabName) {
       // only process active tab
+      const mockWorkFlow = [
+        {name: '建议0001', status: 'finished', content: '这是一个建议', date: '2018-03-10'},
+        {name: '建议0002', status: 'finished', content: '这是一个建议', date: '2018-03-18'}
+      ]
       if (this.activeName === tabName) {
         let composedArry = []
         this.competitionStatistics.map(pro => {
@@ -320,10 +324,12 @@ export default {
             let name = dt.id
             let type = 'line'
             let markPoint = {
-              data: [
-                {type: 'max', name: '最大值'},
-                {type: 'min', name: '最小值'}
-              ]
+              clickable: true,
+              data: mockWorkFlow.map(m => {
+                return {
+                  name: m.name, value: m.name, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
+                }
+              })
             }
             let data = dt.data.map(i => i.value)
             return {name, type, markPoint, data}
