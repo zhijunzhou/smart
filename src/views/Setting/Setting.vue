@@ -3,7 +3,7 @@
       <el-row>
           <el-col :span="8">
           <el-input
-            placeholder="请输入用户名"
+            placeholder="请输入姓名"
             v-model="searchFullName"
             @clear="searchFullNameChange"
             clearable>
@@ -62,9 +62,7 @@
                 prop="role">
                 <template slot-scope="scope">
                   <span v-for="role in scope.row.roles">
-                    <el-tooltip :content="role.shopName" placement="bottom" effect="light">
                       <span class="role-txt">{{ role.roleName }}</span>
-                    </el-tooltip>
                   </span>
                 </template>
               </el-table-column>
@@ -101,7 +99,7 @@
                     <el-input v-model="newPassword" placeholder="请输入密码"></el-input>
                     <p>&nbsp;</p>
                     <div style="text-align: right; margin: 0">
-                      <el-button type="primary" size="mini" disabled="!newPassword" @click="confirmChangePassword(scope.row)">确定</el-button>
+                      <el-button type="primary" size="mini" @click="confirmChangePassword(scope.row)">确定</el-button>
                     </div>
                   </el-popover>
                   <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
@@ -124,6 +122,9 @@
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
+            </el-form-item>
+            <el-form-item v-if="modalType === 'edit'" label="用户名" :label-width="formLabelWidth">
+              {{form.userName}}
             </el-form-item>
             <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
                 <el-input v-model="form.userName" auto-complete="off"></el-input>
