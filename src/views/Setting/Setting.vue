@@ -3,7 +3,7 @@
       <el-row>
           <el-col :span="8">
           <el-input
-            placeholder="请输入用户名"
+            placeholder="请输入姓名"
             v-model="searchFullName"
             @clear="searchFullNameChange"
             clearable>
@@ -122,6 +122,9 @@
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
+            </el-form-item>
+            <el-form-item v-if="modalType === 'edit'" label="用户名" :label-width="formLabelWidth">
+              {{form.userName}}
             </el-form-item>
             <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
                 <el-input v-model="form.userName" auto-complete="off"></el-input>
