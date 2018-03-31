@@ -218,7 +218,7 @@
           'finished': '完成',
           'summed': '完结',
           'rejected': '拒绝',
-          'closed': '关闭'
+          'closed': '关闭工作'
         },
         chains: {
           issued: {
