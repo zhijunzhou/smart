@@ -100,25 +100,18 @@
                     trigger="hover">
                     <div class="text-center">
                       <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
-                        <el-step title="提出建议"></el-step>
-                        <el-step title="已批准" v-if="scope.row.status !== 'rejected'"></el-step>
-                        <el-step title="已完成" v-if="scope.row.status !== 'rejected'"></el-step>
-                        <el-step title="完结" v-if="scope.row.status !== 'rejected'"></el-step>
-                        <el-step title="被拒绝" v-else></el-step>
+                        <el-step v-for="(step, index) in getAllSteps(scope.row.status)" :key="'step_' + index" :title="typeReverseMapping[step]"></el-step>
                       </el-steps>
                     </div>
-                    <div class="sug-description text-center" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'">
+                    <div class="sug-description text-center" v-if="scope.row.status !== 'closed'">
                       <el-input size="mini" placeholder="输入描述文字" v-model="sugDescription"></el-input>
                     </div>
                     <div class="btn-sug-group text-center">
-                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'permitted')" v-if="scope.row.status === 'issued'" round>批准</el-button>
-                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'finished')" v-else-if="scope.row.status === 'permitted'" round>完成</el-button>
-                      <el-button type="primary" size="mini" @click="processSuggest(scope.row.suggestionId, 'summed')" v-else-if="scope.row.status === 'finished'" round>总结</el-button>
-                      <el-button type="danger" size="mini" @click="processSuggest(scope.row.suggestionId, 'rejected')" v-if="scope.row.status !== 'rejected' && scope.row.status !== 'summed'" round>拒绝</el-button>
+                      <el-button v-for="(oper,index) of getNextOpers(scope.row.status)" :key="'oper_' + index" size="mini" round>{{operMapping[oper]}}</el-button>                      
                     </div>
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
-                </template>              
+                </template>
             </el-table-column>
             <el-table-column
               label="操作">
@@ -172,6 +165,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import { Message } from 'element-ui'
   import api from '../../utils/api'
 
@@ -200,21 +194,85 @@
           {value: 'permitted', name: '待执行'},
           {value: 'finished', name: '待总结'},
           {value: 'summed', name: '完结'},
-          {value: 'rejected', name: '被拒绝'}
+          {value: 'rejected', name: '被拒绝'},
+          {value: 'closed', name: '已关闭'}
         ],
         typeMapping: {
           '待审核': 'issued',
           '待执行': 'permitted',
           '待总结': 'finished',
           '完结': 'summed',
-          '被拒绝': 'rejected'
+          '被拒绝': 'rejected',
+          '已关闭': 'closed'
         },
         typeReverseMapping: {
           'issued': '待审核',
           'permitted': '待执行',
           'finished': '待总结',
           'summed': '完结',
-          'rejected': '被拒绝'
+          'rejected': '被拒绝',
+          'closed': '已关闭'
+        },
+        operMapping: {
+          'permitted': '审批',
+          'finished': '完成',
+          'summed': '完结',
+          'rejected': '拒绝',
+          'closed': '关闭'
+        },
+        chains: {
+          issued: {
+            permitted: {
+              manager: true
+            },
+            rejected: {
+              manager: true
+            },
+            closed: {
+              sales: true
+            }
+          },
+          permitted: {
+            finished: {
+              manager: true
+            },
+            closed: {
+              manager: true
+            }
+          },
+          finished: {
+            summed: {
+              manager: true
+            },
+            closed: {
+              manager: true
+            }
+          },
+          summed: {
+            closed: {
+              manager: true
+            }
+          },
+          rejected: {
+            reissued: {
+              manager: true
+            },
+            closed: {
+              manager: true
+            }
+          },
+          reissued: {
+            permitted: {
+              manager: true
+            },
+            rejected: {
+              manager: true
+            },
+            closed: {
+              manager: true
+            }
+          },
+          closed: {}
         },
         form: {
           productId: '',
@@ -232,6 +290,7 @@
     mounted () {
     },
     computed: {
+      ...mapGetters(['userInfo']),
       getStatus () {
         return this.checkList.map(ck => {
           if (ck && this.typeMapping[ck]) {
@@ -339,6 +398,7 @@
           case 'finished': return 3
           case 'summed': return 4
           case 'rejected': return 5
+          case 'closed': return 6
         }
         return 1
       },
@@ -348,8 +408,27 @@
           case 'finished': return 'primary'
           case 'summed': return 'success'
           case 'rejected': return 'danger'
+          case 'close': return 'default'
         }
         return 'warning'
+      },
+      getAllSteps (name) {
+        switch (name) {
+          case 'rejected': return ['issued', 'rejected']
+          case 'closed': return ['closed']
+        }
+        return ['issued', 'permitted', 'finished', 'summed']
+      },
+      getNextOpers (name) {
+        const userName = this.userInfo.userName
+        let currentNode = this.chains[name]
+        let opers = []
+        for (let c in currentNode) {
+          if (currentNode[c][userName] === true) {
+            opers.push(c)
+          }
+        }
+        return opers
       },
       processSuggest (id, nextStatus) {
         const params = {
