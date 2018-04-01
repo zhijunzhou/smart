@@ -1,6 +1,5 @@
 <template>
   <div>
-    <el-button @click="test">test</el-button>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="本产品" name="sales">
         <el-row>
@@ -103,6 +102,7 @@ export default {
       initOptions: {
         renderer: 'svg'
       },
+      workFlow: [],
       mockWorkFlow: [
         {name: '建议0001', status: 'finished', content: '这是一个建议', date: '2018-03-10'},
         {name: '建议0002', status: 'finished', content: '这是一个建议', date: '2018-03-18'}
@@ -123,12 +123,9 @@ export default {
   },
   created () {
     this.getStatistics()
+    this.getSuggestion()
   },
   methods: {
-    test () {
-      this.show = true
-      console.log('resize')
-    },
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -162,6 +159,22 @@ export default {
         txt1 = '关键字'
       }
       return txt1
+    },
+    getSuggestion () {
+      api.get(`/api/suggestion/all/${this.shopId}/${this.productId}`).then(res => {
+        this.$store.dispatch('setLoadingState', false)
+        if (res.status === 200 && res.data) {
+          console.log('suggestion', res)
+          this.workFlow = res.data.filter(r => r.operation === 'finished')
+        }
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     udpateSalesChart (unit, period) {
       let params
@@ -339,9 +352,9 @@ export default {
             let type = 'line'
             let markPoint = {
               clickable: true,
-              data: this.mockWorkFlow.map(m => {
+              data: this.workFlow.map(m => {
                 return {
-                  name: m.name, value: m.name, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
+                  name: m.message, value: m.message, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
                 }
               })
             }
@@ -395,9 +408,9 @@ export default {
             let type = 'line'
             let markPoint = {
               clickable: true,
-              data: this.mockWorkFlow.map(m => {
+              data: this.workFlow.map(m => {
                 return {
-                  name: m.name, value: m.name, xAxis: m.date, yAxis: 0
+                  name: m.message, value: m.message, xAxis: m.date, yAxis: 0
                 }
               })
             }

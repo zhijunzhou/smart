@@ -25,6 +25,12 @@
 					<div class="text item">
 						电话: {{userInfo.phone}}
 					</div>
+					<div class="text item">
+						角色: <span v-for="role in userInfo.roles">{{role.roleName}} &nbsp;</span>
+					</div>
+					<div class="text item">
+						店铺: <span v-for="shop in userInfo.shops">{{shop.shopName}} &nbsp;</span>
+					</div>
 					<div slot="header" class="clearfix" v-if="userInfo.wechatId">
 						<span>昵称: {{userInfo.wechatName}}</span>
 						<el-button style="float: right; padding: 3px 0" type="text" @click="unbind(userInfo.userId)">微信解绑</el-button>
