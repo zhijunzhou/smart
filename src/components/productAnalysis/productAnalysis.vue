@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-button @click="test">test</el-button>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="本产品" name="sales">
         <el-row>
@@ -8,14 +9,15 @@
               :options="statisticsBar"
               :init-options="initOptions"
               auto-resize
-            />
-          </el-col>
-        </el-row>         
-      </el-tab-pane>
-      <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
-        <el-row>
-          <el-col :span="24" style="padding-top: 0;">
-            <chart 
+              />
+            </el-col>
+          </el-row>         
+        </el-tab-pane>
+        <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
+          <el-row v-if="showChartCategory">
+            <el-col :span="24" style="padding-top: 0">
+              <chart 
+              :resize="test"
               :options="categoryBar(ca)"
               :init-options="initOptions"
               auto-resize
@@ -24,7 +26,7 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane v-for="kw of keywords" :key="kw" :label="getTabName(kw)" :name="kw">
-        <el-row>
+        <el-row v-if="showChartKeyword">
           <el-col :span="24" style="padding-top: 0;">
             <chart 
               :options="categoryBar(kw)"
@@ -85,6 +87,8 @@ export default {
       activeName: 'sales',
       salesUnit: '7',
       latestUnit: '5',
+      showChartCategory: false,
+      showChartKeyword: false,
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
       categories: [],
@@ -121,6 +125,10 @@ export default {
     this.getStatistics()
   },
   methods: {
+    test () {
+      this.show = true
+      console.log('resize')
+    },
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {
@@ -135,19 +143,25 @@ export default {
       this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
     },
     handleClick (tab, event) {
+      this.showChartCategory = false
+      this.showChartKeyword = false
       this.chartTitle = tab.name
+      if (tab.name.indexOf('category:') !== -1) {
+        setTimeout(() => { this.showChartCategory = true }, 0)
+      } else if (tab.name.indexOf('keyword:') !== -1) {
+        setTimeout(() => { this.showChartKeyword = true }, 0)
+      }
       console.log(tab, event)
     },
     getTabName (name) {
       const arr = name.split(' > ')
       let txt1 = ''
       if (name.substring(0, 8) === 'category') {
-        txt1 = '类目'
+        txt1 = '类目' + arr.length
       } else {
         txt1 = '关键字'
       }
-      console.log('name', name, arr)
-      return txt1 + arr.length
+      return txt1
     },
     udpateSalesChart (unit, period) {
       let params

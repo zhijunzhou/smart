@@ -14,6 +14,12 @@
 				>
 				<el-card class="box-card">
 					<div class="text item">
+						用户名: {{userInfo.userName}}
+					</div>
+					<div class="text item">
+						姓名: {{userInfo.fullName}}
+					</div>
+					<div class="text item">
 						邮件: {{userInfo.email}}
 					</div>
 					<div class="text item">
