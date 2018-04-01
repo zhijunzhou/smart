@@ -71,7 +71,7 @@
 						<i class="el-icon-location"></i>
 						<span><b>产品列表</b></span>
 					</el-menu-item>
-          <el-menu-item index="3" :route="{ path: '/main/setting' }">
+          <el-menu-item index="3" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
             <i class="el-icon-setting"></i>
             <span><b>用户管理</b></span>
 					</el-menu-item>
