@@ -16,7 +16,6 @@
           <el-row v-if="showChartCategory">
             <el-col :span="24" style="padding-top: 0">
               <chart 
-              :resize="test"
               :options="categoryBar(ca)"
               :init-options="initOptions"
               auto-resize
