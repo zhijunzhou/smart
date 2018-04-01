@@ -443,7 +443,13 @@
         return ['issued', 'permitted', 'finished', 'summed']
       },
       getNextOpers (name) {
-        const userName = this.userInfo.userName
+        let userName
+        if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
+          userName = 'manager'
+        } else if (this.userInfo.roles.findIndex(r => r.roleId === 5) >= 0) {
+          userName = 'sales'
+        }
+        // const userName = this.userInfo.userName
         let currentNode = this.chains[name]
         let opers = []
         for (let c in currentNode) {
