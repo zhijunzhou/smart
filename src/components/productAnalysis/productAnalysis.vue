@@ -353,7 +353,7 @@ export default {
               clickable: true,
               data: this.workFlow.map(m => {
                 return {
-                  name: m.message, value: m.message, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: composedArry[0].data.find(dt => dt.label === m.date).value
                 }
               })
             }
@@ -409,7 +409,7 @@ export default {
               clickable: true,
               data: this.workFlow.map(m => {
                 return {
-                  name: m.message, value: m.message, xAxis: m.date, yAxis: 0
+                  name: m.suggestTitle, value: m.suggestTitle, xAxis: m.date, yAxis: 0
                 }
               })
             }
