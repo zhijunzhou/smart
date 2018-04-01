@@ -397,6 +397,11 @@
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {
             this.workflows = res.data.grid
+            this.workflows.forEach(w => {
+              api.get(`/api/suggestion/${w.suggestionId}/history`).then(res => {
+                w.history = res.data
+              })
+            })
             this.total = res.data.pagination.total
           }
           this.$store.dispatch('setLoadingState', false)
@@ -449,27 +454,27 @@
         return opers
       },
       getSugHistory (row, expandedRows) {
-        const self = this
-        expandedRows.map((eRow) => {
-          console.log(eRow)
-          let currentIndex
-          let copied = self.workflows
-          self.workflows.map((wf, index) => {
-            if (wf.suggestionId === eRow.suggestionId) {
-              currentIndex = index
-            }
-          })
-          if (currentIndex !== undefined) {
-            (function (activeRow, activeIndex) {
-              api.get(`/api/suggestion/${activeRow.suggestionId}/history`).then(res => {
-                copied[activeIndex].history = res.data
-                self.$nextTick(() => {
-                  self.workflows = copied
-                })
-              })
-            })(eRow, currentIndex)
-          }
-        })
+        // const self = this
+        // expandedRows.map((eRow) => {
+        //   console.log(eRow)
+        //   let currentIndex
+        //   let copied = self.workflows
+        //   self.workflows.map((wf, index) => {
+        //     if (wf.suggestionId === eRow.suggestionId) {
+        //       currentIndex = index
+        //     }
+        //   })
+        //   if (currentIndex !== undefined) {
+        //     (function (activeRow, activeIndex) {
+        //       api.get(`/api/suggestion/${activeRow.suggestionId}/history`).then(res => {
+        //         copied[activeIndex].history = res.data
+        //         self.$nextTick(() => {
+        //           self.workflows = copied
+        //         })
+        //       })
+        //     })(eRow, currentIndex)
+        //   }
+        // })
       },
       processSuggest (row, nextStatus) {
         const params = {
