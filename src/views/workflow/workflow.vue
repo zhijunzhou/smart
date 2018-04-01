@@ -85,9 +85,14 @@
               prop="productId">
             </el-table-column>
             <el-table-column
-              width="200"
+              width="140"
               label="建议"
               prop="suggestion">
+            </el-table-column>
+            <el-table-column
+              width="140"
+              label="建议主题"
+              prop="title">
             </el-table-column>
             <el-table-column
               width="100"
@@ -162,6 +167,9 @@
         </el-form-item>
         <el-form-item label="优化类型" :label-width="formLabelWidth">
           <el-input v-model="form.optimizationType"></el-input>
+        </el-form-item>
+        <el-form-item label="建议主题" :label-width="formLabelWidth">
+          <el-input v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="建议" :label-width="formLabelWidth">
           <el-input v-model="form.suggestion"></el-input>
@@ -295,6 +303,7 @@
           productName: '',
           optimizationType: '',
           suggestion: '',
+          title: '',
           sn: 1
         }
       }
@@ -324,6 +333,7 @@
         this.form.productName = undefined
         this.form.optimizationType = undefined
         this.form.suggestion = undefined
+        this.form.title = undefined
       },
       edit (row) {
         this.modalType = 'edit'
@@ -336,6 +346,7 @@
         this.form.optimizationType = row.suggestType
         this.form.suggestion = row.suggestion
         this.form.sn = row.sn
+        this.form.title = row.title
       },
       saveWork () {
         this.form.sn = undefined
@@ -532,7 +543,7 @@
             message: '当前用户权限不足',
             type: 'error'
           })
-        } else if (err.request.status === 409) {
+        } else if (err.request.status === 431) {
           Message({
             showClose: true,
             message: '数据提交冲突',
