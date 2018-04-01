@@ -41,9 +41,12 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
+          toggleRowExpansion
+          clearSort
+          @expand-change="getSugHistory"
           :data="workflows">
             <el-table-column type="expand">
-              <template slot-scope="props">
+              <template slot-scope="scope">
                 <el-form label-position="left" inline class="demo-table-expand">
                   <br>
                   <el-form-item label="备注">                    
@@ -51,18 +54,22 @@
                       type="textarea"
                       :rows="2"
                       placeholder="添加注释..."
-                      v-model="props.row.comments">
+                      v-model="scope.row.comments">
                     </el-input>
-                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(props.row.suggestionId, props.row.comments)">保存注释</el-button>
+                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments)">保存注释</el-button>
                   </el-form-item>
                   <br>
                   <el-form-item label="历史">
-                      <div v-for="(stage, index) in props.row.stages" :key="index">
-                        <img :src="stage.authorImg" class="privateImage" v-if="stage.authorImg">
-                        <p>{{ stage.text }}</p>
-                        <span>{{ stage.author }}</span>
-                        <span>{{ stage.time }}</span>
-                      </div> 
+                      <div v-if="scope.row.history" v-for="(his, index) in scope.row.history" :key="'his_' + index">
+                        <span><i class="el-icon-time"></i>{{ his.date }}</span>
+                        <span>{{ his.operator }}</span>
+                        <i class="el-icon-arrow-right"></i>
+                        <el-tag>{{ typeReverseMapping[his.operation] }}</el-tag>
+                        <span>{{ his.message }}</span>   
+                      </div>
+                      <div v-else>
+                        Loading...
+                      </div>
                   </el-form-item>
                 </el-form>
               </template>
@@ -79,8 +86,8 @@
             </el-table-column>
             <el-table-column
               width="200"
-              label="商品名称"
-              prop="name">
+              label="建议"
+              prop="suggestion">
             </el-table-column>
             <el-table-column
               width="100"
@@ -91,12 +98,17 @@
               label="建议类型"
               width="100"
               prop="suggestType">
+            </el-table-column>            
+            <el-table-column
+              label="提出人"
+              width="100"
+              prop="proposer">
             </el-table-column>
             <el-table-column
               label="状态">
                 <template slot-scope="scope">
                   <el-popover
-                    ref="popoverStatus"                    
+                    ref="popoverStatus"              
                     trigger="hover">
                     <div class="text-center">
                       <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
@@ -203,7 +215,8 @@
           '待总结': 'finished',
           '完结': 'summed',
           '被拒绝': 'rejected',
-          '已关闭': 'closed'
+          '已关闭': 'closed',
+          '重新提出': 'reissued'
         },
         typeReverseMapping: {
           'issued': '待审核',
@@ -211,14 +224,16 @@
           'finished': '待总结',
           'summed': '完结',
           'rejected': '被拒绝',
-          'closed': '已关闭'
+          'closed': '已关闭',
+          'reissued': '重新提出'
         },
         operMapping: {
           'permitted': '审批',
           'finished': '完成',
           'summed': '完结',
           'rejected': '拒绝',
-          'closed': '关闭工作'
+          'closed': '关闭工作',
+          'reissued': '重新提出'
         },
         chains: {
           issued: {
@@ -279,7 +294,8 @@
           shopId: undefined,
           productName: '',
           optimizationType: '',
-          suggestion: ''
+          suggestion: '',
+          sn: 1
         }
       }
     },
@@ -319,8 +335,10 @@
         this.form.productName = row.name
         this.form.optimizationType = row.suggestType
         this.form.suggestion = row.suggestion
+        this.form.sn = row.sn
       },
       saveWork () {
+        this.form.sn = undefined
         api.post(`/api/suggestion`, this.form).then(res => {
           Message({
             showClose: true,
@@ -330,7 +348,7 @@
           this.dialogFormVisible = false
           this.getPageWorkflows(true)
         }).catch(err => {
-          this.errorHandler(err)
+          this.errorHandler(err, {code: 404, message: '产品未找到'})
         })
       },
       updateWork () {
@@ -430,6 +448,29 @@
         }
         return opers
       },
+      getSugHistory (row, expandedRows) {
+        const self = this
+        expandedRows.map((eRow) => {
+          console.log(eRow)
+          let currentIndex
+          let copied = self.workflows
+          self.workflows.map((wf, index) => {
+            if (wf.suggestionId === eRow.suggestionId) {
+              currentIndex = index
+            }
+          })
+          if (currentIndex !== undefined) {
+            (function (activeRow, activeIndex) {
+              api.get(`/api/suggestion/${activeRow.suggestionId}/history`).then(res => {
+                copied[activeIndex].history = res.data
+                self.$nextTick(() => {
+                  self.workflows = copied
+                })
+              })
+            })(eRow, currentIndex)
+          }
+        })
+      },
       processSuggest (row, nextStatus) {
         const params = {
           suggestionId: row.suggestionId,
@@ -467,8 +508,14 @@
           this.errorHandler(err)
         })
       },
-      errorHandler (err) {
-        if (err.request.status === 403) {
+      errorHandler (err, specialCase) {
+        if (specialCase && err.request.status === specialCase.code) {
+          Message({
+            showClose: true,
+            message: specialCase.message,
+            type: 'error'
+          })
+        } else if (err.request.status === 403) {
           Message({
             showClose: true,
             message: '当前用户权限不足',
