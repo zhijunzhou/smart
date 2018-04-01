@@ -18,7 +18,7 @@
         <el-col :span="3">
           <el-form-item>
             <el-input
-              placeholder="帽子"
+              placeholder="产品ASIN"
               prefix-icon="el-icon-search"
               v-model="search_val">
             </el-input>
