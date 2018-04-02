@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{getShops}}
     <el-row>
       <el-form ref="form">
         <el-col :span="24">
@@ -96,8 +97,10 @@
             </el-table-column>
             <el-table-column
               width="100"
-              label="店铺名"
-              prop="shopId">
+              label="店铺名">
+              <template slot-scope="scope">
+                {{getShops[scope.row.shopId]}}
+              </template>
             </el-table-column>
             <el-table-column
               label="建议类型"
@@ -322,6 +325,17 @@
             return this.typeMapping[ck]
           }
         })
+      },
+      getShops () {
+        if (Array.isArray(this.shopList) && this.shopList.length > 0) {
+          return this.shopList.reduce((res, cur) => {
+            if (!res[cur.shopId]) {
+              res[cur.shopId] = cur.shopName
+            }
+            return res
+          }, {})
+        }
+        return {}
       }
     },
     methods: {
@@ -381,10 +395,6 @@
       },
       searchWorkflow () {
         this.getPageWorkflows()
-      },
-      getShopName (shopId) {
-        const scope = this.getShops().find(s => s.shopId === shopId)
-        return scope ? scope.shopName : ''
       },
       getShopList () {
         api.get('/api/shop').then(res => {
