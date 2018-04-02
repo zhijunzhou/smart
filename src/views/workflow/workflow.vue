@@ -80,7 +80,7 @@
               prop="suggestionId">
             </el-table-column>
             <el-table-column
-              label="商品S/N"
+              label="ASIN"
               width="120"
               prop="productId">
             </el-table-column>
@@ -156,7 +156,7 @@
     </el-row>
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="产品" :label-width="formLabelWidth">
+        <el-form-item label="ASIN" :label-width="formLabelWidth">
           <el-input v-model="form.productId"></el-input>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
@@ -185,7 +185,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>        
         <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
-        <el-button type="primary" @click="updateWork" v-else>更  新</el-button>
+        <el-button type="primary" @click="updateWork" v-else>重新提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -231,7 +231,7 @@
           '完结': 'summed',
           '被拒绝': 'rejected',
           '已关闭': 'closed',
-          '重新提出': 'reissued'
+          '重新提交': 'reissued'
         },
         typeReverseMapping: {
           'issued': '待审核',
@@ -240,7 +240,7 @@
           'summed': '完结',
           'rejected': '被拒绝',
           'closed': '已关闭',
-          'reissued': '重新提出'
+          'reissued': '重新提交'
         },
         operMapping: {
           'permitted': '审批',
@@ -248,7 +248,7 @@
           'summed': '完结',
           'rejected': '拒绝',
           'closed': '关闭工作',
-          'reissued': '重新提出'
+          'reissued': '重新提交'
         },
         chains: {
           issued: {
