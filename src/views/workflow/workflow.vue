@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{getShops}}
     <el-row>
       <el-form ref="form">
         <el-col :span="24">
@@ -82,8 +81,13 @@
             </el-table-column>
             <el-table-column
               label="商品S/N"
-              width="180"
+              width="120"
               prop="productId">
+            </el-table-column>
+            <el-table-column
+              label="商品名"
+              width="140"
+              prop="name">
             </el-table-column>
             <el-table-column
               width="140"
