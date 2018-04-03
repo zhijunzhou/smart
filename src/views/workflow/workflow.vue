@@ -85,20 +85,20 @@
               prop="productId">
             </el-table-column>
             <el-table-column
-              label="商品名"
+              label="产品名"
               width="140"
               prop="name">
-            </el-table-column>
-            <el-table-column
-              width="140"
-              label="建议"
-              prop="suggestion">
             </el-table-column>
             <el-table-column
               width="140"
               label="建议主题"
               prop="title">
             </el-table-column>
+            <!-- <el-table-column
+              width="140"
+              label="建议"
+              prop="suggestion">
+            </el-table-column> -->
             <el-table-column
               width="100"
               label="店铺名">
@@ -157,7 +157,25 @@
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="ASIN" :label-width="formLabelWidth">
-          <el-input v-model="form.productId"></el-input>
+            <el-row>
+                <el-col :span="8">
+                  <el-input v-model="form.productId"></el-input>
+                </el-col>
+              </el-row>
+        </el-form-item>
+        <el-form-item label="产品名" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="8">
+              <el-input v-model="form.productName"></el-input>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="优化类型" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="8">
+              <el-input v-model="form.optimizationType"></el-input>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
           <el-select v-model="form.shopId" placeholder="选择店铺">
@@ -169,17 +187,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品名" :label-width="formLabelWidth">
-          <el-input v-model="form.productName"></el-input>
-        </el-form-item>
-        <el-form-item label="优化类型" :label-width="formLabelWidth">
-          <el-input v-model="form.optimizationType"></el-input>
-        </el-form-item>
         <el-form-item label="建议主题" :label-width="formLabelWidth">
-          <el-input v-model="form.title"></el-input>
+          <el-row>
+            <el-col :span="12">
+              <el-input v-model="form.title"></el-input>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="建议" :label-width="formLabelWidth">
-          <el-input v-model="form.suggestion"></el-input>
+          <el-input type="textarea" autosize placeholder="请输入建议内容" v-model="form.suggestion"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
