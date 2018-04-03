@@ -273,6 +273,7 @@ export default {
             if (dt.name.startsWith('category:') === true) {
               // dt.name.substr(10)
               self.categories.push(dt.name)
+              self.categories.sort((a, b) => a.split(' > ').length > b.split(' > ').length ? 1 : -1)
             }
             if (dt.name.startsWith('keyword:') === true) {
               // dt.name.substr(9)
@@ -337,14 +338,14 @@ export default {
         return {
           title: {
             text: this.chartTitle,
-            top: 0
+            top: 40
           },
           legend: {
-            top: 50,
+            top: 90,
             data: composedArry.map(dt => dt.id)
           },
           grid: {
-            top: 100
+            top: 140
           },
           toolbox: this.toolBoxOptions,
           xAxis: {
@@ -408,7 +409,7 @@ export default {
             selected: selected
           },
           grid: {
-            top: 120
+            top: 150
           },
           toolbox: self.toolBoxOptions,
           xAxis: {

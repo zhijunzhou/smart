@@ -1,9 +1,9 @@
 <template v-if="product">
   <el-form :label-position="labelPosition" label-width="80px" class="product-form">
     <el-form-item label="产品ASIN">
-      <el-input v-model="product.asin"></el-input>
+      {{product.asin}}
     </el-form-item>
-    <el-form-item label="图片">
+    <!-- <el-form-item label="图片">
       <el-upload
         class="avatar-uploader"
         action=""
@@ -13,9 +13,9 @@
         <img v-if="product.imgUrl" :src="product.imgUrl" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="描述">
-      <el-input type="textarea" v-model="product.name"></el-input>
+      {{product.name}}
     </el-form-item>
     <el-form-item label="关键字">
       <div v-for="(kw, index) in keywords" :key="kw + '_' + index">
@@ -45,6 +45,7 @@
 
 <script>
 import api from '@/utils/api'
+import { MessageBox, Message } from 'element-ui'
 
 export default {
   data () {
@@ -149,20 +150,58 @@ export default {
       })
     },
     deleteCompetitor (id) {
-      if (confirm('Do you want to delete the competitor product?')) {
-        let self = this
+      let self = this
+      MessageBox.confirm('确定删除竞品?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.asin}/${id}`).then(res => {
           self.listCompetitor()
+          Message({
+            type: 'success',
+            message: '删除成功!'
+          })
         })
-      }
+      }).catch(() => {
+        Message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+      // if (confirm('Do you want to delete the competitor product?')) {
+      //   let self = this
+      //   api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.asin}/${id}`).then(res => {
+      //     self.listCompetitor()
+      //   })
+      // }
     },
     deleteKeyword (kw) {
-      if (confirm('Do you want to delete the keyword?')) {
-        let self = this
+      let self = this
+      MessageBox.confirm('确定删除关键字?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         api.delete(`/api/product/keyword/${self.product.shopId}/${kw.keywordId}`).then(res => {
           self.listKeywords()
+          Message({
+            type: 'success',
+            message: '删除成功!'
+          })
         })
-      }
+      }).catch(() => {
+        Message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+      // if (confirm('Do you want to delete the keyword?')) {
+      //   let self = this
+      //   api.delete(`/api/product/keyword/${self.product.shopId}/${kw.keywordId}`).then(res => {
+      //     self.listKeywords()
+      //   })
+      // }
     }
   }
 }
