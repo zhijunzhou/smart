@@ -54,11 +54,12 @@
       <el-table-column
         sortable
         prop="date"
+        width="100%"
         label="日期">
       </el-table-column>
       <el-table-column 
-        width="100%" 
         v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
+        :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
         :key="headerName + '_' + index" 
         :label="headerName"
         v-if="dynamicHeaders[headerName]">
@@ -94,6 +95,15 @@ export default {
       dateRange: [],
       legends: [],
       dynamicHeaders: {},
+      headerWidth: {
+        price: 50,
+        reviews: 70,
+        score: 60,
+        QA: 40,
+        orders: 60,
+        Sessions: 80,
+        'Session Percentage': 90
+      },
       productsData: [],
       currentStatistics: [],
       competitionStatistics: [],

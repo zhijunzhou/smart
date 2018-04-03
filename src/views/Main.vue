@@ -148,6 +148,10 @@ export default {
 	width: 150px;
 }
 
+.el-submenu .el-menu-item {
+	min-width: 150px;
+}
+
 .content {
   padding: 20px;
 }
