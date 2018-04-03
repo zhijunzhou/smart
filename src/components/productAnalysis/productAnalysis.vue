@@ -108,6 +108,7 @@ export default {
       ],
       toolBoxOptions: {
         show: true,
+        top: 0,
         feature: {
           dataZoom: {
             yAxisIndex: 'none'
@@ -329,8 +330,11 @@ export default {
             top: 0
           },
           legend: {
-            top: 24,
+            top: 50,
             data: composedArry.map(dt => dt.id)
+          },
+          grid: {
+            top: 100
           },
           toolbox: this.toolBoxOptions,
           xAxis: {
@@ -390,7 +394,11 @@ export default {
           },
           legend: {
             data: self.currentStatistics.map(dt => dt.name),
+            top: 30,
             selected: selected
+          },
+          grid: {
+            top: 120
           },
           toolbox: self.toolBoxOptions,
           xAxis: {
