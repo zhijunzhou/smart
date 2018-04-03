@@ -75,14 +75,19 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="编号"
-              width="60"
+              label="工作编号"
+              width="80"
               prop="suggestionId">
             </el-table-column>
             <el-table-column
-              label="商品ASIN"
-              width="140"
+              label="ASIN"
+              width="120"
               prop="productId">
+            </el-table-column>
+            <el-table-column
+              label="商品名"
+              width="140"
+              prop="name">
             </el-table-column>
             <el-table-column
               width="140"
@@ -96,8 +101,10 @@
             </el-table-column>
             <el-table-column
               width="100"
-              label="店铺名"
-              prop="shopId">
+              label="店铺名">
+              <template slot-scope="scope">
+                {{getShops[scope.row.shopId]}}
+              </template>
             </el-table-column>
             <el-table-column
               label="建议类型"
@@ -149,7 +156,7 @@
     </el-row>
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="产品" :label-width="formLabelWidth">
+        <el-form-item label="ASIN" :label-width="formLabelWidth">
           <el-input v-model="form.productId"></el-input>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
@@ -178,7 +185,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>        
         <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
-        <el-button type="primary" @click="updateWork" v-else>更  新</el-button>
+        <el-button type="primary" @click="updateWork" v-else>重新提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -224,7 +231,7 @@
           '完结': 'summed',
           '被拒绝': 'rejected',
           '已关闭': 'closed',
-          '重新提出': 'reissued'
+          '重新提交': 'reissued'
         },
         typeReverseMapping: {
           'issued': '待审核',
@@ -233,7 +240,7 @@
           'summed': '完结',
           'rejected': '被拒绝',
           'closed': '已关闭',
-          'reissued': '重新提出'
+          'reissued': '重新提交'
         },
         operMapping: {
           'permitted': '审批',
@@ -241,7 +248,7 @@
           'summed': '完结',
           'rejected': '拒绝',
           'closed': '关闭工作',
-          'reissued': '重新提出'
+          'reissued': '重新提交'
         },
         chains: {
           issued: {
@@ -322,6 +329,17 @@
             return this.typeMapping[ck]
           }
         })
+      },
+      getShops () {
+        if (Array.isArray(this.shopList) && this.shopList.length > 0) {
+          return this.shopList.reduce((res, cur) => {
+            if (!res[cur.shopId]) {
+              res[cur.shopId] = cur.shopName
+            }
+            return res
+          }, {})
+        }
+        return {}
       }
     },
     methods: {
@@ -381,10 +399,6 @@
       },
       searchWorkflow () {
         this.getPageWorkflows()
-      },
-      getShopName (shopId) {
-        const scope = this.getShops().find(s => s.shopId === shopId)
-        return scope ? scope.shopName : ''
       },
       getShopList () {
         api.get('/api/shop').then(res => {
