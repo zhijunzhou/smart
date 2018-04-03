@@ -15,7 +15,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
-        <el-col :span="3">
+        <el-col :span="6">
           <el-form-item>
             <el-input
               placeholder="产品ASIN"
@@ -27,7 +27,7 @@
         <el-col :span="2" style="padding-left: 5px;">
           <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
         </el-col>
-        <el-col :span="7" class="text-right">
+        <el-col :span="6" class="text-right">
           <el-form-item>
             <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
           </el-form-item>
@@ -46,17 +46,17 @@
       <el-col :span="24">
         <el-table
             :data="products">
-            <el-table-column
+            <!-- <el-table-column
               type="selection">
-            </el-table-column>
-            <el-table-column
+            </el-table-column> -->
+            <!-- <el-table-column
               label="商品"
               width="80"
               sortable>
               <template slot-scope="scope">
                 <i class="el-icon-picture"></i>
                 </template>              
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
               label="ASIN码"
               width="180">
@@ -69,13 +69,13 @@
             </el-table-column>
             <el-table-column
               label="商品描述"
-              width="200"
+              width="350"
               prop="name"
               sortable>
             </el-table-column>
             <el-table-column
               label="所属店铺"
-              width="100"
+              width="150"
               prop="shopName"
               sortable>
             </el-table-column>            
