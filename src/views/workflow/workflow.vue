@@ -75,8 +75,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="工作编号"
-              width="80"
+              label="编号"
+              width="60"
               prop="suggestionId">
             </el-table-column>
             <el-table-column

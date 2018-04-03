@@ -56,7 +56,7 @@
       </ul>
 		</el-header>
     <el-container>
-      <el-aside class="menu">
+      <el-aside class="menu" width="180">
         <el-menu
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
@@ -139,13 +139,13 @@ export default {
 
 <style>
 .menu {
-	width: 250px;
+	width: 150px;
   height: 100%;
 	overflow: visible;
 }
 
 .menu > .el-menu {
-	width: 250px;
+	width: 150px;
 }
 
 .content {
