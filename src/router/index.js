@@ -25,8 +25,8 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'expand',
-          component: Expand
+          name: 'workflow',
+          component: WorkFlow
         },
         {
           path: 'test',

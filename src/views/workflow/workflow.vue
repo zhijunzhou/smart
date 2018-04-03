@@ -75,13 +75,13 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="工作编号"
-              width="80"
+              label="编号"
+              width="60"
               prop="suggestionId">
             </el-table-column>
             <el-table-column
-              label="商品S/N"
-              width="180"
+              label="商品ASIN"
+              width="140"
               prop="productId">
             </el-table-column>
             <el-table-column

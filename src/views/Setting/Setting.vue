@@ -43,7 +43,7 @@
                       </el-col>
                       <el-col :span="18">
                         <h6>{{ scope.row.fullName }}</h6>
-                        <span>昵称 {{ scope.row.wechatName }}</span>
+                        <span v-if="scope.row.wechatName">昵称 {{ scope.row.wechatName }}</span>
                       </el-col>
                     </el-row>
                   </template>              
@@ -103,8 +103,8 @@
                     </div>
                   </el-popover>
                   <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
-                  <el-button v-if="scope.row.userStatus==='disabled'" type="success" icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
-                  <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" type="danger">禁用</el-button>
+                  <el-button v-if="scope.row.userStatus==='disabled'"  icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
+                  <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" >禁用</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -187,7 +187,7 @@
           { roleId: 4, roleName: '项目执行人' },
           { roleId: 3, roleName: '项目创建人' },
           { roleId: 5, roleName: '销售' },
-          { roleId: 6, roleName: '销售总监' }
+          { roleId: 6, roleName: '销售主管' }
         ],
         userStatusList: [
           { id: 'active', value: '正常' },

@@ -1,6 +1,6 @@
 <template v-if="product">
   <el-form :label-position="labelPosition" label-width="80px" class="product-form">
-    <el-form-item label="产品S/N">
+    <el-form-item label="产品ASIN">
       <el-input v-model="product.asin"></el-input>
     </el-form-item>
     <el-form-item label="图片">
@@ -32,14 +32,14 @@
         {{cp.competitorId}} <i class="el-icon-delete" @click="deleteCompetitor(cp.competitorId)"></i>
       </div>
       <div v-if="showAddCpButton === false">
-        <el-input v-model="competitor.competitorId" placeholder="竞品S/N"></el-input>
+        <el-input v-model="competitor.competitorId" placeholder="竞品ASIN"></el-input>
       </div>
       <el-button size="mini" icon="el-icon-plus" v-if="showAddCpButton === true" @click="addCompetitor" round>增加竞品</el-button>
       <el-button size="mini" v-if="showAddCpButton === false" @click="saveCompetitor" round>保存竞品</el-button>
     </el-form-item>
-    <el-form-item class="text-center">
+    <!-- <el-form-item class="text-center">
       <el-button type="primary" round>立即保存</el-button>
-    </el-form-item>
+    </el-form-item> -->
   </el-form>
 </template>
 

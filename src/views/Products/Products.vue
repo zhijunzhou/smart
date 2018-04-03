@@ -58,7 +58,7 @@
                 </template>              
             </el-table-column>
             <el-table-column
-              label="S/N码"
+              label="ASIN码"
               width="180">
               <template slot-scope="scope">
                 <b>{{scope.row.asin}}</b>
