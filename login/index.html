@@ -34,7 +34,7 @@ var app = new Vue({
       WeixinJSBridge.call('closeWindow')
     },
     redirectToUrl: function () {
-      var url = 'http://nstart.cc:8688/wepay/login?uid=' + this.uid + '&code=' + this.code
+      var url = 'http://nstart.cc:8688/wepay/login?force=y&uid=' + this.uid + '&code=' + this.code
       var ajax = new XMLHttpRequest()
       // 步骤二:设置请求的url参数,参数一是请求的类型,参数二是请求的url,可以带参数,动态的传递参数starName到服务端
 
