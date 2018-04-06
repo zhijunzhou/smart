@@ -83,11 +83,11 @@
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item index="2-1" :route="{ path: '/main/workflow' }">提议</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow' }">待执行</el-menu-item>
-						<el-menu-item index="2-1" :route="{ path: '/main/workflow' }">已执行</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow' }">已总结</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow' }">被拒绝提议</el-menu-item>
+						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued' }">提议</el-menu-item>
+						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行</el-menu-item>
+						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=finished' }">已执行</el-menu-item>
+						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=summed' }">已总结</el-menu-item>
+						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=rejected' }">被拒绝提议</el-menu-item>
           </el-submenu>
 					<el-menu-item index="3" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>

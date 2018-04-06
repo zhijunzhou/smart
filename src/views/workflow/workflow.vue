@@ -80,41 +80,9 @@
               prop="suggestionId">
             </el-table-column>
             <el-table-column
-              label="ASIN"
-              width="120"
-              prop="productId">
-            </el-table-column>
-            <el-table-column
-              label="产品名"
-              width="140"
-              prop="name">
-            </el-table-column>
-            <el-table-column
-              width="140"
-              label="建议主题"
-              prop="title">
-            </el-table-column>
-            <!-- <el-table-column
-              width="140"
-              label="建议"
-              prop="suggestion">
-            </el-table-column> -->
-            <el-table-column
+              label="提议时间"
               width="100"
-              label="店铺名">
-              <template slot-scope="scope">
-                {{getShops[scope.row.shopId]}}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="建议类型"
-              width="100"
-              prop="suggestType">
-            </el-table-column>            
-            <el-table-column
-              label="提出人"
-              width="100"
-              prop="proposer">
+              prop="createDate">
             </el-table-column>
             <el-table-column
               label="状态">
@@ -136,6 +104,51 @@
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
                 </template>
+            </el-table-column>
+            <el-table-column
+            label="优化类型"
+            width="100"
+            prop="suggestType">
+          </el-table-column> 
+            <el-table-column
+              label="ASIN"
+              width="120"
+              prop="productId">
+            </el-table-column>
+            <el-table-column
+              label="产品名"
+              width="140"
+              prop="name">
+            </el-table-column>
+            <!-- <el-table-column
+              width="140"
+              label="建议主题"
+              prop="title">
+            </el-table-column> -->
+            <el-table-column
+              width="140"
+              label="建议"
+              prop="suggestion">
+              <template slot-scope="scope">
+                <div class="suggestion" :title="scope.row.suggestion">{{scope.row.suggestion}}</div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column
+              width="100"
+              label="店铺名">
+              <template slot-scope="scope">
+                {{getShops[scope.row.shopId]}}
+              </template>
+            </el-table-column>            -->
+            <el-table-column
+              label="提出人"
+              width="100"
+              prop="proposer">
+            </el-table-column>
+            <el-table-column
+              label="审批人"
+              width="100"
+              prop="auditor">
             </el-table-column>
             <el-table-column
               label="操作">
@@ -597,6 +610,11 @@
 <style scoped>
 .btn-sug-group {
   margin-top: 20px;
+}
+.suggestion {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 .sug-description {
   padding: 15px 10px 2px 10px;
