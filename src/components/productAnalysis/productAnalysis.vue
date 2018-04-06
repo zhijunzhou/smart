@@ -45,7 +45,14 @@
       :salesUnit="salesUnit" 
       :dateRange="dateRange"
     />
-
+    <el-row>
+        <vue-csv-downloader
+        :data="productsData"
+        :fields="fields"
+        >
+        下载表格
+      </vue-csv-downloader>
+    </el-row>
     <el-table 
       border
       stripe
@@ -63,8 +70,8 @@
         :key="headerName + '_' + index" 
         :label="headerName"
         v-if="dynamicHeaders[headerName]">
-        <template slot-scope="scope" v-if="scope.row.other[headerName]">
-          {{scope.row.other[headerName].value}}
+        <template slot-scope="scope" v-if="scope.row[headerName]">
+          {{scope.row[headerName]}}
         </template>
       </el-table-column>
     </el-table>
@@ -79,8 +86,13 @@ import 'echarts/lib/component/markArea'
 import api from '@/utils/api'
 import productSearch from '@/components/productSearch/productSearch'
 import { Message } from 'element-ui'
+import VueCsvDownloader from 'vue-csv-downloader'
 
 export default {
+  components: {
+    VueCsvDownloader,
+    productSearch
+  },
   data () {
     return {
       activeName: 'sales',
@@ -95,6 +107,8 @@ export default {
       dateRange: [],
       legends: [],
       dynamicHeaders: {},
+      fields: [
+      ],
       headerWidth: {
         price: 50,
         reviews: 70,
@@ -112,10 +126,6 @@ export default {
         renderer: 'svg'
       },
       workFlow: [],
-      mockWorkFlow: [
-        {name: '建议0001', status: 'finished', content: '这是一个建议', date: '2018-03-10'},
-        {name: '建议0002', status: 'finished', content: '这是一个建议', date: '2018-03-18'}
-      ],
       toolBoxOptions: {
         show: true,
         top: 0,
@@ -234,6 +244,8 @@ export default {
       api.post('/api/product/statistics', params).then(res => {
         if (res.status === 200 && res.data) {
           self.currentStatistics = res.data
+          self.fields = res.data.map(r => r.name)
+          self.fields = ['date'].concat(self.fields)
           self.parseCategories(self.currentStatistics)
           // console.log(self.currentStatistics)
 
@@ -303,11 +315,17 @@ export default {
 
         // transform object to array
         self.productsData = []
-        for (var x in productsData) {
+        for (let x in productsData) {
           var item = productsData[x]
+          // console.log(item)
+          for (let prop in item) {
+            // console.log(prop, item[prop])
+            item[prop] = item[prop].value
+          }
+          console.log(item)
           self.productsData.push({
             date: x,
-            other: item
+            ...item
           })
         }
         self.productsData.sort((a, b) => {
@@ -315,7 +333,7 @@ export default {
           if (a.date < b.date) return 1
           return 0
         })
-        // console.log(self.productsData)
+        console.log(self.productsData)
         return productsData
       }
     },
@@ -438,9 +456,6 @@ export default {
         }
       }
     }
-  },
-  components: {
-    productSearch
   }
 }
 </script>
