@@ -72,7 +72,7 @@
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
           default-active="1"
-          active-text-color="#409EFF"
+          active-text-color="#FF6600"
 					class="el-menu-vertical-d">					
 					<el-menu-item index="1" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
 						<i class="el-icon-setting"></i>
@@ -223,9 +223,13 @@ header::after {
     outline: none;
     background-color: #ecf5ff;
 }
-.el-menu-item.is-active {
-    color: #409eff;
-}
+
+	li 
+		.el-menu-item.is-active {
+				color: #FF6600!important;
+		}
+	
+
 .header-operations {
 	display: inline-block;
 	float: right;

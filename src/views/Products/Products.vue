@@ -329,4 +329,13 @@ export default {
   }
 }
 </script>
+<style>
+.el-icon-star-off {
+  color:#FF6600
+}
+
+.el-icon-star-on {
+  color:#FF6600
+}
+</style>
 
