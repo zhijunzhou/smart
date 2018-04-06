@@ -123,9 +123,9 @@
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
             </el-form-item>
-            <el-form-item v-if="modalType === 'edit'" label="用户名" :label-width="formLabelWidth">
+            <!-- <el-form-item v-if="modalType === 'edit'" label="用户名" :label-width="formLabelWidth">
               {{form.userName}}
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
                 <el-input v-model="form.userName" auto-complete="off"></el-input>
               </el-form-item>
@@ -184,8 +184,8 @@
           userStatus: ''
         },
         roleList: [
-          { roleId: 4, roleName: '项目执行人' },
-          { roleId: 3, roleName: '项目创建人' },
+          // { roleId: 4, roleName: '项目执行人' },
+          // { roleId: 3, roleName: '项目创建人' },
           { roleId: 5, roleName: '销售' },
           { roleId: 6, roleName: '销售主管' }
         ],
