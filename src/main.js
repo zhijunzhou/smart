@@ -49,6 +49,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import { role } from './filter/role'
+import '../static/style/element-variables.scss'
 
 Vue.config.productionTip = false
 

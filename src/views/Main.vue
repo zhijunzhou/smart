@@ -1,10 +1,19 @@
 <template>
   <el-container class="wrapper">
-    <el-header
-      height="60px"
-      :style="{'background-color': primaryColor}">      
-			<span class="header-logo">$</span>
+		<el-header
+			class="main-header"
+			height="65px">      
+			<el-row height="auto">
+				<el-col :span="12">
+					<img src="../assets/logo.png">
+				</el-col>
+				<el-col :span="2">
+					工作管理
+				</el-col>
+
+			<!-- <span class="header-logo">$</span> -->
 			<!-- <span class="logo-txt">mart</span> -->
+			<el-col :span="10">
 			<el-popover
 				ref="userDetail"
 				placement="top-start"
@@ -53,7 +62,9 @@
 						</span>
 					</router-link>
         </li>
-      </ul>
+			</ul>
+			</el-col>
+		</el-row>
 		</el-header>
     <el-container>
       <el-aside class="menu" width="180">
@@ -63,22 +74,22 @@
           default-active="1"
           active-text-color="#409EFF"
 					class="el-menu-vertical-d">					
+					<el-menu-item index="3" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
+						<i class="el-icon-setting"></i>
+						<span><b>用户管理</b></span>
+					</el-menu-item>
           <el-menu-item index="1" :route="{ path: '/main/workflow' }">
             <i class="el-icon-menu"></i>
             <span>工作管理</span>
           </el-menu-item>
 					<el-menu-item index="2" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
-						<span><b>产品列表</b></span>
-					</el-menu-item>
-          <el-menu-item index="3" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
-            <i class="el-icon-setting"></i>
-            <span><b>用户管理</b></span>
+						<span><b>订单统计</b></span>
 					</el-menu-item>
 					<el-submenu index="2">
 							<template slot="title">
 								<i class="el-icon-service"></i>
-								<span><b>反馈列表</b></span>
+								<span><b>反馈维护</b></span>
 							</template>
 							<el-menu-item index="2-1" :route="{ path: '/main' }">反馈详情</el-menu-item>
 							<el-menu-item index="2-2" :route="{ path: '/main' }">反馈统计</el-menu-item>
@@ -86,12 +97,12 @@
         </el-menu>
       </el-aside>
       <el-main class="content">
-				<el-row>
+				<!-- <el-row>
 					<el-col>
 						<el-button size="mini" icon="el-icon-arrow-left" @click="goBack">返回</el-button>
 						<hr class="split-line" />
 					</el-col>
-				</el-row>
+				</el-row> -->
 				<router-view></router-view>
       </el-main>
     </el-container>    
@@ -138,6 +149,13 @@ export default {
 </script>
 
 <style>
+
+.main-header {
+	width: 100%;
+	box-shadow: 0px 2px 4px #666;
+    /* position: relative; */
+	/* z-index: 8999; */
+}
 .menu {
 	width: 150px;
   height: 100%;

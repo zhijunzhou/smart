@@ -1,6 +1,14 @@
 <template>
   <el-container>
-    <el-header class="login-header"><h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1></el-header>
+    <el-header height="auto" class="login-header">
+      <el-row>
+        <img src="./../assets/logo.png">
+      </el-row>
+      <el-row>
+        工作管理
+      </el-row>
+      <!-- <h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1> -->
+    </el-header>
     <el-main>      
       <el-row>
         <el-col v-show="!inputMode">
@@ -259,7 +267,9 @@ export default {
 }
 
 .login-header {
-  background-color: #409EFF;
+  /* background-color: #409EFF; */
+  margin-top: 30px;
+  text-align: center;
 }
 </style>
 
