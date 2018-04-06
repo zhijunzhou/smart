@@ -37,7 +37,7 @@
           <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button>
           </el-button>
           <vue-csv-downloader
-            :data="workflows"
+            :data="allWorkflows"
             :fields="fields"
           >
           下载表格
@@ -260,10 +260,14 @@ export default {
         productType: '',
         shopList: [],
         checkList: [],
+        allWorkflows: [],
         shopId: undefined,
         currentSugId: undefined,
         modalType: undefined,
-        fields: ['suggestionId', 'createDate', 'status', 'suggestType', 'productId', 'name', 'suggestion', 'proposer', 'auditor'],
+        fields: [
+          'suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
+          'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'
+        ],
         STAGES: [
           {value: 'issued', name: '待审核'},
           {value: 'permitted', name: '待执行'},
@@ -366,6 +370,7 @@ export default {
     created () {
       this.getShopList()
       this.getPageWorkflows()
+      this.getAllWorkflows()
     },
     mounted () {
       console.log(this.$route.query.status)
@@ -518,6 +523,32 @@ export default {
               })
             })
             this.total = res.data.pagination.total
+          }
+          this.$store.dispatch('setLoadingState', false)
+        }).catch(err => {
+          this.$store.dispatch('setLoadingState', false)
+          Message({
+            showClose: true,
+            message: err.response.statusText,
+            type: 'error'
+          })
+        })
+      },
+      getAllWorkflows (hideWorkingDialog) {
+        const params = {
+          pagination: {
+            pageSize: 999999,
+            currentPage: 1,
+            filter: {
+              shopId: this.shopId
+            }
+          }
+        }
+        console.log(this.getStatus)
+        this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
+        api.post(`/api/suggestion/pagination`, params).then(res => {
+          if (res.status === 200 && res.data) {
+            this.allWorkflows = res.data.grid
           }
           this.$store.dispatch('setLoadingState', false)
         }).catch(err => {
