@@ -59,7 +59,7 @@
             </el-table-column> -->
             <el-table-column
               label="ASIN码"
-              width="180">
+              width="140">
               <template slot-scope="scope">
                 <b>{{scope.row.asin}}</b>
                 <div v-for="cp in scope.row.competitors" :key="cp">
@@ -96,6 +96,9 @@
               align="center"
               label="操作">
               <template slot-scope="scope">
+                <el-button size="mini" round @click="add(scope.row)">
+                  建议
+                </el-button>
                 <router-link :to="{path: '/main/edit-product', query: scope.row}">
                   <el-button size="mini" round>
                     编辑
@@ -127,6 +130,54 @@
         </el-pagination>
       </el-col>
     </el-row>
+    <el-dialog title="工作流" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="ASIN" :label-width="formLabelWidth">
+              {{form.productId}}
+          </el-form-item>
+          <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
+              {{form.name}}
+          </el-form-item> -->
+          <el-form-item label="产品名" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="10">
+                <el-input v-model="form.productName"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="优化类型" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="10">
+                <el-input v-model="form.optimizationType"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="所属店铺" :label-width="formLabelWidth">
+            <el-select v-model="form.shopId" placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="建议主题" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="10">
+                <el-input v-model="form.title"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="建议" :label-width="formLabelWidth">
+            <el-input type="textarea" autosize placeholder="请输入建议内容" v-model="form.suggestion"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>        
+          <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -147,23 +198,20 @@ export default {
       isShowLiked: false,
       likedProducts: [],
       shopList: [],
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
-      productType: ''
+      formLabelWidth: '120px',
+      options: [],
+      productType: '',
+      modalType: 'add',
+      dialogFormVisible: false,
+      form: {
+        productId: '',
+        shopId: undefined,
+        productName: '',
+        optimizationType: '',
+        suggestion: '',
+        title: '',
+        sn: 1
+      }
     }
   },
   created () {
@@ -171,6 +219,33 @@ export default {
     this.getPageProducts()
   },
   methods: {
+    saveWork () {
+      this.form.sn = undefined
+      api.post(`/api/suggestion`, this.form).then(res => {
+        Message({
+          showClose: true,
+          message: '更新成功!',
+          type: 'success'
+        })
+        this.dialogFormVisible = false
+        this.getPageWorkflows(true)
+      }).catch(err => {
+        this.errorHandler(err, {code: 404, message: '产品未找到'})
+      })
+    },
+    add (row) {
+      console.log(row)
+      const {asin, shopId, name} = row
+      this.modalType = 'add'
+      this.dialogFormVisible = true
+      this.form.productId = asin
+      this.form.name = name
+      this.form.shopId = shopId
+      this.form.productName = undefined
+      this.form.optimizationType = undefined
+      this.form.suggestion = undefined
+      this.form.title = undefined
+    },
     isNotLike (product) {
       return !this.likedProducts.find(p => {
         return product.asin === p.productId
