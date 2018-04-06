@@ -2,13 +2,13 @@
   <div>
     <el-row>
       <el-form ref="form">
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item label="状态">
             <el-checkbox-group  v-model="checkList" @change="searchWorkflow">
               <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="8">
           <el-form-item label="店铺">
             <el-select v-model="shopId" placeholder="选择店铺">
@@ -35,12 +35,20 @@
         </el-col>
         <el-col :span="11" class="text-right">
           <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button>
+          </el-button>
+          <vue-csv-downloader
+            :data="workflows"
+            :fields="fields"
+          >
+          下载表格
+    </vue-csv-downloader>
         </el-col>        
       </el-form>
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
+          ref="table"
           toggleRowExpansion
           clearSort
           @expand-change="getSugHistory"
@@ -224,8 +232,18 @@
   import { mapGetters } from 'vuex'
   import { Message } from 'element-ui'
   import api from '../../utils/api'
+  // import CsvExport from '../../utils/csv-export'
+  import json2csv from 'json2csv'
+  import VueCsvDownloader from 'vue-csv-downloader'
 
-  export default {
+export default {
+    watch: {
+      // 如果路由有变化，会再次执行该方法
+      '$route': 'getPageWorkflows'
+    },
+    components: {
+      VueCsvDownloader
+    },
     data () {
       return {
         workflows: [],
@@ -245,6 +263,7 @@
         shopId: undefined,
         currentSugId: undefined,
         modalType: undefined,
+        fields: ['suggestionId', 'createDate', 'status', 'suggestType', 'productId', 'name', 'suggestion', 'proposer', 'auditor'],
         STAGES: [
           {value: 'issued', name: '待审核'},
           {value: 'permitted', name: '待执行'},
@@ -349,15 +368,17 @@
       this.getPageWorkflows()
     },
     mounted () {
+      console.log(this.$route.query.status)
     },
     computed: {
       ...mapGetters(['userInfo']),
       getStatus () {
-        return this.checkList.map(ck => {
-          if (ck && this.typeMapping[ck]) {
-            return this.typeMapping[ck]
-          }
-        })
+        return [this.$route.query.status]
+        //  this.checkList.map(ck => {
+        //   if (ck && this.typeMapping[ck]) {
+        //     return this.typeMapping[ck]
+        //   }
+        // })
       },
       getShops () {
         if (Array.isArray(this.shopList) && this.shopList.length > 0) {
@@ -372,6 +393,46 @@
       }
     },
     methods: {
+      GetRow (row, columns) {
+        let obj = {}
+
+        columns.forEach(col => {
+          let val = row[col.prop]
+
+          if (col.formatter) {
+            val = col.formatter(row, col, val)
+          }
+
+          obj[col.prop] = val
+        })
+
+        return obj
+      },
+      ExportCsv (data, columns, fileName) {
+        console.log(json2csv)
+        const rows = data.map(t => this.GetRow(t, columns))
+        const fields = columns.map(t => t.prop)
+        const fieldNames = columns.map(t => t.label)
+
+        try {
+          const result = json2csv({ data: rows, fields, fieldNames })
+          const csvContent = 'data:text/csv;charset=GBK,\uFEFF' + result
+          const link = document.createElement('a')
+          link.href = encodeURI(csvContent)
+          link.download = `${fileName}.csv`
+          document.body.appendChild(link) // Required for FF
+          link.click() // This will download the data file named 'my_data.csv'.
+          document.body.removeChild(link) // Required for FF
+        } catch (err) {
+          // Errors are thrown for bad options, or if the data is empty and no fields are provided.
+          // Be sure to provide fields if it is possible that your data array will be empty.
+          console.error(err)
+        }
+      },
+      exportCsv (filename = '列表') {
+        // const columns = this.$refs.table.$children.filter(t => t.prop != null)
+        // this.ExportCsv(this.workflows, columns, filename)
+      },
       add () {
         this.modalType = 'add'
         this.dialogFormVisible = true
@@ -446,7 +507,7 @@
             }
           }
         }
-
+        console.log(this.getStatus)
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {
