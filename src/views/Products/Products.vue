@@ -220,17 +220,18 @@ export default {
   },
   methods: {
     saveWork () {
-      this.form.sn = undefined
-      api.post(`/api/suggestion`, this.form).then(res => {
+      let self = this
+      self.form.sn = undefined
+      api.post(`/api/suggestion`, self.form).then(res => {
         Message({
           showClose: true,
           message: '更新成功!',
           type: 'success'
         })
-        this.dialogFormVisible = false
-        this.getPageWorkflows(true)
+        self.dialogFormVisible = false
+        self.getPageWorkflows(true)
       }).catch(err => {
-        this.errorHandler(err, {code: 404, message: '产品未找到'})
+        self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
     add (row) {
@@ -323,6 +324,33 @@ export default {
         let interested = this.likedProducts.find(p => p.productId === product.asin)
         api.delete(`/api/interested/${interested.interestedId}`).then(res => {
           this.listLikedProducts()
+        })
+      }
+    },
+    errorHandler (err, specialCase) {
+      if (specialCase && err.request.status === specialCase.code) {
+        Message({
+          showClose: true,
+          message: specialCase.message,
+          type: 'error'
+        })
+      } else if (err.request.status === 403) {
+        Message({
+          showClose: true,
+          message: '当前用户权限不足',
+          type: 'error'
+        })
+      } else if (err.request.status === 431) {
+        Message({
+          showClose: true,
+          message: '数据提交冲突',
+          type: 'error'
+        })
+      } else {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
         })
       }
     }
