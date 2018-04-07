@@ -429,7 +429,7 @@ figure .echarts {
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
 }
-.el-input-group__append {
+.el-input-group--prepend .el-input__inner, .el-input-group__append {
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
   background: #FF6600;
