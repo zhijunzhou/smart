@@ -21,19 +21,26 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="3">
-          <el-form-item>
+        <el-col :span="8">
             <el-input
-              placeholder="产品名"
+            placeholder="请输入产品ASIN"
+            v-model="search_val"
+            @clear="searchWorkflow"
+            clearable>
+            <el-button slot="append" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+          </el-input>
+          <!-- <el-form-item>
+            <el-input
+              placeholder="产品ASIN"
               prefix-icon="el-icon-search"
               v-model="search_val">
             </el-input>
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
-        <el-col :span="2" style="padding-left: 5px;">
+        <!-- <el-col :span="2" style="padding-left: 5px;">
           <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-        </el-col>
-        <el-col :span="11" class="text-right">
+        </el-col> -->
+        <el-col :span="7" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button> -->
           <!-- </el-button> -->
           <vue-csv-downloader
@@ -300,6 +307,7 @@ export default {
           'summed': '完结',
           'rejected': '被拒绝',
           'closed': '已关闭',
+          'comments': '备注',
           'reissued': '重新提交'
         },
         operMapping: {

@@ -15,18 +15,26 @@
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
-        <el-col :span="6">
-          <el-form-item>
+        <el-col :span="8">
+          <el-input
+            placeholder="请输入产品ASIN"
+            v-model="search_val"
+            @clear="searchProduct"
+            clearable>
+            <el-button slot="append" icon="el-icon-search" @click="searchProduct">搜索</el-button>
+          </el-input>
+
+          <!-- <el-form-item>
             <el-input
               placeholder="产品ASIN"
               prefix-icon="el-icon-search"
               v-model="search_val">
             </el-input>
-          </el-form-item>
+          </el-form-item> -->
         </el-col>
-        <el-col :span="2" style="padding-left: 5px;">
+        <!-- <el-col :span="2" style="padding-left: 5px;">
           <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
-        </el-col>
+        </el-col> -->
         <el-col :span="6" class="text-right">
           <el-form-item>
             <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>

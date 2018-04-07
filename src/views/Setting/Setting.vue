@@ -7,7 +7,7 @@
             v-model="searchFullName"
             @clear="searchFullNameChange"
             clearable>
-            <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange">搜索</el-button>
           </el-input>
         </el-col>
         <el-col :span="6">
@@ -418,6 +418,16 @@
 .header-content {
   height: 40px;
   line-height: 40px;
+}
+.el-input-group--append .el-input__inner {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.el-input-group__append {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: #FF6600;
+  color: #FFF;
 }
 </style>
   
