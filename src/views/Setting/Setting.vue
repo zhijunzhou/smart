@@ -127,16 +127,32 @@
               {{form.userName}}
             </el-form-item> -->
             <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
-                <el-input v-model="form.userName" auto-complete="off"></el-input>
+              <el-row>
+                <el-col :span="12">
+                  <el-input v-model="form.userName" auto-complete="off"></el-input>
+                </el-col>
+              </el-row>
               </el-form-item>
             <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-row>
+                    <el-col :span="12">
               <el-input v-model="form.fullName" auto-complete="off"></el-input>
+              </el-col>
+              </el-row>
             </el-form-item>
             <el-form-item label="电话" :label-width="formLabelWidth">
+                <el-row>
+                    <el-col :span="12">
               <el-input v-model="form.phone" auto-complete="off"></el-input>
+              </el-col>
+              </el-row>
             </el-form-item>
             <el-form-item label="邮件" :label-width="formLabelWidth">
+                <el-row>
+                    <el-col :span="12">
               <el-input v-model="form.email" auto-complete="off"></el-input>
+              </el-col>
+              </el-row>
             </el-form-item>
             <el-form-item label="角色" :label-width="formLabelWidth">
               <el-checkbox-group v-model="roleSelected" >
@@ -178,7 +194,7 @@
         shopList: [],
         changePasswordFlag: true,
         shopSelected: [],
-        formLabelWidth: '120px',
+        formLabelWidth: '200px',
         filter: {
           userName: '',
           userStatus: ''

@@ -198,7 +198,7 @@ export default {
                 this.setUserInfo(login.data)
                 this.cacheToken(login.headers)
                 console.log(this.$store.state)
-                this.$router.push('/main')
+                this.$router.push('/main/setting')
               }).catch(error => {
                 if (error.response) {
                   // The request was made and the server responded with a status code
