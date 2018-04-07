@@ -4,16 +4,16 @@
 			class="main-header"
 			height="65px">      
 			<el-row height="auto">
-				<el-col :span="12">
+				<el-col :span="11">
 					<img src="../assets/logo.png">
 				</el-col>
-				<el-col :span="2">
-					工作管理
+				<el-col :span="4">
+					<div class="main-title">工作管理系统</div>
 				</el-col>
 
 			<!-- <span class="header-logo">$</span> -->
 			<!-- <span class="logo-txt">mart</span> -->
-			<el-col :span="10">
+			<el-col :span="9">
 			<el-popover
 				ref="userDetail"
 				placement="top-start"
@@ -83,7 +83,7 @@
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued' }">提议</el-menu-item>
+						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">提议</el-menu-item>
 						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行</el-menu-item>
 						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行</el-menu-item>
 						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结</el-menu-item>
@@ -155,13 +155,18 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 
 .main-header {
 	width: 100%;
 	box-shadow: 0px 2px 4px #666;
     /* position: relative; */
 	/* z-index: 8999; */
+	.main-title {
+		font-weight: 800;
+		font-size: 24px;
+		margin-top: 12px;
+	}
 }
 .menu {
 	width: 150px;

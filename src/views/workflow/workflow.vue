@@ -34,8 +34,8 @@
           <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
         </el-col>
         <el-col :span="11" class="text-right">
-          <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button>
-          </el-button>
+          <!-- <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button> -->
+          <!-- </el-button> -->
           <vue-csv-downloader
             :data="allWorkflows"
             :fields="fields"
@@ -161,7 +161,7 @@
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" @click="edit(scope.row)" round>编辑</el-button>
+                <el-button v-if="scope.row.status==='issued'||scope.row.status==='reissued'"  size="mini" @click="edit(scope.row)" round>编辑</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -178,22 +178,23 @@
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="ASIN" :label-width="formLabelWidth">
-            <el-row>
-                <el-col :span="8">
+          &nbsp;&nbsp;&nbsp;&nbsp;{{form.productId}}
+            <!-- <el-row>
+                <el-col :span="10">
                   <el-input v-model="form.productId"></el-input>
                 </el-col>
-              </el-row>
+              </el-row> -->
         </el-form-item>
         <el-form-item label="产品名" :label-width="formLabelWidth">
           <el-row>
-            <el-col :span="8">
+            <el-col :span="10">
               <el-input v-model="form.productName"></el-input>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="优化类型" :label-width="formLabelWidth">
           <el-row>
-            <el-col :span="8">
+            <el-col :span="10">
               <el-input v-model="form.optimizationType"></el-input>
             </el-col>
           </el-row>
@@ -210,7 +211,7 @@
         </el-form-item>
         <el-form-item label="建议主题" :label-width="formLabelWidth">
           <el-row>
-            <el-col :span="12">
+            <el-col :span="10">
               <el-input v-model="form.title"></el-input>
             </el-col>
           </el-row>
@@ -378,7 +379,7 @@ export default {
     computed: {
       ...mapGetters(['userInfo']),
       getStatus () {
-        return [this.$route.query.status]
+        return this.$route.query.status.split('_')
         //  this.checkList.map(ck => {
         //   if (ck && this.typeMapping[ck]) {
         //     return this.typeMapping[ck]

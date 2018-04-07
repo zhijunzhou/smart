@@ -10,7 +10,7 @@
             <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange"></el-button>
           </el-input>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           &nbsp;
         </el-col>
         <el-col :span="2" class="header-content">
@@ -21,7 +21,7 @@
             <el-checkbox v-for="status of userStatusList" :label="status.id" :key="status.id" >{{status.value}}</el-checkbox>
           </el-checkbox-group>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="4" class="add-user">
           <el-button type="primary" icon="el-icon-plus" round @click="add">新增用户</el-button>
         </el-col>
       </el-row>
@@ -30,8 +30,8 @@
           <el-table
             :data="users">
               <el-table-column
-                label="用户编号"
-                width="100"
+                label="编号"
+                width="50"
                 prop="userId">
               </el-table-column>
               <el-table-column
@@ -392,6 +392,9 @@
 	border-radius:50%;
 	height: 40px;
 	vertical-align:middle;
+}
+.add-user {
+  text-align: right;
 }
 .role-txt {
   margin: 5px;

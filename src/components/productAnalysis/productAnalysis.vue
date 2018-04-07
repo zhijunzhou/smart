@@ -36,22 +36,26 @@
       </el-tab-pane>
     </el-tabs>
 
-    <product-search 
-      v-if="Object.keys(dynamicHeaders).length > 0"
-      v-on:showHideColumns="showHideColumns"
-      v-on:processUnitChange="processUnitChange"
-      v-on:processDateRangeChange="processDateRangeChange"
-      :columns="dynamicHeaders"
-      :salesUnit="salesUnit" 
-      :dateRange="dateRange"
-    />
     <el-row>
+      <el-col :span="22">
+      <product-search 
+        v-if="Object.keys(dynamicHeaders).length > 0"
+        v-on:showHideColumns="showHideColumns"
+        v-on:processUnitChange="processUnitChange"
+        v-on:processDateRangeChange="processDateRangeChange"
+        :columns="dynamicHeaders"
+        :salesUnit="salesUnit" 
+        :dateRange="dateRange"
+      />
+      </el-col>
+      <el-col :span="2">
         <vue-csv-downloader
         :data="productsData"
         :fields="fields"
         >
-        下载表格
-      </vue-csv-downloader>
+          下载表格
+        </vue-csv-downloader>
+      </el-col>
     </el-row>
     <el-table 
       border
@@ -133,7 +137,7 @@ export default {
           dataZoom: {
             yAxisIndex: 'none'
           },
-          dataView: {readOnly: false},
+          // dataView: {readOnly: false},
           magicType: {type: ['line', 'bar']},
           restore: {},
           saveAsImage: {}
