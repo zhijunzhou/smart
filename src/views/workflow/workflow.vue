@@ -64,7 +64,7 @@
                       placeholder="添加注释..."
                       v-model="scope.row.comments">
                     </el-input>
-                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments)">保存注释</el-button>
+                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
                   </el-form-item>
                   <br>
                   <el-form-item label="历史">
@@ -111,6 +111,13 @@
                     </div>
                   </el-popover>
                   <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
+                  <div style="display:none">
+                    <el-popover
+                    ref="popoverStatus"              
+                    trigger="click">
+                    </el-popover>
+                    <el-tag v-popover:popoverStatus></el-tag>
+                  </div>
                 </template>
             </el-table-column>
             <el-table-column
@@ -651,10 +658,11 @@ export default {
           this.errorHandler(err)
         })
       },
-      addComment (id, message) {
+      addComment (id, message, sn) {
         const params = {
           suggestionId: id,
-          message: message
+          message: message,
+          sn: sn
         }
 
         api.post(`/api/suggestion/comments`, params).then(res => {
