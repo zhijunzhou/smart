@@ -34,10 +34,10 @@
         <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
           <el-form :model="userInformation">
             <el-form-item>
-              <el-input v-model="userInformation.name" placeholder="用户名"></el-input>
+              <el-input v-model="userInformation.name" placeholder="用户名" @keyup.enter="login"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-input type="password" v-model="userInformation.password" placeholder="密码"></el-input>
+              <el-input type="password" v-model="userInformation.password" placeholder="密码" @keyup.enter.native="login"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="login" class="longbtn">登录</el-button>
