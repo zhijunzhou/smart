@@ -41,14 +41,13 @@
           <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
         </el-col> -->
         <el-col :span="7" class="text-right">
-          <!-- <el-button size="mini" icon="el-icon-plus" @click="add">新增工作</el-button> -->
-          <!-- </el-button> -->
-          <vue-csv-downloader
+          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+          <vue-csv-download
             :data="allWorkflows"
             :fields="fields"
             >
             下载表格
-          </vue-csv-downloader>
+          </vue-csv-download>
         </el-col>        
       </el-form>
     </el-row>
@@ -249,7 +248,8 @@
   import api from '../../utils/api'
   // import CsvExport from '../../utils/csv-export'
   import json2csv from 'json2csv'
-  import VueCsvDownloader from 'vue-csv-downloader'
+  // import VueCsvDownloader from 'vue-csv-downloader'
+  import VueCsvDownload from '@/components/csvDownload/csvDownload'
 
 export default {
     watch: {
@@ -257,7 +257,8 @@ export default {
       '$route': 'getPageWorkflows'
     },
     components: {
-      VueCsvDownloader
+      // VueCsvDownloader,
+      VueCsvDownload
     },
     data () {
       return {
@@ -433,14 +434,15 @@ export default {
         return obj
       },
       ExportCsv (data, columns, fileName) {
-        console.log(json2csv)
-        const rows = data.map(t => this.GetRow(t, columns))
-        const fields = columns.map(t => t.prop)
-        const fieldNames = columns.map(t => t.label)
+        // console.log(json2csv)
+        // const rows = data.map(t => this.GetRow(t, columns))
+        const fields = this.fields
+        // const fieldNames = columns.map(t => t.label)
 
         try {
-          const result = json2csv({ data: rows, fields, fieldNames })
-          const csvContent = 'data:text/csv;charset=GBK,\uFEFF' + result
+          const result = json2csv.parse(this.allWorkflows, { fields })
+          console.log(result)
+          const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + result
           const link = document.createElement('a')
           link.href = encodeURI(csvContent)
           link.download = `${fileName}.csv`
