@@ -1,4 +1,31 @@
 language: node_js
-node_js:
-  - "iojs"
-  - "7"
+node_js: stable
+
+# S: Build Lifecycle
+install:
+ - npm install
+
+# before_script:
+
+script:
+- hexo g
+
+after_script:
+- cd ./public
+- git init
+- git init
+- git config user.name "zhijunzhou"
+- git config user.email "2050588049@qq.com"
+- git add .
+- git commit -m "Update docs"
+- git push --force --quiet "https://${SMART_GH_TOKEN}@{SMART_GH_REF}" master:master
+
+# E: Build Lifecycle
+
+branches:
+ only:
+  - blog-souce
+  
+env:
+  global:
+   - SMART_GH_REF: github.com/zhijunzhou/smart.git
