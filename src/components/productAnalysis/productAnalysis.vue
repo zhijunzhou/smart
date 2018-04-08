@@ -36,7 +36,7 @@
       </el-tab-pane>
     </el-tabs>
 
-    <el-row>
+    <el-row class="analysis-table-header">
       <el-col :span="22">
       <product-search 
         v-if="Object.keys(dynamicHeaders).length > 0"
@@ -475,5 +475,8 @@ export default {
 }
 .cell-class-name {
   font-size: 12px;
+}
+.analysis-table-header {
+  margin-bottom: 0;
 }
 </style>
