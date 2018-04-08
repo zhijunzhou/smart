@@ -175,7 +175,8 @@ export default {
 }
 
 .menu > .el-menu {
-	width: 200px;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .el-submenu .el-menu-item {
