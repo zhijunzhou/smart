@@ -56,11 +56,7 @@
 					</span>
 				</li>
         <li>
-					<router-link to="/">
-						<span>
-							退出
-						</span>
-					</router-link>
+						<el-button @click="logout" type="primary" plain>退出</el-button>
         </li>
 			</ul>
 			</el-col>
@@ -133,6 +129,12 @@ export default {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
     goBack () {
       this.$router.go(-1)
+    },
+    logout () {
+      console.log('logout')
+      this.$router.push('/')
+      location.reload()
+      localStorage.removeItem('userInfo')
     },
     unbind (userId) {
       const wechatId = null
@@ -244,7 +246,6 @@ header::after {
 }
 
 .header-operations li {
-	color: #fff;
 	display: inline-block;
 	vertical-align: middle;
 	padding: 0 10px;
