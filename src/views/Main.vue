@@ -23,7 +23,7 @@
 				>
 				<el-card class="box-card">
 					<div class="text item">
-						用户名: {{userInfo.userName}}
+						工号: {{userInfo.userName}}
 					</div>
 					<div class="text item">
 						姓名: {{userInfo.fullName}}
@@ -79,11 +79,16 @@
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">提议</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行</el-menu-item>
-						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行</el-menu-item>
-						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结</el-menu-item>
-						<el-menu-item index="2-5" :route="{ path: '/main/workflow?status=rejected' }">被拒绝提议</el-menu-item>
+						<el-menu-item :index="work.index" :route="work.route" v-for="work in workflow">
+							<el-badge :value="work.count" class="suggestion-count">{{work.text}}&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
+						</el-menu-item>
+						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
+							<el-badge :value="12" class="suggestion-count">提议&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
+						</el-menu-item>
+						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-5" :route="{ path: '/main/workflow?status=rejected' }">被拒绝&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item> -->
           </el-submenu>
 					<el-menu-item index="3" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
@@ -122,6 +127,13 @@ export default {
   data () {
     return {
       primaryColor: '#409eff',
+      workflow: [
+        {id: 'issued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: 200},
+        {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: 200},
+        {id: 'finished', index: '2-3', route: {path: '/main/workflow?status=finished'}, text: '已执行', count: 200},
+        {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: 200},
+        {id: 'rejected', index: '2-5', route: {path: '/main/workflow?status=rejected'}, text: '被拒绝', count: 200}
+      ],
       defaultOpeneds: ['2']
     }
   },
@@ -168,6 +180,12 @@ export default {
 		font-weight: 800;
 		font-size: 24px;
 		margin-top: 12px;
+	}
+}
+
+.suggestion-count {
+	sup {
+		margin-top: 20px;
 	}
 }
 .menu {

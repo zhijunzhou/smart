@@ -123,16 +123,16 @@
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
             </el-form-item>
-            <!-- <el-form-item v-if="modalType === 'edit'" label="用户名" :label-width="formLabelWidth">
+            <!-- <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userName}}
             </el-form-item> -->
-            <el-form-item v-if="modalType === 'add'" label="用户名" :label-width="formLabelWidth">
+            <!-- <el-form-item v-if="modalType === 'add'" label="工号" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="12">
                   <el-input v-model="form.userName" auto-complete="off"></el-input>
                 </el-col>
               </el-row>
-              </el-form-item>
+            </el-form-item> -->
             <el-form-item label="姓名" :label-width="formLabelWidth">
                 <el-row>
                     <el-col :span="12">

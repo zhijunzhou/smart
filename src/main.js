@@ -41,6 +41,7 @@ import {
   DropdownMenu,
   Steps,
   Card,
+  Badge,
   Step
 } from 'element-ui'
 import ECharts from 'vue-echarts/components/ECharts'
@@ -54,6 +55,7 @@ import '../static/style/element-variables.scss'
 Vue.config.productionTip = false
 
 // Vue.use(ElementUI)
+Vue.component(Badge.name, Badge)
 Vue.component(Message.name, Message)
 Vue.component(Container.name, Container)
 Vue.component(Header.name, Header)
