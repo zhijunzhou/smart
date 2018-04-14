@@ -4,7 +4,7 @@
       <el-form ref="form">
         <el-col :span="8" style="padding-right: 5px;">
           <el-form-item label="店铺">
-            <el-select v-model="shopId" placeholder="选择店铺">
+            <el-select clearable v-model="shopId" placeholder="选择店铺">
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
@@ -223,8 +223,16 @@ export default {
     }
   },
   created () {
+    this.search_val = this.$route.query.productId
+    this.shopId = this.$route.query.shopId
+
     this.getShopList()
-    this.getPageProducts()
+
+    if (this.search_val && this.shopId) {
+      this.searchProduct()
+    } else {
+      this.getPageProducts()
+    }
   },
   methods: {
     saveWork () {

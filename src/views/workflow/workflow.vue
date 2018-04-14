@@ -11,7 +11,7 @@
         </el-col> -->
         <el-col :span="8">
           <el-form-item label="店铺">
-            <el-select v-model="shopId" placeholder="选择店铺">
+            <el-select clearable v-model="shopId" placeholder="选择店铺">
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
@@ -133,19 +133,18 @@
           </el-table-column> 
             <el-table-column
               label="ASIN"
-              width="120"
-              prop="productId">
+              width="120">
+              <template slot-scope="scope">
+                <router-link :to="{path: '/main/products', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
+                  {{scope.row.productId}}
+                </router-link>
+              </template>
             </el-table-column>
             <el-table-column
               label="产品名"
               width="140"
               prop="name">
             </el-table-column>
-            <!-- <el-table-column
-              width="140"
-              label="建议主题"
-              prop="title">
-            </el-table-column> -->
             <el-table-column
               width="140"
               label="建议"
@@ -154,13 +153,6 @@
                 <div class="suggestion" :title="scope.row.suggestion">{{scope.row.suggestion}}</div>
               </template>
             </el-table-column>
-            <!-- <el-table-column
-              width="100"
-              label="店铺名">
-              <template slot-scope="scope">
-                {{getShops[scope.row.shopId]}}
-              </template>
-            </el-table-column>            -->
             <el-table-column
               label="提出人"
               width="100"
