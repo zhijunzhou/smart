@@ -34,12 +34,14 @@
       <div v-if="showAddCpButton === false">
         <el-input v-model="competitor.competitorId" placeholder="竞品ASIN"></el-input>
       </div>
-      <el-button size="mini" icon="el-icon-plus" v-if="showAddCpButton === true" @click="addCompetitor" round>增加竞品</el-button>
-      <el-button size="mini" v-if="showAddCpButton === false" @click="saveCompetitor" round>保存竞品</el-button>
+      <div v-if="competitors.length < 2">
+        <el-button size="mini" icon="el-icon-plus" v-if="showAddCpButton === true" @click="addCompetitor" round>增加竞品</el-button>
+        <el-button size="mini" v-if="showAddCpButton === false" @click="saveCompetitor" round>保存竞品</el-button>
+      </div>
+      <div v-else>
+        <el-alert type="warning" :closable="closable" show-icon title="竞品最多为2个"></el-alert>
+      </div>
     </el-form-item>
-    <!-- <el-form-item class="text-center">
-      <el-button type="primary" round>立即保存</el-button>
-    </el-form-item> -->
   </el-form>
 </template>
 
@@ -53,6 +55,7 @@ export default {
       product: {},
       competitors: [],
       keywords: [],
+      closable: false,
       labelPosition: 'right',
       showAddCpButton: true,
       showAddKwButton: true,
