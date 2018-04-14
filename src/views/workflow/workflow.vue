@@ -320,7 +320,7 @@ export default {
               manager: true
             },
             closed: {
-              sales: true
+              sales: false
             }
           },
           permitted: {
@@ -328,7 +328,7 @@ export default {
               manager: true
             },
             closed: {
-              manager: true
+              manager: false
             }
           },
           finished: {
@@ -336,12 +336,12 @@ export default {
               manager: true
             },
             closed: {
-              manager: true
+              manager: false
             }
           },
           summed: {
             closed: {
-              manager: true
+              manager: false
             }
           },
           rejected: {
@@ -349,7 +349,7 @@ export default {
               manager: true
             },
             closed: {
-              manager: true
+              manager: false
             }
           },
           reissued: {
@@ -360,7 +360,7 @@ export default {
               manager: true
             },
             closed: {
-              manager: true
+              manager: false
             }
           },
           closed: {}
