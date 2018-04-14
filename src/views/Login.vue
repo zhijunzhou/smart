@@ -24,9 +24,9 @@
       </el-row>
       <el-row>
         <el-col :span="24" class="text-center">
-          <!-- <el-button @click="startJourney">快速体验</el-button>
-          <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button>
-          <el-button v-else @click="switchInputMode">密码登陆</el-button> -->
+          <!-- <el-button @click="startJourney">快速体验</el-button> -->
+          <!-- <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button> -->
+          <el-button @click="switchInputMode">密码登陆</el-button>
         </el-col>
       </el-row>
       <el-row v-if="inputMode">

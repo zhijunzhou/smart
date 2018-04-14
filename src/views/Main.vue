@@ -74,6 +74,10 @@
 						<i class="el-icon-setting"></i>
 						<span><b>用户管理</b></span>
 					</el-menu-item>
+					<el-menu-item index="5" :route="{ path: '/main/config' }" v-if="userInfo.userName==='admin'">
+						<i class="el-icon-setting"></i>
+						<span><b>系统设置</b></span>
+					</el-menu-item>
 					<el-submenu index="2">
 						<template slot="title">
 							<i class="el-icon-menu"></i>

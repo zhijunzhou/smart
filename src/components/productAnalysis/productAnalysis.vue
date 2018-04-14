@@ -7,6 +7,7 @@
             <chart 
               :options="statisticsBar"
               :init-options="initOptions"
+              @legendselectchanged="onClick($event)"
               auto-resize
               />
             </el-col>
@@ -150,6 +151,10 @@ export default {
     this.getSuggestion()
   },
   methods: {
+    onClick (evnet, e) {
+      console.log(event, e, window.VueECharts)
+      console.log(event.componentType)
+    },
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
         let found = newHeaders.find(nh => {

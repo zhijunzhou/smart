@@ -198,11 +198,14 @@
           </el-row>
         </el-form-item>
         <el-form-item label="优化类型" :label-width="formLabelWidth">
-          <el-row>
-            <el-col :span="10">
-              <el-input v-model="form.optimizationType"></el-input>
-            </el-col>
-          </el-row>
+          <el-select v-model="form.optimizationType" placeholder="选择优化类型">
+            <el-option
+              v-for="option in optimizationTypes"
+              :key="option.typeId"
+              :label="option.typeName"
+              :value="option.typeName">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
           <el-select v-model="form.shopId" placeholder="选择店铺">
@@ -311,6 +314,8 @@ export default {
           'closed': '关闭工作',
           'reissued': '重新提交'
         },
+        optimizationTypes: [
+        ],
         chains: {
           issued: {
             permitted: {
@@ -380,6 +385,7 @@ export default {
       this.getShopList()
       this.getPageWorkflows()
       this.getAllWorkflows()
+      this.listSuggestTypes()
     },
     mounted () {
       console.log(this.$route.query.status)
@@ -410,6 +416,11 @@ export default {
       }
     },
     methods: {
+      listSuggestTypes () {
+        api.get(`/api/suggest_type`).then(res => {
+          this.optimizationTypes = res.data
+        })
+      },
       GetRow (row, columns) {
         let obj = {}
 
