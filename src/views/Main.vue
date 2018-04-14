@@ -128,7 +128,7 @@ export default {
     return {
       primaryColor: '#409eff',
       workflow: [
-        {id: 'issued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: 200},
+        {id: 'issued_reissued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: 200},
         {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: 200},
         {id: 'finished', index: '2-3', route: {path: '/main/workflow?status=finished'}, text: '已执行', count: 200},
         {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: 200},
@@ -136,6 +136,9 @@ export default {
       ],
       defaultOpeneds: ['2']
     }
+  },
+  created () {
+    this.getCount()
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
@@ -147,6 +150,34 @@ export default {
       this.$router.push('/')
       location.reload()
       localStorage.removeItem('userInfo')
+    },
+    getCount () {
+      const params = {
+        pagination: {
+          pageSize: 9999999,
+          currentPage: 1,
+          filter: {
+          }
+        }
+      }
+      api.post(`/api/suggestion/pagination`, params).then(res => {
+        if (res.status === 200 && res.data) {
+          // this.workflows = res.data.grid
+          this.workflow.forEach(wk => {
+            wk.count = res.data.grid.filter(g => wk.id.indexOf(g.status) >= 0).length
+          })
+          console.log(this.workflow)
+        }
+        // this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        // this.$store.dispatch('setLoadingState', false)
+        console.log(err)
+        // Message({
+        //   showClose: true,
+        //   message: err.response.statusText,
+        //   type: 'error'
+        // })
+      })
     },
     unbind (userId) {
       const wechatId = null
