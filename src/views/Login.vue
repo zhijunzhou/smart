@@ -2,9 +2,9 @@
   <el-container>
     <el-header height="auto" class="login-header">
       <el-row>
-        <img src="./../assets/logo.png">
+        <img @click="switchInputMode" src="./../assets/logo.png">
       </el-row>
-      <el-row>
+      <el-row  >
         工作管理
       </el-row>
       <!-- <h1 class="project-title text-center"><span class="header-logo">$</span><span class="logo-txt">mart</span></h1> -->
@@ -22,13 +22,13 @@
           </div>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="24" class="text-center">
+      <!-- <el-row>
+        <el-col :span="24" class="text-center"> -->
           <!-- <el-button @click="startJourney">快速体验</el-button> -->
           <!-- <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button> -->
-          <el-button @click="switchInputMode">密码登陆</el-button>
+          <!-- <el-button @click="switchInputMode">密码登陆</el-button>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-row v-if="inputMode">
         <el-col :lg="9" :md="8" :sm="6" :xs="3">&nbsp;</el-col>
         <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
@@ -83,8 +83,12 @@ export default {
       this.$router.push('/main')
     },
     switchInputMode () {
-      this.inputMode = true
-      clearInterval(this.timer)
+      this.inputMode = !this.inputMode
+      if (this.inputMode === true) {
+        clearInterval(this.timer)
+      } else {
+        this.getWXCode()
+      }
     },
     cacheToken (headers) {
       let key = 'x-auth-token'
