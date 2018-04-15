@@ -818,12 +818,13 @@
         let description = ''
         row.history.forEach(h => {
           if (step === h.operation) {
-            description += ('(' + h.date + ')' + h.operator + ': ' + h.message)
+            description += ('(' + h.date + ') ' + h.operator + ': ' + h.message)
           }
         })
         return description === '' ? '(流程中)' : description
       },
       processSuggest (row, nextStatus) {
+        this.dialogWorkflowVisible = false
         const params = {
           suggestionId: row.suggestionId,
           status: nextStatus,
