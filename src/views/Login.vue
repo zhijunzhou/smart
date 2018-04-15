@@ -24,9 +24,9 @@
       </el-row>
       <el-row>
         <el-col :span="24" class="text-center">
-          <el-button @click="startJourney">快速体验</el-button>
-          <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button>
-          <el-button v-else @click="switchInputMode">密码登陆</el-button>
+          <!-- <el-button @click="startJourney">快速体验</el-button> -->
+          <!-- <el-button v-if="inputMode" @click="switchInputMode">微信登陆</el-button> -->
+          <el-button @click="switchInputMode">密码登陆</el-button>
         </el-col>
       </el-row>
       <el-row v-if="inputMode">
@@ -34,7 +34,7 @@
         <el-col :lg="6" :md="8" :sm="12" :xs="18" class="text-center">
           <el-form :model="userInformation">
             <el-form-item>
-              <el-input v-model="userInformation.name" placeholder="用户名" @keyup.enter="login"></el-input>
+              <el-input v-model="userInformation.name" placeholder="工号" @keyup.enter="login"></el-input>
             </el-form-item>
             <el-form-item>
               <el-input type="password" v-model="userInformation.password" placeholder="密码" @keyup.enter.native="login"></el-input>

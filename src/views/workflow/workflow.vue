@@ -1,17 +1,17 @@
 <template>
   <div>
-    <el-row>
-      <el-form ref="form">
-        <!-- <el-col :span="24">
-          <el-form-item label="状态">
-            <el-checkbox-group  v-model="checkList" @change="searchWorkflow">
-              <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-        </el-col> -->
-        <el-col :span="8">
+    <el-form ref="form">
+      <!-- <el-col :span="24">
+        <el-form-item label="状态">
+          <el-checkbox-group  v-model="checkList" @change="searchWorkflow">
+            <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-col> -->
+      <el-row>
+        <el-col :span="6">
           <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺">
+            <el-select clearable v-model="shopId" placeholder="选择店铺" >
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
@@ -21,26 +21,20 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-            <el-input
+        <!-- <el-col :span="6" :offset="2"> -->
+            <!-- <el-input
             placeholder="请输入产品ASIN"
-            v-model="search_val"
+            v-model="searchField"
             @clear="searchWorkflow"
             clearable>
             <el-button slot="append" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-          </el-input>
-          <!-- <el-form-item>
-            <el-input
-              placeholder="产品ASIN"
-              prefix-icon="el-icon-search"
-              v-model="search_val">
-            </el-input>
-          </el-form-item> -->
-        </el-col>
+          </el-input> -->
+      
+        <!-- </el-col> -->
         <!-- <el-col :span="2" style="padding-left: 5px;">
           <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
         </el-col> -->
-        <el-col :span="7" class="text-right">
+        <el-col :span="7" :offset="11" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
             :data="allWorkflows"
@@ -48,9 +42,48 @@
             >
             下载表格
           </vue-csv-download>
-        </el-col>        
-      </el-form>
-    </el-row>
+        </el-col>    
+      </el-row>
+      <el-row>
+        <el-col :span="5" >
+            <el-form-item>
+                <el-input
+                  placeholder="请输入产品ASIN"
+                  clearable
+                  @clear="searchWorkflow"
+                  v-model="searchField.productId">
+                  <template slot="prepend">产品码</template>
+                </el-input>
+              </el-form-item>
+        </el-col>    
+        <el-col :span="5" :offset="2">
+          <el-form-item>
+              <el-input
+                placeholder="输入建议人"
+                clearable
+                @clear="searchWorkflow"
+                v-model="searchField.proposer">
+                <template slot="prepend">建议人</template>
+              </el-input>
+            </el-form-item>
+        </el-col>    
+        <el-col :span="5" :offset="2">
+            <el-form-item>
+                <el-input
+                  placeholder="输入审批人"
+                  clearable
+                  @clear="searchWorkflow"
+                  v-model="searchField.auditor">
+                  <template slot="prepend">审批人</template>
+                </el-input>
+              </el-form-item>
+          </el-col>
+          <el-col :span="2" :offset="2">
+              <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+          </el-col>
+        </el-row>
+      </el-row>
+    </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
@@ -90,12 +123,14 @@
             </el-table-column>
             <el-table-column
               label="编号"
-              width="60"
+              width="70"
+              sortable
               prop="suggestionId">
             </el-table-column>
             <el-table-column
               label="提议时间"
               width="100"
+              sortable
               prop="createDate">
             </el-table-column>
             <el-table-column
@@ -133,6 +168,7 @@
             </el-table-column>
             <el-table-column
               label="提出人"
+              sortable
               width="100"
               prop="proposer">
             </el-table-column>
@@ -225,11 +261,14 @@
           </el-row>
         </el-form-item>
         <el-form-item label="优化类型" :label-width="formLabelWidth">
-          <el-row>
-            <el-col :span="10">
-              <el-input v-model="form.optimizationType"></el-input>
-            </el-col>
-          </el-row>
+          <el-select v-model="form.optimizationType" placeholder="选择优化类型">
+            <el-option
+              v-for="option in optimizationTypes"
+              :key="option.typeId"
+              :label="option.typeName"
+              :value="option.typeName">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="所属店铺" :label-width="formLabelWidth">
           <el-select v-model="form.shopId" placeholder="选择店铺">
@@ -282,7 +321,13 @@ export default {
         pageSize: 15,
         currentPage: 1,
         total: 0,
-        search_val: undefined,
+        searchField: {
+          shopId: this.shopId,
+          status: this.getStatus,
+          productId: '',
+          auditor: '',
+          proposer: ''
+        },
         sugComment: undefined,
         sugDescription: undefined,
         formLabelWidth: '120px',
@@ -336,6 +381,8 @@ export default {
           'closed': '关闭工作',
           'reissued': '重新提交'
         },
+        optimizationTypes: [
+        ],
         chains: {
           issued: {
             permitted: {
@@ -417,6 +464,7 @@ export default {
       this.getShopList()
       this.getPageWorkflows()
       this.getAllWorkflows()
+      this.listSuggestTypes()
     },
     mounted () {
       console.log(this.$route.query.status)
@@ -447,6 +495,11 @@ export default {
       }
     },
     methods: {
+      listSuggestTypes () {
+        api.get(`/api/suggest_type`).then(res => {
+          this.optimizationTypes = res.data
+        })
+      },
       GetRow (row, columns) {
         let obj = {}
 
@@ -570,9 +623,7 @@ export default {
             pageSize: this.pageSize,
             currentPage: this.currentPage,
             filter: {
-              shopId: this.shopId,
-              productId: this.search_val,
-              status: this.getStatus
+              ...this.searchField
             }
           }
         }

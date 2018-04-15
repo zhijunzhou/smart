@@ -23,7 +23,7 @@
 				>
 				<el-card class="box-card">
 					<div class="text item">
-						用户名: {{userInfo.userName}}
+						工号: {{userInfo.userName}}
 					</div>
 					<div class="text item">
 						姓名: {{userInfo.fullName}}
@@ -74,16 +74,25 @@
 						<i class="el-icon-setting"></i>
 						<span><b>用户管理</b></span>
 					</el-menu-item>
+					<el-menu-item index="5" :route="{ path: '/main/config' }" v-if="userInfo.userName==='admin'">
+						<i class="el-icon-setting"></i>
+						<span><b>系统设置</b></span>
+					</el-menu-item>
 					<el-submenu index="2">
 						<template slot="title">
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">提议</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行</el-menu-item>
-						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行</el-menu-item>
-						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结</el-menu-item>
-						<el-menu-item index="2-5" :route="{ path: '/main/workflow?status=rejected' }">被拒绝提议</el-menu-item>
+						<el-menu-item :index="work.index" :route="work.route" v-for="work in workflow" @click="refresh">
+							<el-badge :value="work.count" class="suggestion-count">{{work.text}}&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
+						</el-menu-item>
+						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
+							<el-badge :value="12" class="suggestion-count">提议&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
+						</el-menu-item>
+						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
+						<el-menu-item index="2-5" :route="{ path: '/main/workflow?status=rejected' }">被拒绝&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item> -->
           </el-submenu>
 					<el-menu-item index="3" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
@@ -122,11 +131,24 @@ export default {
   data () {
     return {
       primaryColor: '#409eff',
+      workflow: [
+        {id: 'issued_reissued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: null},
+        {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: null},
+        {id: 'finished', index: '2-3', route: {path: '/main/workflow?status=finished'}, text: '已执行', count: null},
+        {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: null},
+        {id: 'rejected', index: '2-5', route: {path: '/main/workflow?status=rejected'}, text: '被拒绝', count: null}
+      ],
       defaultOpeneds: ['2']
     }
   },
+  created () {
+    this.getCount()
+  },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
+    refresh () {
+      this.getCount()
+    },
     goBack () {
       this.$router.go(-1)
     },
@@ -135,6 +157,34 @@ export default {
       this.$router.push('/')
       location.reload()
       localStorage.removeItem('userInfo')
+    },
+    getCount () {
+      const params = {
+        pagination: {
+          pageSize: 9999999,
+          currentPage: 1,
+          filter: {
+          }
+        }
+      }
+      api.post(`/api/suggestion/pagination`, params).then(res => {
+        if (res.status === 200 && res.data) {
+          // this.workflows = res.data.grid
+          this.workflow.forEach(wk => {
+            wk.count = res.data.grid.filter(g => wk.id.indexOf(g.status) >= 0).length
+          })
+          console.log(this.workflow)
+        }
+        // this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        // this.$store.dispatch('setLoadingState', false)
+        console.log(err)
+        // Message({
+        //   showClose: true,
+        //   message: err.response.statusText,
+        //   type: 'error'
+        // })
+      })
     },
     unbind (userId) {
       const wechatId = null
@@ -168,6 +218,12 @@ export default {
 		font-weight: 800;
 		font-size: 24px;
 		margin-top: 12px;
+	}
+}
+
+.suggestion-count {
+	sup {
+		margin-top: 20px;
 	}
 }
 .menu {

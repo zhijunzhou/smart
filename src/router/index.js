@@ -7,6 +7,7 @@ import Analysis from '@/views/Analysis/Analysis'
 import Products from '@/views/Products/Products'
 import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
+import config from '@/views/config/config'
 import WorkFlow from '@/views/workflow/workflow'
 
 Vue.use(Router)
@@ -62,6 +63,11 @@ export default new Router({
           path: 'setting',
           name: 'setting',
           component: Setting
+        },
+        {
+          path: 'config',
+          name: 'config',
+          component: config
         }
       ]
     }
