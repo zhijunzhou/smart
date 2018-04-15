@@ -100,30 +100,8 @@
             </el-table-column>
             <el-table-column
               label="状态">
-                <template slot-scope="scope">
-                  <el-popover
-                    ref="popoverStatus"              
-                    trigger="hover">
-                    <div class="text-center">
-                      <el-steps :active="getActiveStep(scope.row.status)" align-center :space="100" finish-status="success">
-                        <el-step v-for="(step, index) in getAllSteps(scope.row.status)" :key="'step_' + index" :title="typeReverseMapping[step]"></el-step>
-                      </el-steps>
-                    </div>
-                    <div class="sug-description text-center" v-if="scope.row.status !== 'closed'">
-                      <el-input size="mini" placeholder="输入描述文字" v-model="sugDescription"></el-input>
-                    </div>
-                    <div class="btn-sug-group text-center">
-                      <el-button v-for="(oper,index) of getNextOpers(scope.row.status)" :key="'oper_' + index" size="mini" @click="processSuggest(scope.row, oper)" round>{{operMapping[oper]}}</el-button>                      
-                    </div>
-                  </el-popover>
-                  <el-tag :type="getTagType(scope.row.status)" v-popover:popoverStatus>{{typeReverseMapping[scope.row.status]}}</el-tag>
-                  <div style="display:none">
-                    <el-popover
-                    ref="popoverStatus"              
-                    trigger="click">
-                    </el-popover>
-                    <el-tag v-popover:popoverStatus></el-tag>
-                  </div>
+                <template slot-scope="scope">                  
+                  <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column
@@ -166,7 +144,8 @@
             <el-table-column
               label="操作">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.status==='issued'||scope.row.status==='reissued'"  size="mini" @click="edit(scope.row)" round>编辑</el-button>
+                <el-button v-if="scope.row.status==='issued'||scope.row.status==='reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
+                <el-button v-else size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)">工作流</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -180,6 +159,54 @@
         </el-pagination>
       </el-col>
     </el-row>
+    <el-dialog title="工作流" :visible.sync="dialogWorkflowVisible">
+      <el-card shadow="never">
+        <div slot="header" class="text-center">
+          <el-steps :active="getActiveStep(wf.status)" align-center :space="200" finish-status="success">
+            <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
+          </el-steps>
+          <el-form size="mini" :model="wf" style="margin-top: 15px;">
+            <el-form-item label="备注" :label-width="formLabelWidth">
+              <el-row>
+                <el-col :span="10" v-if="wf.status !== 'closed'">
+                  <el-input placeholder="输入描述文字" v-model="sugDescription"></el-input>
+                </el-col>
+                <el-col :span="10">
+                  <el-button v-for="(oper,index) of getNextOpers(wf.status)" :key="'oper_' + index" size="mini" @click="processSuggest(wf, oper)" round>{{operMapping[oper]}}</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-form>
+        </div>
+        <el-form size="mini" :model="wf" style="margin-top: 15px;">        
+          <el-form-item label="ASIN" :label-width="formLabelWidth">
+            <small>{{wf.productId}}</small>
+          </el-form-item>
+          <el-form-item label="产品名" :label-width="formLabelWidth">
+            <small>{{wf.productName}}</small>
+          </el-form-item>
+          <el-form-item label="优化类型" :label-width="formLabelWidth">
+            <small>{{wf.optimizationType}}</small>
+          </el-form-item>
+          <el-form-item label="所属店铺" :label-width="formLabelWidth">
+            <el-select v-model="wf.shopId" disabled placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="建议主题" :label-width="formLabelWidth">
+            <small>{{wf.title}}</small>
+          </el-form-item>
+          <el-form-item label="建议" :label-width="formLabelWidth">
+            <small>{{wf.suggestion}}</small>
+          </el-form-item>
+        </el-form>      
+      </el-card>      
+    </el-dialog>
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="ASIN" :label-width="formLabelWidth">
@@ -238,9 +265,7 @@
   import { mapGetters } from 'vuex'
   import { Message } from 'element-ui'
   import api from '../../utils/api'
-  // import CsvExport from '../../utils/csv-export'
   import json2csv from 'json2csv'
-  // import VueCsvDownloader from 'vue-csv-downloader'
   import VueCsvDownload from '@/components/csvDownload/csvDownload'
 
 export default {
@@ -249,7 +274,6 @@ export default {
       '$route': 'getPageWorkflows'
     },
     components: {
-      // VueCsvDownloader,
       VueCsvDownload
     },
     data () {
@@ -264,6 +288,7 @@ export default {
         formLabelWidth: '120px',
         showLiked: false,
         dialogFormVisible: false,
+        dialogWorkflowVisible: false,
         options: [],
         productType: '',
         shopList: [],
@@ -373,6 +398,18 @@ export default {
           suggestion: '',
           title: '',
           sn: 1
+        },
+        wf: {
+          suggestionId: 0,
+          productId: '',
+          shopId: undefined,
+          productName: '',
+          optimizationType: '',
+          suggestion: '',
+          title: '',
+          status: undefined,
+          history: [],
+          sn: 1
         }
       }
     },
@@ -473,6 +510,20 @@ export default {
         this.form.suggestion = row.suggestion
         this.form.sn = row.sn
         this.form.title = row.title
+      },
+      doWorkflowUpdate (row) {
+        this.wf.suggestionId = row.suggestionId
+        this.wf.productId = row.productId
+        this.wf.shopId = row.shopId
+        this.wf.productName = row.name
+        this.wf.optimizationType = row.suggestType
+        this.wf.suggestion = row.suggestion
+        this.wf.sn = row.sn
+        this.wf.title = row.title
+        this.wf.status = row.status
+        this.wf.history = row.history
+
+        this.dialogWorkflowVisible = true
       },
       saveWork () {
         this.form.sn = undefined
@@ -640,6 +691,15 @@ export default {
         //     })(eRow, currentIndex)
         //   }
         // })
+      },
+      getDescription (row, step) {
+        let description = ''
+        row.history.forEach(h => {
+          if (step === h.operation) {
+            description += ('(' + h.date + ')' + h.operator + ': ' + h.message)
+          }
+        })
+        return description
       },
       processSuggest (row, nextStatus) {
         const params = {
