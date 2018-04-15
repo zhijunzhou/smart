@@ -181,8 +181,8 @@
             </el-row>
           </el-form-item>
           <el-form-item label="建议" :label-width="formLabelWidth">
-            <el-input type="textarea" autosize placeholder="请输入建议内容" v-model="form.suggestion"></el-input>
-          </el-form-item>
+              <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
+            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>        
@@ -199,6 +199,7 @@ import { Message } from 'element-ui'
 export default {
   data () {
     return {
+      maxlength: 200,
       products: [],
       pageSize: 15,
       productTotal: 0,
