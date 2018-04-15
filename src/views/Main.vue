@@ -159,32 +159,42 @@ export default {
       localStorage.removeItem('userInfo')
     },
     getCount () {
-      const params = {
-        pagination: {
-          pageSize: 9999999,
-          currentPage: 1,
-          filter: {
-          }
-        }
-      }
-      api.post(`/api/suggestion/pagination`, params).then(res => {
+      // const params = {
+      //   pagination: {
+      //     pageSize: 9999999,
+      //     currentPage: 1,
+      //     filter: {
+      //     }
+      //   }
+      // }
+      api.get('/api/suggestion/count').then(res => {
         if (res.status === 200 && res.data) {
           // this.workflows = res.data.grid
-          this.workflow.forEach(wk => {
-            wk.count = res.data.grid.filter(g => wk.id.indexOf(g.status) >= 0).length
-          })
           console.log(this.workflow)
+          this.workflow.forEach(wk => {
+            if (wk.id.indexOf('_') > 0) {
+              const arr = wk.id.split('_')
+              wk.count = res.data[arr[1]] + res.data[arr[0]]
+            } else {
+              wk.count = res.data[wk.id]
+            }
+          })
         }
-        // this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
-        // this.$store.dispatch('setLoadingState', false)
         console.log(err)
-        // Message({
-        //   showClose: true,
-        //   message: err.response.statusText,
-        //   type: 'error'
-        // })
       })
+      // api.post(`/api/suggestion/pagination`, params).then(res => {
+      //   if (res.status === 200 && res.data) {
+      //     // this.workflows = res.data.grid
+      //     this.workflow.forEach(wk => {
+      //       wk.count = res.data.grid.filter(g => wk.id.indexOf(g.status) >= 0).length
+      //     })
+      //     console.log(this.workflow)
+      //   }
+      //   // this.$store.dispatch('setLoadingState', false)
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     unbind (userId) {
       const wechatId = null
