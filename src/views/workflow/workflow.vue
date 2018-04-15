@@ -21,6 +21,18 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="6">
+          <el-form-item label="最近">
+            <el-select size="mini" style="width: 150px;" v-model="lu" @change="updateLu">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <!-- <el-col :span="6" :offset="2"> -->
             <!-- <el-input
             placeholder="请输入产品ASIN"
@@ -34,7 +46,7 @@
         <!-- <el-col :span="2" style="padding-left: 5px;">
           <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
         </el-col> -->
-        <el-col :span="7" :offset="11" class="text-right">
+        <el-col :span="7" :offset="5" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
             :data="allWorkflows"
