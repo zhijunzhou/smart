@@ -91,8 +91,9 @@
                       <el-form-item label="备注" :label-width="formLabelWidth">                    
                         <el-input
                           type="textarea"
-                          :rows="2"
-                          placeholder="添加注释..."
+                          :maxlength="maxlength"
+                          :autosize="{ minRows: 3, maxRows: 5}"
+                          :placeholder="'添加注释..., 最大字数' + maxlength"
                           v-model="scope.row.comments">
                         </el-input>
                         <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
@@ -208,10 +209,10 @@
             <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
           </el-steps>
           <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed'">
-            <el-form-item label="说明" :label-width="formLabelWidth">
+            <el-form-item label="意见" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="10" v-if="wf.status !== 'closed'">
-                  <el-input placeholder="输入描述文字" v-model="sugDescription"></el-input>
+                  <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'输入描述文字, 最大字数' +  maxlength" v-model="sugDescription" ></el-input>
                 </el-col>
                 <el-col :span="10">
                   <el-button v-for="(oper,index) of getNextOpers(wf.status)" :key="'oper_' + index" size="mini" @click="processSuggest(wf, oper)" round>{{operMapping[oper]}}</el-button>
@@ -294,7 +295,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="建议" :label-width="formLabelWidth">
-          <el-input type="textarea" autosize placeholder="请输入建议内容" v-model="form.suggestion"></el-input>
+          <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -324,6 +325,7 @@
     },
     data () {
       return {
+        maxlength: 200,
         workflows: [],
         pageSize: 15,
         currentPage: 1,
