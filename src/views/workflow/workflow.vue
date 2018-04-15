@@ -530,9 +530,17 @@
     methods: {
       updateLu () {
         let format = 'YYYY-MM-DD'
-        let start = moment().subtract(this.lu, 'days')
-        let end = moment()
-        console.log(format, start, end)
+        let start = moment().subtract(this.periodSelect, 'days').format(format)
+        let end = moment().format(format)
+        const status = this.getStatus
+  
+        console.log('updateLu', status, start, end)
+        // this.searchField.period = {
+        //   dateType: status.join(','),
+        //   start: start,
+        //   end: end
+        // }
+        // this.getPageWorkflows()
       },
       listSuggestTypes () {
         api.get(`/api/suggest_type`).then(res => {
