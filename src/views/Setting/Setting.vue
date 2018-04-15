@@ -105,6 +105,13 @@
                   <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
                   <el-button v-if="scope.row.userStatus==='disabled'"  icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
                   <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" >禁用</el-button>
+                  <div style="display:none">
+                      <el-popover
+                      ref="changePassWord"              
+                      trigger="focus">
+                      &nbsp;
+                      </el-popover>
+                    </div>
                 </template>
               </el-table-column>
             </el-table>
