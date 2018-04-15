@@ -23,9 +23,9 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="最近">
-            <el-select size="mini" style="width: 150px;" v-model="lu" @change="updateLu">
+            <el-select style="width: 150px;" v-model="periodSelect" @change="updateLu">
               <el-option
-                v-for="item in options"
+                v-for="item in periodOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -318,8 +318,9 @@
   import api from '../../utils/api'
   import json2csv from 'json2csv'
   import VueCsvDownload from '@/components/csvDownload/csvDownload'
+  import moment from 'moment'
 
-export default {
+  export default {
     watch: {
       // 如果路由有变化，会再次执行该方法
       '$route': 'getPageWorkflows'
@@ -333,9 +334,8 @@ export default {
         pageSize: 15,
         currentPage: 1,
         total: 0,
+        periodSelect: null,
         searchField: {
-          shopId: this.shopId,
-          status: this.getStatus,
           productId: '',
           auditor: '',
           proposer: ''
@@ -394,6 +394,27 @@ export default {
           'reissued': '重新提交'
         },
         optimizationTypes: [
+        ],
+        periodOptions: [
+          {
+            label: '周',
+            value: 7
+          }, {
+            label: '月',
+            value: 30
+          }, {
+            label: '季度',
+            value: 120
+          }, {
+            label: '半年',
+            value: 183
+          }, {
+            label: '一年',
+            value: 365
+          }, {
+            label: '两年',
+            value: 730
+          }
         ],
         chains: {
           issued: {
@@ -507,6 +528,12 @@ export default {
       }
     },
     methods: {
+      updateLu () {
+        let format = 'YYYY-MM-DD'
+        let start = moment().subtract(this.lu, 'days')
+        let end = moment()
+        console.log(format, start, end)
+      },
       listSuggestTypes () {
         api.get(`/api/suggest_type`).then(res => {
           this.optimizationTypes = res.data
@@ -635,11 +662,13 @@ export default {
             pageSize: this.pageSize,
             currentPage: this.currentPage,
             filter: {
+              shopId: this.shopId,
+              status: this.getStatus,
               ...this.searchField
             }
           }
         }
-        console.log(this.getStatus)
+        console.log('params', params, this.getStatus)
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {

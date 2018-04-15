@@ -30,9 +30,9 @@
           <el-table
             :data="users">
               <el-table-column
-                label="编号"
+                label="工号"
                 width="50"
-                prop="userId">
+                prop="userName">
               </el-table-column>
               <el-table-column
                 label="用户">
