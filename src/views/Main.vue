@@ -83,7 +83,7 @@
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item :index="work.index" :route="work.route" v-for="work in workflow">
+						<el-menu-item :index="work.index" :route="work.route" v-for="work in workflow" @click="refresh">
 							<el-badge :value="work.count" class="suggestion-count">{{work.text}}&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
 						</el-menu-item>
 						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
@@ -132,11 +132,11 @@ export default {
     return {
       primaryColor: '#409eff',
       workflow: [
-        {id: 'issued_reissued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: 200},
-        {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: 200},
-        {id: 'finished', index: '2-3', route: {path: '/main/workflow?status=finished'}, text: '已执行', count: 200},
-        {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: 200},
-        {id: 'rejected', index: '2-5', route: {path: '/main/workflow?status=rejected'}, text: '被拒绝', count: 200}
+        {id: 'issued_reissued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: null},
+        {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: null},
+        {id: 'finished', index: '2-3', route: {path: '/main/workflow?status=finished'}, text: '已执行', count: null},
+        {id: 'summed', index: '2-4', route: {path: '/main/workflow?status=summed'}, text: '已总结', count: null},
+        {id: 'rejected', index: '2-5', route: {path: '/main/workflow?status=rejected'}, text: '被拒绝', count: null}
       ],
       defaultOpeneds: ['2']
     }
@@ -146,6 +146,9 @@ export default {
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
+    refresh () {
+      this.getCount()
+    },
     goBack () {
       this.$router.go(-1)
     },

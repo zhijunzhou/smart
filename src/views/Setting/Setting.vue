@@ -307,8 +307,9 @@
       saveUser () {
         this.dialogFormVisible = false
         const fullName = this.form.fullName
-        const email = this.form.email | ''
-        const phone = this.form.phone | ''
+        const email = this.form.email || ''
+        console.log(email, this.form.email)
+        const phone = this.form.phone || ''
         const userName = this.form.userName
         const roles = this.roleSelected
         const shops = this.shopSelected
@@ -353,6 +354,7 @@
         this.modalType = 'edit'
         this.form = user
         this.roleSelected = user.roles.map(u => u.roleId)
+        this.shopSelected = user.shops.map(u => u.shopId)
         console.log(user)
         this.dialogFormVisible = true
       },
