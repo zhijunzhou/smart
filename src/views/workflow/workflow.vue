@@ -1,13 +1,6 @@
 <template>
   <div>
     <el-form ref="form">
-      <!-- <el-col :span="24">
-        <el-form-item label="状态">
-          <el-checkbox-group  v-model="checkList" @change="searchWorkflow">
-            <el-checkbox v-for="(stage, index) in STAGES" :key="index" :label="stage.name"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-      </el-col> -->
       <el-row>
         <el-col :span="6">
           <el-form-item label="店铺">
@@ -33,19 +26,6 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="6" :offset="2"> -->
-            <!-- <el-input
-            placeholder="请输入产品ASIN"
-            v-model="searchField"
-            @clear="searchWorkflow"
-            clearable>
-            <el-button slot="append" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-          </el-input> -->
-      
-        <!-- </el-col> -->
-        <!-- <el-col :span="2" style="padding-left: 5px;">
-          <el-button type="primary" icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-        </el-col> -->
         <el-col :span="7" :offset="5" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
@@ -80,20 +60,19 @@
             </el-form-item>
         </el-col>    
         <el-col :span="5" :offset="2">
-            <el-form-item>
-                <el-input
-                  placeholder="输入审批人"
-                  clearable
-                  @clear="searchWorkflow"
-                  v-model="searchField.auditor">
-                  <template slot="prepend">审批人</template>
-                </el-input>
-              </el-form-item>
-          </el-col>
-          <el-col :span="2" :offset="2">
-              <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-          </el-col>
-        </el-row>
+          <el-form-item>
+              <el-input
+                placeholder="输入审批人"
+                clearable
+                @clear="searchWorkflow"
+                v-model="searchField.auditor">
+                <template slot="prepend">审批人</template>
+              </el-input>
+            </el-form-item>
+        </el-col>
+        <el-col :span="2" :offset="2">
+            <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+        </el-col>
       </el-row>
     </el-form>
     <el-row :gutter="20">
@@ -225,11 +204,11 @@
     <el-dialog title="工作流" :visible.sync="dialogWorkflowVisible">
       <el-card shadow="never">
         <div slot="header" class="text-center">
-          <el-steps :active="getActiveStep(wf.status)" align-center :space="200" finish-status="success">
+          <el-steps direction="vertical" :active="getActiveStep(wf.status)" align-center :space="120" finish-status="success">
             <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
           </el-steps>
           <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed'">
-            <el-form-item label="备注" :label-width="formLabelWidth">
+            <el-form-item label="说明" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="10" v-if="wf.status !== 'closed'">
                   <el-input placeholder="输入描述文字" v-model="sugDescription"></el-input>
@@ -267,7 +246,7 @@
           <el-form-item label="建议" :label-width="formLabelWidth">
             <small>{{wf.suggestion}}</small>
           </el-form-item>
-        </el-form>      
+        </el-form>
       </el-card>      
     </el-dialog>
     <el-dialog :title="modalType === 'add' ? '工作流' : '工作流: ' + currentSugId" :visible.sync="dialogFormVisible">
@@ -401,6 +380,7 @@
           'reissued': '重新提交'
         },
         operMapping: {
+          'issued': '提议',
           'permitted': '审批',
           'finished': '完成',
           'summed': '完结',
@@ -814,7 +794,7 @@
             description += ('(' + h.date + ')' + h.operator + ': ' + h.message)
           }
         })
-        return description
+        return description === '' ? '(流程中)' : description
       },
       processSuggest (row, nextStatus) {
         const params = {
