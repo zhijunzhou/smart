@@ -118,7 +118,7 @@
           </el-pagination>
         </el-col>
       </el-row>
-      <el-dialog title="用户详情" :visible.sync="dialogFormVisible">
+      <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
