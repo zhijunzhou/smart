@@ -50,7 +50,7 @@
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
             :data="allWorkflows"
-            :fields="fields"
+            :fields="fieldsCn"
             >
             下载表格
           </vue-csv-download>
@@ -390,6 +390,8 @@
           'suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
           'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'
         ],
+        fieldsCn: [
+        ],
         STAGES: [
           {value: 'issued', name: '待审核'},
           {value: 'permitted', name: '待执行'},
@@ -530,9 +532,9 @@
       this.getPageWorkflows()
       this.getAllWorkflows()
       this.listSuggestTypes()
+      this.fieldsCn = this.fields.map(f => this.dictCn[f])
     },
     mounted () {
-      console.log(this.$route.query.status)
     },
     computed: {
       ...mapGetters(['userInfo']),
@@ -597,7 +599,8 @@
       ExportCsv (data, columns, fileName) {
         // console.log(json2csv)
         // const rows = data.map(t => this.GetRow(t, columns))
-        const fields = this.fields.map(en => this.dict[en])
+        const fields = this.fieldsCn
+        console.log('fields', fields)
         // const fieldNames = columns.map(t => t.label)
 
         try {
@@ -747,10 +750,11 @@
             this.allWorkflows = res.data.grid.map(dt => {
               let reformat = {}
               for (let key in dt) {
-                reformat[this.dictCn(key)] = dt[key]
+                reformat[this.dictCn[key]] = dt[key]
               }
               return reformat
             })
+            console.log('this.allWorkflows', this.allWorkflows)
           }
           this.$store.dispatch('setLoadingState', false)
         }).catch(err => {
