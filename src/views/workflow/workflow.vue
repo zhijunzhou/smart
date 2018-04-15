@@ -354,6 +354,23 @@
         shopId: undefined,
         currentSugId: undefined,
         modalType: undefined,
+        dictCn: {
+          suggestionId: '提议编号',
+          status: '提议状态',
+          createDate: '提议时间',
+          name: '产品名称',
+          productId: 'ASIN',
+          proposer: '提议人',
+          suggestType: '优化类型',
+          suggestion: '提议内容',
+          auditor: '审批人',
+          reply: '审批建议',
+          auditDate: '审批时间',
+          finishDate: '完成时间',
+          sumup: '总结内容',
+          sumupDate: '总结时间',
+          comments: '备注'
+        },
         fields: [
           'suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
           'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'
@@ -565,7 +582,7 @@
       ExportCsv (data, columns, fileName) {
         // console.log(json2csv)
         // const rows = data.map(t => this.GetRow(t, columns))
-        const fields = this.fields
+        const fields = this.fields.map(en => this.dict[en])
         // const fieldNames = columns.map(t => t.label)
 
         try {
@@ -712,7 +729,13 @@
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {
-            this.allWorkflows = res.data.grid
+            this.allWorkflows = res.data.grid.map(dt => {
+              let reformat = {}
+              for (let key in dt) {
+                reformat[this.dictCn(key)] = dt[key]
+              }
+              return reformat
+            })
           }
           this.$store.dispatch('setLoadingState', false)
         }).catch(err => {
