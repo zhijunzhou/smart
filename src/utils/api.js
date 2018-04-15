@@ -16,6 +16,10 @@ const getToken = () => {
   return window.sessionStorage.getItem(tokenKey)
 }
 
+api.baseURL = baseURL
+api.tokenKey = tokenKey
+api.getToken = getToken
+
 api.interceptors.request.use(config => {
   if (config.url.indexOf('/login') === -1) {
     config.headers[tokenKey] = getToken()

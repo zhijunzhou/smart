@@ -106,19 +106,32 @@
           :data="workflows">
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <el-form label-position="left" inline class="demo-table-expand">
-                  <br>
-                  <el-form-item label="备注">                    
-                    <el-input
-                      type="textarea"
-                      :rows="2"
-                      placeholder="添加注释..."
-                      v-model="scope.row.comments">
-                    </el-input>
-                    <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
+                <el-form label-position="right">
+                  <el-row>
+                    <el-col  :md="16" :lg="12">
+                      <el-form-item label="备注" :label-width="formLabelWidth">                    
+                        <el-input
+                          type="textarea"
+                          :rows="2"
+                          placeholder="添加注释..."
+                          v-model="scope.row.comments">
+                        </el-input>
+                        <el-button icon="el-icon-edit" round size="mini" @click="addComment(scope.row.suggestionId, scope.row.comments, scope.row.sn)">保存注释</el-button>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <el-form-item label="附件" :label-width="formLabelWidth">
+                    <el-upload
+                      drag
+                      name="attachement"
+                      :on-change="handlerUploader"
+                      :headers="getAuthHeaders()"
+                      :action="getUploadUrl(scope.row.suggestionId)">
+                      <i class="el-icon-upload"></i>
+                      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    </el-upload>
                   </el-form-item>
-                  <br>
-                  <el-form-item label="历史">
+                  <el-form-item label="历史" :label-width="formLabelWidth">
                       <div v-if="scope.row.history" v-for="(his, index) in scope.row.history" :key="'his_' + index">
                         <span><i class="el-icon-time"></i>{{ his.date }}</span>
                         <span>{{ his.operator }}</span>
@@ -861,6 +874,17 @@
           this.sugComment = ''
           this.errorHandler(err)
         })
+      },
+      getAuthHeaders () {
+        let headers = {}
+        headers[api.tokenKey] = api.getToken()
+        return headers
+      },
+      getUploadUrl (suggestionId) {
+        return api.baseURL + '/api/suggestion/attachement/' + suggestionId
+      },
+      handlerUploader (file, fileList) {
+        console.log(api, file, fileList)
       },
       errorHandler (err, specialCase) {
         if (specialCase && err.request.status === specialCase.code) {
