@@ -213,7 +213,7 @@
           <el-steps :active="getActiveStep(wf.status)" align-center :space="200" finish-status="success">
             <el-step v-for="(step, index) in getAllSteps(wf.status)" :key="'wf_step_' + index" :description="getDescription(wf, step)" :title="typeReverseMapping[step]"></el-step>
           </el-steps>
-          <el-form size="mini" :model="wf" style="margin-top: 15px;">
+          <el-form size="mini" :model="wf" style="margin-top: 15px;" v-if="wf.status !== 'summed' && wf.status !== 'closed'">
             <el-form-item label="备注" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="10" v-if="wf.status !== 'closed'">
