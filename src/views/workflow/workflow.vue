@@ -159,6 +159,7 @@
               prop="createDate">
             </el-table-column>
             <el-table-column
+              width="80"
               label="状态">
                 <template slot-scope="scope">                  
                   <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
@@ -180,11 +181,11 @@
             </el-table-column>
             <el-table-column
               label="产品名"
-              width="140"
+              width="100"
               prop="name">
             </el-table-column>
             <el-table-column
-              width="140"
+              width="100"
               label="建议"
               prop="suggestion">
               <template slot-scope="scope">
@@ -203,10 +204,11 @@
               prop="auditor">
             </el-table-column>
             <el-table-column
+              width="180"
               label="操作">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.status==='issued'||scope.row.status==='reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
-                <el-button v-else size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)">工作流</el-button>
+                <el-button v-if="scope.row.status === 'issued' || scope.row.status === 'reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
+                <el-button v-if="scope.row.status !== 'closed'" size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)" round>工作流</el-button>
               </template>
             </el-table-column>
           </el-table>
