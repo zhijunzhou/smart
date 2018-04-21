@@ -4,16 +4,20 @@
 			class="main-header"
 			height="65px">      
 			<el-row height="auto">
-				<el-col :span="11">
+				<el-col :span="4">
 					<img src="../assets/logo.png">
 				</el-col>
-				<el-col :span="4">
-					<div class="main-title">工作管理系统</div>
+				<el-col :span="6">
+							<div class="main-title-cn">亿泰德内部销售系统  </div>
+							<div class="main-title">{{date}}</div>
 				</el-col>
-
+				<el-col :span="8">
+							<div class="main-title-en">Excellence  Leadership Teamwork Creative</div>
+							<div class="main-title-en">Until you make peace with who you are, you will never be content with what you have.</div>
+				</el-col>
 			<!-- <span class="header-logo">$</span> -->
 			<!-- <span class="logo-txt">mart</span> -->
-			<el-col :span="9">
+			<el-col :span="6">
 			<el-popover
 				ref="userDetail"
 				placement="top-start"
@@ -83,7 +87,7 @@
 							<i class="el-icon-menu"></i>
 							<span>工作管理</span>
 						</template>
-						<el-menu-item :index="work.index" :route="work.route" v-for="work in workflow" @click="refresh">
+						<el-menu-item :index="work.index" :route="work.route" :key="work.index" v-for="work in workflow" @click="refresh">
 							<el-badge :value="work.count" class="suggestion-count">{{work.text}}&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
 						</el-menu-item>
 						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
@@ -126,11 +130,13 @@
 import { mapGetters, mapActions } from 'vuex'
 import mainHeader from '@/components/mainHeader/mainHeader'
 import api from '@/utils/api'
+import moment from 'moment'
 
 export default {
   data () {
     return {
       primaryColor: '#409eff',
+      date: '',
       workflow: [
         {id: 'issued_reissued', index: '2-1', route: {path: '/main/workflow?status=issued_reissued'}, text: '提议', count: null},
         {id: 'permitted', index: '2-2', route: {path: '/main/workflow?status=permitted'}, text: '待执行', count: null},
@@ -143,11 +149,17 @@ export default {
   },
   created () {
     this.getCount()
+    this.getDate()
   },
   methods: {
     ...mapActions({ setUserInfo: 'setUserInfo' }),
     refresh () {
       this.getCount()
+    },
+    getDate () {
+      setInterval(() => {
+        this.date = moment().locale('zh-cn').format('MM/DD/YYYY HH:mm:ss dddd')
+      }, 1000)
     },
     goBack () {
       this.$router.go(-1)
@@ -222,12 +234,20 @@ export default {
 .main-header {
 	width: 100%;
 	box-shadow: 0px 2px 4px #666;
-    /* position: relative; */
-	/* z-index: 8999; */
-	.main-title {
+	.main-title-cn {
 		font-weight: 800;
 		font-size: 24px;
-		margin-top: 12px;
+    line-height: 36px;
+	}
+	.main-title {
+		font-weight: 800;
+		/* font-size: 24px; */
+		/* margin-top: 12px; */
+	}
+	.main-title-en {
+		font-weight: 600;
+    font-style: italic;
+		line-height: 22px;
 	}
 }
 
