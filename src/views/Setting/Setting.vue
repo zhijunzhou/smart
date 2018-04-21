@@ -1,18 +1,32 @@
 <template>
     <div>
       <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
           <el-input
-            placeholder="请输入姓名"
+            placeholder="请输入姓名或者工号"
             v-model="searchFullName"
             @clear="searchFullNameChange"
+            @change="inputChange"
             clearable>
             <el-button slot="append" icon="el-icon-search" @click="searchFullNameChange">搜索</el-button>
           </el-input>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="2">
           &nbsp;
         </el-col>
+        <el-col :span="2" class="header-content">
+            用户角色:
+          </el-col>
+          <el-col :span="4" class="header-content">
+            <el-select size="mini" style="width: 150px;" v-model="roleId" @change="selectRole">
+                <el-option
+                  v-for="item in roleList"
+                  :key="item.roleId"
+                  :label="item.roleName"
+                  :value="item.roleId">
+                </el-option>
+              </el-select>
+          </el-col>
         <el-col :span="2" class="header-content">
           用户状态:
         </el-col>
@@ -117,13 +131,16 @@
             </el-table>
         </el-col>
         <el-col :span="24" class="text-right">
-          <el-pagination
-            layout="total, prev, pager, next, jumper"
-            @current-change="updatePageUsers"
-            :page-size="pageSize"
-            :total="total">
-          </el-pagination>
-        </el-col>
+            <el-pagination
+              @size-change="sizeChange"
+              @current-change="updatePageUsers"
+              :current-page="currentPage"
+              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-size="pageSize"
+              layout="sizes, total, prev, pager, next"
+              :total="total">
+            </el-pagination>
+          </el-col>
       </el-row>
       <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
           <el-form :model="form">
@@ -204,8 +221,11 @@
         formLabelWidth: '200px',
         filter: {
           userName: '',
+          fullName: '',
+          userRoleId: [],
           userStatus: ''
         },
+        roleId: null,
         roleList: [
           // { roleId: 4, roleName: '项目执行人' },
           // { roleId: 3, roleName: '项目创建人' },
@@ -236,6 +256,9 @@
     mounted () {
     },
     methods: {
+      inputChange (value) {
+        // console.log(value)
+      },
       unbind (userId) {
         const wechatId = null
         const wechatName = ''
@@ -244,6 +267,14 @@
         api.post('/api/wechat/bind', {userId, wechatId, wechatName, wechatImage, force}).then(res => {
           this.setUserInfo(res.data)
         })
+      },
+      sizeChange (pageSize) {
+        this.pageSize = pageSize
+        this.getUserData()
+      },
+      selectRole () {
+        this.filter.userRoleId = [this.roleId]
+        this.getUserData()
       },
       getBoolen (value) {
         console.log(value)
@@ -286,7 +317,14 @@
         })
       },
       searchFullNameChange () {
-        this.filter.userName = this.searchFullName
+        const isNumber = /^[0-9]+$/
+        if (isNumber.test(this.searchFullName)) {
+          this.filter.fullName = ''
+          this.filter.userName = this.searchFullName
+        } else {
+          this.filter.userName = ''
+          this.filter.fullName = this.searchFullName
+        }
         this.getUserData()
         console.log('searchFullNameChange', this.searchFullName)
       },
