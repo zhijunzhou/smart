@@ -45,7 +45,7 @@
             :data="users">
               <el-table-column
                 label="工号"
-                width="50"
+                width="60"
                 prop="userName">
               </el-table-column>
               <el-table-column
