@@ -38,7 +38,7 @@
     </el-tabs>
 
     <el-row class="analysis-table-header">
-      <el-col :span="22">
+      <el-col :span="23">
       <product-search 
         v-if="Object.keys(dynamicHeaders).length > 0"
         v-on:showHideColumns="showHideColumns"
@@ -49,12 +49,13 @@
         :dateRange="dateRange"
       />
       </el-col>
-      <el-col :span="2">
+      <el-col :span="1">
         <vue-csv-downloader
         :data="productsData"
         :fields="fields"
+        class="download"
         >
-          下载表格
+        <i class="el-icon-document" ></i>
         </vue-csv-downloader>
       </el-col>
     </el-row>
@@ -483,5 +484,9 @@ export default {
 }
 .analysis-table-header {
   margin-bottom: 0;
+}
+.download {
+  color: #FF6600;
+  font-size: 24px
 }
 </style>

@@ -31,8 +31,9 @@
           <vue-csv-download
             :data="allWorkflows"
             :fields="fieldsCn"
+            class="download"
             >
-            下载表格
+            <i class="el-icon-document" ></i>
           </vue-csv-download>
         </el-col>    
       </el-row>
@@ -920,6 +921,11 @@
 }
 .sug-description {
   padding: 15px 10px 2px 10px;
+}
+
+.download {
+  color: #FF6600;
+  font-size: 24px;
 }
 </style>
 
