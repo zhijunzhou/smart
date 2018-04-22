@@ -383,7 +383,7 @@ export default {
             data: composedArry[0].data.map(dt => dt.label)
           },
           yAxis: {
-            inverse: true,
+            // inverse: true,
             type: 'value'
           },
           tooltip: {
