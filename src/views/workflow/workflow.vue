@@ -525,7 +525,7 @@
         if (this.$route.query.status) {
           return this.$route.query.status.split('_')
         }
-        return ['issued', 'reissued']
+        return []
         //  this.checkList.map(ck => {
         //   if (ck && this.typeMapping[ck]) {
         //     return this.typeMapping[ck]

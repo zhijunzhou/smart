@@ -72,7 +72,8 @@
 					:router="true"
 					:defaultOpeneds="defaultOpeneds"
           default-active="1"
-          active-text-color="#FF6600"
+					active-text-color="#FF6600"
+					@open="allWork($event)" @close="allWork($event)"
 					class="el-menu-vertical-d">					
 					<el-menu-item index="1" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
 						<i class="el-icon-setting"></i>
@@ -82,13 +83,22 @@
 						<i class="el-icon-setting"></i>
 						<span><b>系统设置</b></span>
 					</el-menu-item>
-					<el-submenu index="2">
-						<template slot="title">
-							<i class="el-icon-menu"></i>
-							<span>工作管理</span>
+					<el-submenu index="2" class="workflow-box">
+						<template slot="title" >
+								<el-menu-item index="2-0" :route="{ path: '/main/workflow' }" class="workflow-main">
+									<i class="el-icon-message"></i>
+									<span><b>工作管理</b></span>
+								</el-menu-item>
+								<!-- <el-menu-item> -->
+									<!-- <span :class="{  submenuactive : index }">
+										<i class="el-icon-menu"></i>
+										<b>工作管理</b>
+									</span> -->
+								<!-- </el-menu-item> -->
 						</template>
 						<el-menu-item :index="work.index" :route="work.route" :key="work.index" v-for="work in workflow" @click="refresh">
-							<el-badge :value="work.count" class="suggestion-count">{{work.text}}&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
+								{{work.text}} <span class="work-count">({{work.count}})</span>
+							<!-- <el-badge :value="work.count" class="suggestion-count">&nbsp;&nbsp;&nbsp;&nbsp;</el-badge> -->
 						</el-menu-item>
 						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
 							<el-badge :value="12" class="suggestion-count">提议&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
@@ -250,6 +260,10 @@ export default {
 		line-height: 22px;
 	}
 }
+.work-count {
+	color: red;
+	font-size: 110%;
+}
 
 .suggestion-count {
 	sup {
@@ -317,7 +331,15 @@ header::after {
     outline: none;
     background-color: #ecf5ff;
 }
-
+.workflow-box {
+	.el-submenu__title {
+		height: 100%;
+		padding: 0!important;
+	}
+	.workflow-main {
+		padding: 0 20px!important;
+	}
+}
 	li 
 		.el-menu-item.is-active {
 				color: #FF6600!important;
