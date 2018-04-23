@@ -118,13 +118,13 @@
                   </el-row>
                   <el-form-item label="附件" :label-width="formLabelWidth">
                     <el-upload
-                      drag
                       name="attachement"
+                      :file-list="scope.row.attachment"
                       :on-change="handlerUploader"
                       :headers="getAuthHeaders()"
                       :action="getUploadUrl(scope.row.suggestionId)">
                       <i class="el-icon-upload"></i>
-                      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                      点击上传
                     </el-upload>
                   </el-form-item>
                   <el-form-item label="历史" :label-width="formLabelWidth">
@@ -203,8 +203,14 @@
               width="180"
               label="操作">
               <template slot-scope="scope">
+                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
+                  <el-button size="mini" round>
+                    分析
+                  </el-button>
+                </router-link>
                 <el-button v-if="scope.row.status === 'issued' || scope.row.status === 'reissued'" size="mini" @click="edit(scope.row)" round>编辑</el-button>
                 <el-button v-if="scope.row.status !== 'closed'" size="mini" icon="el-icon-edit" @click="doWorkflowUpdate(scope.row)" round>工作流</el-button>
+                <!-- <el-button v-if="scope.row.status !== 'closed'" size="mini" @click="analysis(scope.row)" round>分析</el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -568,6 +574,9 @@
       }
     },
     methods: {
+      analysis (row) {
+  
+      },
       updateDateRangeValue () {
         console.log(this.dr)
       },
@@ -732,6 +741,15 @@
             this.workflows.forEach(w => {
               api.get(`/api/suggestion/${w.suggestionId}/history`).then(res => {
                 w.history = res.data
+              })
+              api.get(`/api/suggestion/attachement/${w.suggestionId}`).then(attachment => {
+                console.log(attachment)
+                w.attachment = attachment.data.map(a => {
+                  return {
+                    name: a.fileName,
+                    url: a.fileUrl
+                  }
+                })
               })
             })
             this.total = res.data.pagination.total
