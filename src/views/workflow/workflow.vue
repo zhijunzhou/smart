@@ -196,9 +196,12 @@
       </el-col>
       <el-col :span="24" class="text-right">
         <el-pagination
-          layout="total, prev, pager, next, jumper"
+          @size-change="sizeChange"
           @current-change="updatePageWorkflow"
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 50, 100, 200]"
           :page-size="pageSize"
+          layout="sizes, total, prev, pager, next"
           :total="total">
         </el-pagination>
       </el-col>
@@ -328,7 +331,7 @@
       return {
         maxlength: 200,
         workflows: [],
-        pageSize: 15,
+        pageSize: 10,
         currentPage: 1,
         total: 0,
         periodSelect: null,
@@ -545,6 +548,10 @@
       }
     },
     methods: {
+      sizeChange (pageSize) {
+        this.pageSize = pageSize
+        this.getPageWorkflows()
+      },
       updateLu () {
         let format = 'YYYY-MM-DD'
         let start = moment().subtract(this.periodSelect, 'days').format(format)
