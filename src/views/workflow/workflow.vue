@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="form">
-      <el-row>
+      <el-row class="first-search">
         <el-col :span="6">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" >
@@ -14,19 +14,34 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="最近">
+        <el-col :span="5" :offset="1">
+          <el-form-item label="选择时间">
             <el-select style="width: 150px;" v-model="periodSelect" @change="updateLu">
               <el-option
-                v-for="item in periodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="7" :offset="5" class="text-right">
+              v-for="item in periodOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="9">
+        <el-form-item v-if="periodSelect===0">
+          <el-date-picker
+            v-model="dr"
+            @change="updateDateRangeValue"
+            type="daterange"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            range-separator="~"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
+          </el-date-picker>
+        </el-form-item>
+        <span v-else>&nbsp;</span>
+      </el-col>
+        <el-col :span="2" :offset="1" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
             :data="allWorkflows"
@@ -329,6 +344,7 @@
     },
     data () {
       return {
+        dr: null,
         maxlength: 200,
         workflows: [],
         pageSize: 10,
@@ -434,6 +450,10 @@
           }, {
             label: '两年',
             value: 730
+          },
+          {
+            label: '自定义',
+            value: 0
           }
         ],
         chains: {
@@ -548,6 +568,9 @@
       }
     },
     methods: {
+      updateDateRangeValue () {
+        console.log(this.dr)
+      },
       sizeChange (pageSize) {
         this.pageSize = pageSize
         this.getPageWorkflows()
@@ -918,6 +941,9 @@
 </script>
 
 <style scoped>
+.first-search {
+  margin-bottom: 0px;
+}
 .btn-sug-group {
   margin-top: 20px;
 }
