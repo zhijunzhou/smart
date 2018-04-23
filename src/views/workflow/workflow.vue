@@ -44,7 +44,7 @@
         <el-col :span="2" :offset="1" class="text-right">
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <vue-csv-download
-            :data="allWorkflows"
+            :data="download"
             :fields="fieldsCn"
             class="download"
             >
@@ -366,7 +366,7 @@
         productType: '',
         shopList: [],
         checkList: [],
-        allWorkflows: [],
+        download: [],
         shopId: undefined,
         currentSugId: undefined,
         modalType: undefined,
@@ -617,7 +617,7 @@
         // const fieldNames = columns.map(t => t.label)
 
         try {
-          const result = json2csv.parse(this.allWorkflows, { fields })
+          const result = json2csv.parse(this.download, { fields })
           console.log(result)
           const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + result
           const link = document.createElement('a')
@@ -752,7 +752,9 @@
             pageSize: 999999,
             currentPage: 1,
             filter: {
-              shopId: this.shopId
+              shopId: this.shopId,
+              status: this.getStatus,
+              ...this.searchField
             }
           }
         }
@@ -760,14 +762,18 @@
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {
-            this.allWorkflows = res.data.grid.map(dt => {
+            this.download = res.data.grid.map(dt => {
               let reformat = {}
               for (let key in dt) {
-                reformat[this.dictCn[key]] = dt[key]
+                if (key === 'status') {
+                  reformat[this.dictCn[key]] = this.typeReverseMapping[dt[key]]
+                } else {
+                  reformat[this.dictCn[key]] = dt[key]
+                }
               }
               return reformat
             })
-            console.log('this.allWorkflows', this.allWorkflows)
+            console.log('this.download', this.download)
           }
           this.$store.dispatch('setLoadingState', false)
         }).catch(err => {
