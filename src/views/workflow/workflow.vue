@@ -201,7 +201,7 @@
               prop="auditor">
             </el-table-column>
             <el-table-column
-              width="180"
+              width=""
               label="操作">
               <template slot-scope="scope">
                 <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">

@@ -103,29 +103,9 @@
                 width="300">
                 <template slot-scope="scope">
                   <el-button size="mini" round @click="edit(scope.row)" icon="el-icon-edit">编辑</el-button>
-                  <el-popover :style="{ color: scope.row.changePasswordFlag ? 'red':'blue' }"
-                    ref="changePassWord"
-                    placement="top"
-                    width="160"
-                    v-model="scope.row.changePasswordFlag">
-                    <p><b>{{scope.row.fullName}}的新密码</b></p>
-                    <p>注意: 修改密码会同时解绑微信</p>
-                    <el-input v-model="newPassword" placeholder="请输入密码"></el-input>
-                    <p>&nbsp;</p>
-                    <div style="text-align: right; margin: 0">
-                      <el-button type="primary" size="mini" @click="confirmChangePassword(scope.row)">确定</el-button>
-                    </div>
-                  </el-popover>
-                  <el-button size="mini" round icon="el-icon-view" v-popover:changePassWord>修改密码</el-button>
+                  <el-button size="mini" round icon="el-icon-view" @click="changePassWord(scope.row)">修改密码</el-button>
                   <el-button v-if="scope.row.userStatus==='disabled'"  icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
                   <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" >禁用</el-button>
-                  <div style="display:none">
-                      <el-popover
-                      ref="changePassWord"              
-                      trigger="focus">
-                      &nbsp;
-                      </el-popover>
-                    </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -135,13 +115,41 @@
               @size-change="sizeChange"
               @current-change="updatePageUsers"
               :current-page="currentPage"
-              :page-sizes="[10, 20, 50, 100, 200]"
+              :page-sizes="[20, 50, 100]"
               :page-size="pageSize"
               layout="sizes, total, prev, pager, next"
               :total="total">
             </el-pagination>
           </el-col>
       </el-row>
+      <el-dialog title="修改密码" :visible.sync="passwordDialog">
+        <el-form :model="account">
+          <el-form-item label="工号" :label-width="formLabelWidth">
+            {{account.userName}}
+          </el-form-item>
+          <el-form-item label="姓名" :label-width="formLabelWidth">
+              {{account.fullName}}
+            </el-form-item>
+          <el-form-item label="密码" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="12">
+                <el-input v-model="account.password" auto-complete="off" type="password"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+        <el-alert
+          title="注意: 修改密码会同时解绑微信"
+          type="warning"
+          center
+          show-icon
+          :closable="false">
+        </el-alert>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="passwordDialog = false">取 消</el-button>
+          <el-button type="primary" @click="confirmChangePassword">确 定</el-button>
+        </div>
+      </el-dialog>
       <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
@@ -158,10 +166,10 @@
               </el-row>
             </el-form-item> -->
             <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-row>
-                    <el-col :span="12">
-              <el-input v-model="form.fullName" auto-complete="off"></el-input>
-              </el-col>
+              <el-row>
+                <el-col :span="12">
+                  <el-input v-model="form.fullName" auto-complete="off"></el-input>
+                </el-col>
               </el-row>
             </el-form-item>
             <el-form-item label="电话" :label-width="formLabelWidth">
@@ -204,12 +212,11 @@
     data () {
       return {
         users: [],
-        pageSize: 10,
+        pageSize: 20,
         total: 0,
         currentPage: 1,
         search_val: '',
         showLiked: false,
-        newPassword: '',
         searchFullName: '',
         options: [],
         dialogFormVisible: false,
@@ -238,6 +245,13 @@
         ],
         userStatusSelected: ['active', 'disabled'],
         modalType: 'edit',
+        account: {
+          userId: '',
+          userName: '',
+          fullName: '',
+          passWord: ''
+        },
+        passwordDialog: false,
         form: {
           userId: '',
           userName: '',
@@ -256,6 +270,12 @@
     mounted () {
     },
     methods: {
+      changePassWord (user) {
+        this.account.userId = user.userId
+        this.account.userName = user.userName
+        this.account.fullName = user.fullName
+        this.passwordDialog = true
+      },
       inputChange (value) {
         // console.log(value)
       },
@@ -277,38 +297,23 @@
         this.getUserData()
       },
       getBoolen (value) {
-        console.log(value)
         return value
       },
       changePassword (row) {
         row.changePasswordFlag = true
       },
-      cancelChangePassword (row) {
-        console.log(row)
-        row.changePasswordFlag = true
-        setTimeout(() => {
-          row.changePasswordFlag = true
-        }, 0)
-        // this.users = this.users.map(u => {
-        //   u.changePasswordFlag = false
-        //   return u
-        // })
-        this.newPassword = ''
-      },
-      confirmChangePassword (row) {
-        const userId = row.userId
-        const passWord = this.newPassword
+      confirmChangePassword () {
+        const userId = this.account.userId
+        const passWord = this.account.password
         api.post(`/api/user/password`, {userId, passWord}).then(res => {
           Message({
             showClose: true,
             message: '操作成功!',
             type: 'success'
           })
-          this.newPassword = ''
+          this.passwordDialog = false
           this.unbind(userId)
-          row.changePasswordFlag = false
         }).catch(err => {
-          row.changePasswordFlag = false
           Message({
             showClose: true,
             message: err.response.statusText,
@@ -353,7 +358,6 @@
         this.dialogFormVisible = false
         const fullName = this.form.fullName
         const email = this.form.email || ''
-        console.log(email, this.form.email)
         const phone = this.form.phone || ''
         const userName = this.form.userName
         const roles = this.roleSelected
@@ -386,11 +390,9 @@
         switch (id) {
           case 5:
             res = (this.roleSelected.indexOf(6) > -1)
-            console.log(id, res)
             break
           case 6:
             res = (this.roleSelected.indexOf(5) > -1)
-            console.log(id, res)
             break
         }
         return res
@@ -417,6 +419,11 @@
         this.roleSelected = []
         this.dialogFormVisible = true
       },
+      unique (array) {
+        let jsonArray = array.map(a => JSON.stringify(a))
+        jsonArray = Array.from(new Set(jsonArray))
+        return jsonArray.map(j => JSON.parse(j))
+      },
       getUserData () {
         const pagination = {
           pageSize: this.pageSize,
@@ -426,7 +433,7 @@
         api.post('/api/user/pagination', {pagination}).then(res => {
           this.users = res.data.grid
           this.users.forEach(u => {
-            u.changePasswordFlag = false
+            u.roles = this.unique(u.roles)
           })
           this.total = res.data.pagination.total
         })
