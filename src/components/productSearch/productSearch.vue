@@ -11,9 +11,9 @@
       <el-col :span="6">
         <el-form-item label="单位">
           <el-radio-group size="mini" v-model="su" @change="updateUnitChange">
-            <el-radio label="7">月</el-radio>
-            <el-radio label="6">周</el-radio>
             <el-radio label="5">日</el-radio>
+            <el-radio label="6">周</el-radio>
+            <el-radio label="7">月</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>

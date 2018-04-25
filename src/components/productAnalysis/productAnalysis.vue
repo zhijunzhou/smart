@@ -48,6 +48,7 @@
         :salesUnit="salesUnit" 
         :dateRange="dateRange"
       />
+      <span v-else>&nbsp;</span>
       </el-col>
       <el-col :span="1">
         <vue-csv-downloader
@@ -102,7 +103,7 @@ export default {
   data () {
     return {
       activeName: 'sales',
-      salesUnit: '7',
+      salesUnit: '5',
       latestUnit: '5',
       showChartCategory: false,
       showChartKeyword: false,

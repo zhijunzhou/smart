@@ -120,6 +120,7 @@
                     <el-upload
                       name="attachement"
                       :file-list="scope.row.attachment"
+                      :on-preview="downloadFile"
                       :on-change="handlerUploader"
                       :headers="getAuthHeaders()"
                       :action="getUploadUrl(scope.row.suggestionId)">
@@ -220,7 +221,7 @@
           @size-change="sizeChange"
           @current-change="updatePageWorkflow"
           :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100, 200]"
+          :page-sizes="[20, 50, 100]"
           :page-size="pageSize"
           layout="sizes, total, prev, pager, next"
           :total="total">
@@ -353,7 +354,7 @@
         dr: null,
         maxlength: 200,
         workflows: [],
-        pageSize: 10,
+        pageSize: 20,
         currentPage: 1,
         total: 0,
         periodSelect: null,
@@ -577,6 +578,17 @@
       analysis (row) {
   
       },
+      downloadFile (file) {
+        let eleLink = document.createElement('a')
+        eleLink.download = file.name
+        eleLink.style.display = 'none'
+        eleLink.href = file.url
+        // 触发点击
+        document.body.appendChild(eleLink)
+        eleLink.click()
+        // 然后移除
+        document.body.removeChild(eleLink)
+      },
       updateDateRangeValue () {
         console.log(this.dr)
       },
@@ -746,8 +758,8 @@
                 console.log(attachment)
                 w.attachment = attachment.data.map(a => {
                   return {
-                    name: a.fileName,
-                    url: a.fileUrl
+                    name: '<' + this.typeReverseMapping[a.status] + '>' + a.fileName,
+                    url: api.baseURL + a.fileUrl
                   }
                 })
               })
