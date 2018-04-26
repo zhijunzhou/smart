@@ -13,6 +13,18 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
+        <el-tab-pane label="广告" name="advertising">
+          <el-row>
+            <el-col :span="24" style="padding-top: 0;">
+              <chart 
+                :options="statisticsBar"
+                :init-options="initOptions"
+                @legendselectchanged="onClick($event)"
+                auto-resize
+                />
+            </el-col>
+          </el-row>         
+        </el-tab-pane>
         <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
           <el-row v-if="showChartCategory">
             <el-col :span="24" style="padding-top: 0">
