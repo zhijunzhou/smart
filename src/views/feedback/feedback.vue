@@ -1,0 +1,543 @@
+<template>
+  <div>
+    <el-row>
+      <el-form ref="form">
+        <el-col :span="8" style="padding-right: 5px;">
+          <el-form-item label="店铺">
+            <el-select clearable v-model="shopId" placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" style="padding-right: 5px;">
+          <el-form-item label="国家">
+            <el-select clearable v-model="shopId" placeholder="选择国家">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" style="padding-right: 5px;">
+            <el-form-item label="星评">
+              <el-select clearable v-model="shopId" placeholder="选择星评">
+                <el-option
+                  v-for="shop in shopList"
+                  :key="shop.value"
+                  :label="shop.shopName"
+                  :value="shop.shopId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" style="padding-right: 5px;">
+            <el-form-item label="状态">
+              <el-select clearable v-model="shopId" placeholder="选择状态">
+                <el-option
+                  v-for="shop in shopList"
+                  :key="shop.value"
+                  :label="shop.shopName"
+                  :value="shop.shopId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" style="padding-right: 5px;">
+            <el-form-item label="操作员">
+              <el-select clearable v-model="shopId" placeholder="选择操作员">
+                <el-option
+                  v-for="shop in shopList"
+                  :key="shop.value"
+                  :label="shop.shopName"
+                  :value="shop.shopId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5" >
+              <el-form-item>
+                  <el-input
+                    placeholder="请输入产品ASIN"
+                    clearable
+                    v-model="searchField.productId">
+                    <template slot="prepend">产品码</template>
+                  </el-input>
+                </el-form-item>
+          </el-col>    
+          <el-col :span="5" :offset="2">
+            <el-form-item>
+                <el-input
+                  placeholder="输入建议人"
+                  clearable
+                  v-model="searchField.proposer">
+                  <template slot="prepend">建议人</template>
+                </el-input>
+              </el-form-item>
+          </el-col>    
+          <el-col :span="5" :offset="2">
+            <el-form-item>
+                <el-input
+                  placeholder="输入审批人"
+                  clearable
+                  v-model="searchField.auditor">
+                  <template slot="prepend">审批人</template>
+                </el-input>
+              </el-form-item>
+          </el-col>
+          <el-col :span="2" :offset="2">
+              <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+          </el-col>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="选择时间">
+            <el-select style="width: 150px;" v-model="periodSelect" @change="updateLu">
+              <el-option
+              v-for="item in periodOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="9">
+          <el-form-item v-if="periodSelect===0">
+            <el-date-picker
+              v-model="dr"
+              @change="updateDateRangeValue"
+              type="daterange"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              range-separator="~"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间">
+            </el-date-picker>
+          </el-form-item>
+          <span v-else>&nbsp;</span>
+        </el-col>
+        <el-col :span="8">
+          <el-input
+            placeholder="请输入产品ASIN"
+            v-model="search_val"
+            @clear="searchProduct"
+            clearable>
+            <el-button slot="append" icon="el-icon-search" @click="searchProduct">搜索</el-button>
+          </el-input>
+
+          <!-- <el-form-item>
+            <el-input
+              placeholder="产品ASIN"
+              prefix-icon="el-icon-search"
+              v-model="search_val">
+            </el-input>
+          </el-form-item> -->
+        </el-col>
+        <!-- <el-col :span="2" style="padding-left: 5px;">
+          <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
+        </el-col> -->
+        <el-col :span="6" class="text-right">
+          <el-form-item>
+            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="24" class="text-right">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageProducts"
+          :page-size="pageSize"
+          :total="productTotal">
+        </el-pagination>
+      </el-col>
+      <el-col :span="24">
+        <el-table
+            :data="products">
+            <el-table-column
+              label="ASIN码"
+              width="140">
+              <template slot-scope="scope">
+                <b>{{scope.row.asin}}</b>
+                <div v-for="cp in scope.row.competitors" :key="cp">
+                  {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="商品描述"
+              width="350"
+              prop="name"
+              sortable>
+            </el-table-column>
+            <el-table-column
+              label="所属店铺"
+              width="150"
+              prop="shopName"
+              sortable>
+            </el-table-column>            
+            <el-table-column
+              label="销量"
+              width="100"
+              prop="orders"
+              sortable>
+            </el-table-column>
+            <el-table-column
+              label="价格"
+              width="100"
+              prop="price"
+              sortable>
+            </el-table-column>
+            <el-table-column
+              header-align="center"
+              align="center"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button size="mini" round @click="add(scope.row)">
+                  建议
+                </el-button>
+                <router-link :to="{path: '/main/edit-product', query: scope.row}">
+                  <el-button size="mini" round>
+                    编辑
+                  </el-button>
+                </router-link>
+                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">
+                  <el-button size="mini" round>
+                    分析
+                  </el-button>
+                </router-link>
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="80"
+              label="关注">
+              <template slot-scope="scope">
+                <i class="el-icon-star-off large-icon" title="点击关注" v-if="isNotLike(scope.row)" @click="likeProduct(scope.row, true)"></i>
+                <i class="el-icon-star-on large-icon" title="取消关注" v-else @click="likeProduct(scope.row, false)"></i>
+              </template>              
+            </el-table-column>
+          </el-table>
+      </el-col>
+      <el-col :span="24" class="text-right">
+        <el-pagination
+          layout="total, prev, pager, next, jumper"
+          @current-change="updatePageProducts"
+          :page-size="pageSize"
+          :total="productTotal">
+        </el-pagination>
+      </el-col>
+    </el-row>
+    <el-dialog title="工作流" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="ASIN" :label-width="formLabelWidth">
+              {{form.productId}}
+          </el-form-item>
+          <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
+              {{form.name}}
+          </el-form-item> -->
+          <el-form-item label="产品名" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="10">
+                <el-input v-model="form.productName"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="优化类型" :label-width="formLabelWidth">
+            <el-select v-model="form.optimizationType" placeholder="选择优化类型">
+              <el-option
+                v-for="option in optimizationTypes"
+                :key="option.typeId"
+                :label="option.typeName"
+                :value="option.typeName">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属店铺" :label-width="formLabelWidth">
+            <el-select v-model="form.shopId" placeholder="选择店铺">
+              <el-option
+                v-for="shop in shopList"
+                :key="shop.value"
+                :label="shop.shopName"
+                :value="shop.shopId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="建议主题" :label-width="formLabelWidth">
+            <el-row>
+              <el-col :span="10">
+                <el-input v-model="form.title"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="建议" :label-width="formLabelWidth">
+              <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>        
+          <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
+        </div>
+      </el-dialog>
+  </div>
+</template>
+
+<script>
+import api from '../../utils/api'
+import { Message } from 'element-ui'
+import moment from 'moment'
+
+export default {
+  data () {
+    return {
+      periodOptions: [
+        {
+          label: '周',
+          value: 7
+        }, {
+          label: '月',
+          value: 30
+        }, {
+          label: '季度',
+          value: 120
+        }, {
+          label: '半年',
+          value: 183
+        }, {
+          label: '一年',
+          value: 365
+        }, {
+          label: '两年',
+          value: 730
+        },
+        {
+          label: '自定义',
+          value: 0
+        }
+      ],
+      maxlength: 200,
+      products: [],
+      pageSize: 15,
+      productTotal: 0,
+      currentPage: 1,
+      pageProducts: [],
+      search_val: undefined,
+      shopId: undefined,
+      isShowLiked: false,
+      likedProducts: [],
+      shopList: [],
+      formLabelWidth: '120px',
+      options: [],
+      productType: '',
+      modalType: 'add',
+      dialogFormVisible: false,
+      optimizationTypes: [
+      ],
+      periodSelect: null,
+      dr: null,
+      searchField: {
+        productId: '',
+        auditor: '',
+        proposer: ''
+      },
+      form: {
+        productId: '',
+        shopId: undefined,
+        productName: '',
+        optimizationType: '',
+        suggestion: '',
+        title: '',
+        sn: 1
+      }
+    }
+  },
+  created () {
+    this.search_val = this.$route.query.productId
+    this.shopId = this.$route.query.shopId
+
+    this.getShopList()
+
+    if (this.search_val && this.shopId) {
+      this.searchProduct()
+    } else {
+      this.getPageProducts()
+    }
+    this.listSuggestTypes()
+  },
+  methods: {
+    updateLu () {
+      let format = 'YYYY-MM-DD'
+      let start = moment().subtract(this.periodSelect, 'days').format(format)
+      let end = moment().format(format)
+      const status = this.getStatus
+
+      console.log('updateLu', status, start, end)
+      // this.searchField.period = {
+      //   dateType: status.join(','),
+      //   start: start,
+      //   end: end
+      // }
+      // this.getPageWorkflows()
+    },
+    updateDateRangeValue () {
+      console.log(this.dr)
+    },
+    listSuggestTypes () {
+      api.get(`/api/suggest_type`).then(res => {
+        this.optimizationTypes = res.data
+      })
+    },
+    saveWork () {
+      let self = this
+      self.form.sn = undefined
+      api.post(`/api/suggestion`, self.form).then(res => {
+        Message({
+          showClose: true,
+          message: '更新成功!',
+          type: 'success'
+        })
+        self.dialogFormVisible = false
+        self.getPageWorkflows(true)
+      }).catch(err => {
+        self.errorHandler(err, {code: 404, message: '产品未找到'})
+      })
+    },
+    add (row) {
+      console.log(row)
+      const {asin, shopId, name} = row
+      this.modalType = 'add'
+      this.dialogFormVisible = true
+      this.form.productId = asin
+      this.form.name = name
+      this.form.shopId = shopId
+      this.form.productName = undefined
+      this.form.optimizationType = undefined
+      this.form.suggestion = undefined
+      this.form.title = undefined
+    },
+    isNotLike (product) {
+      return !this.likedProducts.find(p => {
+        return product.asin === p.productId
+      })
+    },
+    searchProduct () {
+      let filter = {
+        productId: this.search_val,
+        shopId: this.shopId
+      }
+      this.getPageProducts(filter)
+    },
+    getPageProducts (filter) {
+      let pagination = {
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }
+      if (filter) {
+        pagination.filter = filter
+      }
+
+      this.$store.dispatch('setLoadingState', true)
+      api.post('/api/product/pagination', {pagination}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.products = res.data.grid
+          this.productTotal = res.data.pagination.total
+          this.listLikedProducts()
+        }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
+    },
+    getShopList () {
+      api.get('/api/shop').then(res => {
+        this.shopList = res.data
+      })
+    },
+    updatePageProducts (currentPage) {
+      this.currentPage = currentPage
+      this.getPageProducts()
+    },
+    listLikedProducts () {
+      api.get(`/api/interested`).then(res => {
+        console.log(res.data)
+        this.likedProducts = res.data
+      })
+    },
+    showHideLiked () {
+      let filter = {
+        productId: this.search_val,
+        shopId: this.shopId,
+        interestedOnly: this.isShowLiked ? 1 : undefined
+      }
+      this.getPageProducts(filter)
+    },
+    likeProduct (product, like) {
+      let productInfo = {
+        productId: product.asin,
+        shopId: product.shopId
+      }
+      if (like === true) {
+        api.post(`/api/interested`, productInfo).then(res => {
+          if (res && res.status === 200) {
+            console.log(res)
+            this.listLikedProducts()
+          }
+        })
+      } else {
+        let interested = this.likedProducts.find(p => p.productId === product.asin)
+        api.delete(`/api/interested/${interested.interestedId}`).then(res => {
+          this.listLikedProducts()
+        })
+      }
+    },
+    errorHandler (err, specialCase) {
+      if (specialCase && err.request.status === specialCase.code) {
+        Message({
+          showClose: true,
+          message: specialCase.message,
+          type: 'error'
+        })
+      } else if (err.request.status === 403) {
+        Message({
+          showClose: true,
+          message: '当前用户权限不足',
+          type: 'error'
+        })
+      } else if (err.request.status === 431) {
+        Message({
+          showClose: true,
+          message: '数据提交冲突',
+          type: 'error'
+        })
+      } else {
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      }
+    }
+  }
+}
+</script>
+<style>
+.el-icon-star-off {
+  color:#FF6600
+}
+
+.el-icon-star-on {
+  color:#FF6600
+}
+</style>
+
