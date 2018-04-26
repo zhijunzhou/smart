@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-row>
-      <el-form ref="form">
-        <el-col :span="8" style="padding-right: 5px;">
+    <el-form ref="form">
+      <el-row>
+        <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺">
+            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
@@ -14,150 +14,135 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8" style="padding-right: 5px;">
+        <el-col :span="4" style="padding-right: 5px;">
           <el-form-item label="国家">
-            <el-select clearable v-model="shopId" placeholder="选择国家">
+            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
               <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
+                v-for="nation in nationList"
+                :key="nation.value"
+                :label="nation.nationName"
+                :value="nation.nationId">
               </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8" style="padding-right: 5px;">
-            <el-form-item label="星评">
-              <el-select clearable v-model="shopId" placeholder="选择星评">
+        <el-col :span="5" :offset="1">
+            <el-form-item label="选择时间">
+              <el-select class="time-select" v-model="periodSelect" @change="updateLu">
                 <el-option
-                  v-for="shop in shopList"
-                  :key="shop.value"
-                  :label="shop.shopName"
-                  :value="shop.shopId">
+                v-for="item in periodOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="padding-right: 5px;">
+          <el-col :span="8">
+            <el-form-item v-if="periodSelect===0">
+              <el-date-picker
+                v-model="dr"
+                @change="updateDateRangeValue"
+                type="daterange"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                range-separator="~"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item v-else>&nbsp;</el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="状态">
-              <el-select clearable v-model="shopId" placeholder="选择状态">
+              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select">
                 <el-option
-                  v-for="shop in shopList"
-                  :key="shop.value"
-                  :label="shop.shopName"
-                  :value="shop.shopId">
+                  v-for="status in statusList"
+                  :key="status.value"
+                  :label="status.statusName"
+                  :value="status.statusId">
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="padding-right: 5px;">
-            <el-form-item label="操作员">
-              <el-select clearable v-model="shopId" placeholder="选择操作员">
+          <el-col :span="4" style="padding-right: 5px;">
+            <el-form-item label="星评">
+              <el-select clearable v-model="rateId" placeholder="选择星评" class="rate-select">
                 <el-option
-                  v-for="shop in shopList"
-                  :key="shop.value"
-                  :label="shop.shopName"
-                  :value="shop.shopId">
+                  v-for="rate in rateList"
+                  :key="rate.value"
+                  :label="rate.rateName"
+                  :value="rate.rateId">
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5" >
-              <el-form-item>
-                  <el-input
-                    placeholder="请输入产品ASIN"
-                    clearable
-                    v-model="searchField.productId">
-                    <template slot="prepend">产品码</template>
-                  </el-input>
-                </el-form-item>
-          </el-col>    
-          <el-col :span="5" :offset="2">
-            <el-form-item>
+
+          <el-col :span="10" :offset="1" style="padding-right: 5px;">
+            <el-form-item label="选择用户" >
+              <el-select clearable v-model="userId" placeholder="选择用户" class="time-select">
+                <el-option
+                  v-for="user in userList"
+                  :key="user.value"
+                  :label="user.userName"
+                  :value="user.userId">
+                </el-option>
+              </el-select>
+
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6" style="padding-right: 5px;">
+            <el-form-item label="买家">
+              <el-input
+                class="shop-select"
+                placeholder="请输入买家Id"
+                clearable
+                v-model="searchField.productId">
+              </el-input>
+            </el-form-item>
+          </el-col>  
+          <el-col :span="4" style="padding-right: 5px;">
+              <el-form-item label="订单">
                 <el-input
-                  placeholder="输入建议人"
+                  class="nation-select"
+                  placeholder="输入订单号"
                   clearable
-                  v-model="searchField.proposer">
-                  <template slot="prepend">建议人</template>
+                  v-model="searchField.productId">
                 </el-input>
               </el-form-item>
-          </el-col>    
-          <el-col :span="5" :offset="2">
-            <el-form-item>
+            </el-col>  
+          <el-col :span="6" :offset="1">
+            <el-form-item label="产品ASIN">
                 <el-input
-                  placeholder="输入审批人"
+                  placeholder="输入ASIN"
+                  type="textarea"
+                  class="asin-input"
                   clearable
                   v-model="searchField.auditor">
-                  <template slot="prepend">审批人</template>
                 </el-input>
               </el-form-item>
           </el-col>
-          <el-col :span="2" :offset="2">
+          <el-col :span="5" :offset="0">
               <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
+              <el-button type="" round icon="el-icon-search" @click="searchWorkflow">重置</el-button>
           </el-col>
-        <el-col :span="5" :offset="1">
-          <el-form-item label="选择时间">
-            <el-select style="width: 150px;" v-model="periodSelect" @change="updateLu">
-              <el-option
-              v-for="item in periodOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="9">
-          <el-form-item v-if="periodSelect===0">
-            <el-date-picker
-              v-model="dr"
-              @change="updateDateRangeValue"
-              type="daterange"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd"
-              range-separator="~"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间">
-            </el-date-picker>
-          </el-form-item>
-          <span v-else>&nbsp;</span>
-        </el-col>
-        <el-col :span="8">
-          <el-input
-            placeholder="请输入产品ASIN"
-            v-model="search_val"
-            @clear="searchProduct"
-            clearable>
-            <el-button slot="append" icon="el-icon-search" @click="searchProduct">搜索</el-button>
-          </el-input>
-
-          <!-- <el-form-item>
-            <el-input
-              placeholder="产品ASIN"
-              prefix-icon="el-icon-search"
-              v-model="search_val">
-            </el-input>
-          </el-form-item> -->
-        </el-col>
-        <!-- <el-col :span="2" style="padding-left: 5px;">
-          <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
-        </el-col> -->
-        <el-col :span="6" class="text-right">
-          <el-form-item>
-            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
-          </el-form-item>
-        </el-col>
+          <el-col :span="1" :offset="1" class="text-right">
+              <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+              <vue-csv-download
+                :data="download"
+                :fields="fieldsCn"
+                class="download"
+                >
+                <i class="el-icon-document" ></i>
+              </vue-csv-download>
+            </el-col>
+        </el-row>
       </el-form>
-    </el-row>
     <el-row :gutter="20">
-      <el-col :span="24" class="text-right">
-        <el-pagination
-          layout="total, prev, pager, next, jumper"
-          @current-change="updatePageProducts"
-          :page-size="pageSize"
-          :total="productTotal">
-        </el-pagination>
-      </el-col>
       <el-col :span="24">
         <el-table
             :data="products">
@@ -227,10 +212,13 @@
       </el-col>
       <el-col :span="24" class="text-right">
         <el-pagination
-          layout="total, prev, pager, next, jumper"
-          @current-change="updatePageProducts"
+          @size-change="sizeChange"
+          @current-change="updatePageUsers"
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100]"
           :page-size="pageSize"
-          :total="productTotal">
+          layout="sizes, total, prev, pager, next"
+          :total="total">
         </el-pagination>
       </el-col>
     </el-row>
@@ -536,8 +524,26 @@ export default {
   color:#FF6600
 }
 
+.nation-select {
+  width: 110px;
+}
 .el-icon-star-on {
   color:#FF6600
+}
+
+.asin-input {
+  width: 150px;
+}
+.rate-select {
+  width: 110px;
+}
+
+.time-select {
+  width: 150px;
+}
+
+.shop-select {
+  width: 160px;
 }
 </style>
 

@@ -25,6 +25,28 @@
             </el-col>
           </el-row>         
         </el-tab-pane>
+        <el-tab-pane label="每日QA" name="qaDaily">
+          <el-row>
+            <el-col :span="24" style="padding-top: 0;">
+              <chart 
+                :options="categoryBar(categories[0])"
+                :init-options="initOptions"
+                auto-resize
+                />
+            </el-col>
+          </el-row>         
+        </el-tab-pane>
+        <el-tab-pane label="每日反馈" name="feedbackDaily">
+          <el-row>
+            <el-col :span="24" style="padding-top: 0;">
+              <chart 
+                :options="categoryBar(categories[0])"
+                :init-options="initOptions"
+                auto-resize
+                />
+            </el-col>
+          </el-row>         
+        </el-tab-pane>
         <el-tab-pane v-for="ca of categories" :key="ca" :label="getTabName(ca)" :name="ca">
           <el-row v-if="showChartCategory">
             <el-col :span="24" style="padding-top: 0">

@@ -86,7 +86,12 @@ body > .el-container {
 }
 
 .el-row {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+}
+
+.download {
+  color: #FF6600;
+  font-size: 24px;
 }
 
 .el-row:last-child {
