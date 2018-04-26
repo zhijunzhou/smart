@@ -69,12 +69,12 @@
           </el-col>
           <el-col :span="4" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="rateId" placeholder="选择星评" class="rate-select">
+              <el-select clearable v-model="stars" placeholder="选择星评" class="rate-select">
                 <el-option
                   v-for="rate in rateList"
-                  :key="rate.value"
-                  :label="rate.rateName"
-                  :value="rate.rateId">
+                  :key="rate"
+                  :label="rate"
+                  :value="rate">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -127,99 +127,81 @@
               </el-form-item>
           </el-col>
           <el-col :span="5" :offset="0">
-              <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
-              <el-button type="" round icon="el-icon-search" @click="searchWorkflow">重置</el-button>
+              <el-button type="primary" round icon="el-icon-search" @click="searchGrid">搜索</el-button>
+              <el-button type="" round icon="el-icon-search" @click="searchGrid">重置</el-button>
           </el-col>
-          <el-col :span="1" :offset="1" class="text-right">
-              <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+        </el-row>
+        <el-row>
+          <el-popover
+            ref="showHideColumns"
+            trigger="hover">
+            <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+              <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
+            </el-checkbox-group>
+          </el-popover>
+          <el-col :span="8">
+              <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
               <vue-csv-download
                 :data="download"
                 :fields="fieldsCn"
                 class="download"
                 >
-                <i class="el-icon-document" ></i>
+                <el-button size="mini" icon="el-icon-document">下载</el-button>
+                <!-- <i class="el-icon-document" ></i> -->
               </vue-csv-download>
-            </el-col>
+          </el-col>
+          <!-- <el-col :span="5" :offset="0" class="text-right"> -->
+              <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+            <!-- </el-col> -->
+          <el-col :span="16" class="text-right">
+            <el-pagination
+              @size-change="sizeChange"
+              @current-change="currentChange"
+              :current-page="currentPage"
+              :page-sizes="[20, 50, 100]"
+              :page-size="pageSize"
+              layout="sizes, total, prev, pager, next"
+              :total="total">
+            </el-pagination>
+          </el-col>
         </el-row>
       </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
-        <el-table
-            :data="products">
-            <el-table-column
-              label="ASIN码"
-              width="140">
-              <template slot-scope="scope">
-                <b>{{scope.row.asin}}</b>
-                <div v-for="cp in scope.row.competitors" :key="cp">
-                  {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="商品描述"
-              width="350"
-              prop="name"
-              sortable>
-            </el-table-column>
-            <el-table-column
-              label="所属店铺"
-              width="150"
-              prop="shopName"
-              sortable>
-            </el-table-column>            
-            <el-table-column
-              label="销量"
-              width="100"
-              prop="orders"
-              sortable>
-            </el-table-column>
-            <el-table-column
-              label="价格"
-              width="100"
-              prop="price"
-              sortable>
-            </el-table-column>
-            <el-table-column
-              header-align="center"
-              align="center"
-              label="操作">
-              <template slot-scope="scope">
-                <el-button size="mini" round @click="add(scope.row)">
-                  建议
+        <el-table 
+          border
+          stripe
+          height="500"
+          :data="gridData">
+          <el-table-column
+            fixed
+            sortable
+            prop="reviewDate"
+            width="110"
+            label="reviewDate">
+          </el-table-column>
+          <el-table-column 
+            v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
+            :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
+            :key="headerName + '_' + index" 
+            :label="headerName"
+            v-if="dynamicHeaders[headerName]">
+            <template slot-scope="scope" v-if="scope.row[headerName]">
+              {{scope.row[headerName]}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            header-align="center"
+            align="center"
+            label="操作">
+            <template slot-scope="scope">
+                <el-button size="mini" round>
+                  编辑
                 </el-button>
-                <router-link :to="{path: '/main/edit-product', query: scope.row}">
-                  <el-button size="mini" round>
-                    编辑
-                  </el-button>
-                </router-link>
-                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">
-                  <el-button size="mini" round>
-                    分析
-                  </el-button>
-                </router-link>
-              </template>
-            </el-table-column>
-            <el-table-column
-              width="80"
-              label="关注">
-              <template slot-scope="scope">
-                <i class="el-icon-star-off large-icon" title="点击关注" v-if="isNotLike(scope.row)" @click="likeProduct(scope.row, true)"></i>
-                <i class="el-icon-star-on large-icon" title="取消关注" v-else @click="likeProduct(scope.row, false)"></i>
-              </template>              
-            </el-table-column>
-          </el-table>
-      </el-col>
-      <el-col :span="24" class="text-right">
-        <el-pagination
-          @size-change="sizeChange"
-          @current-change="updatePageUsers"
-          :current-page="currentPage"
-          :page-sizes="[20, 50, 100]"
-          :page-size="pageSize"
-          layout="sizes, total, prev, pager, next"
-          :total="total">
-        </el-pagination>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-col>
     </el-row>
     <el-dialog title="工作流" :visible.sync="dialogFormVisible">
@@ -280,10 +262,25 @@
 import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
+import VueCsvDownload from '@/components/csvDownload/csvDownload'
 
 export default {
+  components: {
+    VueCsvDownload
+  },
   data () {
     return {
+      mockData: [
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'}
+      ],
+      stars: 0,
+      dynamicHeaders: {},
+      checkedList: [],
       periodOptions: [
         {
           label: '周',
@@ -309,11 +306,19 @@ export default {
           value: 0
         }
       ],
-      maxlength: 200,
-      products: [],
-      pageSize: 15,
-      productTotal: 0,
+      rateList: [1, 2, 3, 4, 5],
+      pageSize: 20,
+      total: 0,
       currentPage: 1,
+      maxlength: 200,
+      nationId: 0,
+      nationList: [],
+      statusId: 0,
+      statusList: [],
+      userId: 0,
+      userList: [],
+      gridData: [],
+      productTotal: 0,
       pageProducts: [],
       search_val: undefined,
       shopId: undefined,
@@ -334,6 +339,16 @@ export default {
         auditor: '',
         proposer: ''
       },
+      headers: [],
+      headerWidth: {
+        reviewDate: 100,
+        reviews: 70,
+        score: 60,
+        QA: 40,
+        orders: 60,
+        Sessions: 80,
+        'Session Percentage': 90
+      },
       form: {
         productId: '',
         shopId: undefined,
@@ -343,6 +358,11 @@ export default {
         title: '',
         sn: 1
       }
+    }
+  },
+  computed: {
+    fieldsCn () {
+      return this.headers
     }
   },
   created () {
@@ -359,6 +379,50 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    searchGrid () {
+
+    },
+    sizeChange () {
+
+    },
+    currentChange () {
+
+    },
+    updateVisibleColumns () {
+
+    },
+    showHideColumns (newHeaders) {
+      for (let dh in this.dynamicHeaders) {
+        let found = newHeaders.find(nh => {
+          return dh === nh
+        })
+        if (found) {
+          this.dynamicHeaders[dh] = true
+        } else {
+          this.dynamicHeaders[dh] = false
+        }
+      }
+      this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
+    },
+    createHeader () {
+      for (let key in this.gridData[0]) {
+        this.dynamicHeaders[key] = true
+        this.headers = [...this.headers, key]
+      }
+      this.checkedList = this.headers
+      delete this.dynamicHeaders.reviewDate
+      // this.gridData.map(dt => {
+      //   dt.info.map((io, index) => {
+      //     if (!this.gridData[io.label]) {
+      //       this.gridData[io.label] = {}
+      //     }
+      //     if (!self.dynamicHeaders[dt.name]) {
+      //       self.dynamicHeaders[dt.name] = true
+      //     }
+      //     this.gridData[io.label][dt.name] = Object.create(io)
+      //   })
+      // })
+    },
     updateLu () {
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
@@ -431,21 +495,26 @@ export default {
       }
 
       this.$store.dispatch('setLoadingState', true)
-      api.post('/api/product/pagination', {pagination}).then(res => {
-        if (res.status === 200 && res.data) {
-          this.products = res.data.grid
-          this.productTotal = res.data.pagination.total
-          this.listLikedProducts()
-        }
-        this.$store.dispatch('setLoadingState', false)
-      }).catch(err => {
-        this.$store.dispatch('setLoadingState', false)
-        Message({
-          showClose: true,
-          message: err.response.statusText,
-          type: 'error'
-        })
-      })
+      this.gridData = this.mockData
+      this.download = this.gridData
+      this.total = this.mockData.length
+      this.createHeader()
+      this.$store.dispatch('setLoadingState', false)
+      // api.post('/api/product/pagination', {pagination}).then(res => {
+      //   if (res.status === 200 && res.data) {
+      //     this.products = res.data.grid
+      //     this.productTotal = res.data.pagination.total
+      //     this.listLikedProducts()
+      //   }
+      //   this.$store.dispatch('setLoadingState', false)
+      // }).catch(err => {
+      //   this.$store.dispatch('setLoadingState', false)
+      //   Message({
+      //     showClose: true,
+      //     message: err.response.statusText,
+      //     type: 'error'
+      //   })
+      // })
     },
     getShopList () {
       api.get('/api/shop').then(res => {
@@ -544,6 +613,9 @@ export default {
 
 .shop-select {
   width: 160px;
+}
+.el-checkbox+.el-checkbox {
+  margin-left: 0;
 }
 </style>
 
