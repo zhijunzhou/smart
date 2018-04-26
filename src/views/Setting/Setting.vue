@@ -122,49 +122,11 @@
             </el-pagination>
           </el-col>
       </el-row>
-      <el-dialog title="修改密码" :visible.sync="passwordDialog">
-        <el-form :model="account">
-          <el-form-item label="工号" :label-width="formLabelWidth">
-            {{account.userName}}
-          </el-form-item>
-          <el-form-item label="姓名" :label-width="formLabelWidth">
-              {{account.fullName}}
-            </el-form-item>
-          <el-form-item label="密码" :label-width="formLabelWidth">
-            <el-row>
-              <el-col :span="12">
-                <el-input v-model="account.password" auto-complete="off" type="password"></el-input>
-              </el-col>
-            </el-row>
-          </el-form-item>
-        </el-form>
-        <el-alert
-          title="注意: 修改密码会同时解绑微信"
-          type="warning"
-          center
-          show-icon
-          :closable="false">
-        </el-alert>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="passwordDialog = false">取 消</el-button>
-          <el-button type="primary" @click="confirmChangePassword">确 定</el-button>
-        </div>
-      </el-dialog>
       <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
           <el-form :model="form">
             <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
               {{form.userId}}
             </el-form-item>
-            <!-- <el-form-item v-if="modalType === 'edit'" label="工号" :label-width="formLabelWidth">
-              {{form.userName}}
-            </el-form-item> -->
-            <!-- <el-form-item v-if="modalType === 'add'" label="工号" :label-width="formLabelWidth">
-              <el-row>
-                <el-col :span="12">
-                  <el-input v-model="form.userName" auto-complete="off"></el-input>
-                </el-col>
-              </el-row>
-            </el-form-item> -->
             <el-form-item label="姓名" :label-width="formLabelWidth">
               <el-row>
                 <el-col :span="12">

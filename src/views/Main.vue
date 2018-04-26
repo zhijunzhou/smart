@@ -100,13 +100,6 @@
 								{{work.text}} <span class="work-count">({{work.count}})</span>
 							<!-- <el-badge :value="work.count" class="suggestion-count">&nbsp;&nbsp;&nbsp;&nbsp;</el-badge> -->
 						</el-menu-item>
-						<!-- <el-menu-item index="2-1" :route="{ path: '/main/workflow?status=issued_reissued' }">
-							<el-badge :value="12" class="suggestion-count">提议&nbsp;&nbsp;&nbsp;&nbsp;</el-badge>
-						</el-menu-item>
-						<el-menu-item index="2-2" :route="{ path: '/main/workflow?status=permitted' }">待执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
-						<el-menu-item index="2-3" :route="{ path: '/main/workflow?status=finished' }">已执行&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
-						<el-menu-item index="2-4" :route="{ path: '/main/workflow?status=summed' }">已总结&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item>
-						<el-menu-item index="2-5" :route="{ path: '/main/workflow?status=rejected' }">被拒绝&nbsp;&nbsp;&nbsp;&nbsp;</el-menu-item> -->
           </el-submenu>
 					<el-menu-item index="3" :route="{path: '/main/products'}">
 						<i class="el-icon-location"></i>
@@ -117,7 +110,7 @@
 								<i class="el-icon-service"></i>
 								<span><b>反馈维护</b></span>
 							</template>
-							<el-menu-item index="4-1" :route="{ path: '/main' }">反馈详情</el-menu-item>
+							<el-menu-item index="4-1" :route="{ path: '/main/feedback' }">反馈详情</el-menu-item>
 							<el-menu-item index="4-2" :route="{ path: '/main/products' }">反馈统计</el-menu-item>
 					</el-submenu>
         </el-menu>
