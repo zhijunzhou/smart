@@ -126,7 +126,7 @@
           :data="gridData">
           <el-table-column 
             v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
+            :width="headerWidth[headerName]?headerWidth[headerName]:''"
             :key="headerName + '_' + index" 
             :label="headerName"
             v-if="dynamicHeaders[headerName]">
@@ -445,28 +445,28 @@ export default {
 }
 
 .nation-select {
-  width: 110px;
+  width: 110px!important;
 }
 .el-icon-star-on {
   color:#FF6600
 }
 
 .asin-input {
-  width: 150px;
+  width: 150px!important;
 }
 .rate-select {
-  width: 110px;
+  width: 110px!important;
 }
 
 .time-select {
-  width: 150px;
+  width: 150px!important;
 }
 
 .shop-select {
-  width: 160px;
+  width: 160px!important;
 }
 .el-checkbox+.el-checkbox {
-  margin-left: 0;
+  margin-left: 0!important;
 }
 </style>
 

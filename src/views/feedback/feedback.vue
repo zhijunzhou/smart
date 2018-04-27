@@ -181,7 +181,7 @@
           </el-table-column>
           <el-table-column 
             v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
-            :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
+            :width="headerWidth[headerName]?headerWidth[headerName]:''"
             :key="headerName + '_' + index" 
             :label="headerName"
             v-if="dynamicHeaders[headerName]">
@@ -309,7 +309,7 @@ export default {
         reviewDate: 100,
         reviews: 70,
         score: 60,
-        QA: 40,
+        operatorId: 100,
         orders: 60,
         lastUpdateTime: 160,
         'Session Percentage': 90
@@ -372,8 +372,10 @@ export default {
     },
     createHeader () {
       for (let key in this.gridData[0]) {
-        this.dynamicHeaders[key] = true
-        this.headers = [...this.headers, key]
+        if (key !== 'review') {
+          this.dynamicHeaders[key] = true
+          this.headers = [...this.headers, key]
+        }
       }
       this.checkedList = this.headers
       delete this.dynamicHeaders.reviewDate
@@ -552,28 +554,28 @@ export default {
 }
 
 .nation-select {
-  width: 110px;
+  width: 110px!important;
 }
 .el-icon-star-on {
   color:#FF6600
 }
 
 .asin-input {
-  width: 150px;
+  width: 150px!important;
 }
 .rate-select {
-  width: 110px;
+  width: 110px!important;
 }
 
 .time-select {
-  width: 150px;
+  width: 150px!important;
 }
 
 .shop-select {
-  width: 160px;
+  width: 160px!important;
 }
 .el-checkbox+.el-checkbox {
-  margin-left: 0;
+  margin-left: 0!important;
 }
 </style>
 
