@@ -111,7 +111,7 @@
 								<span><b>反馈维护</b></span>
 							</template>
 							<el-menu-item index="4-1" :route="{ path: '/main/feedback' }">反馈详情</el-menu-item>
-							<el-menu-item index="4-2" :route="{ path: '/main/products' }">反馈统计</el-menu-item>
+							<el-menu-item index="4-2" :route="{ path: '/main/feedback-total' }">反馈统计</el-menu-item>
 					</el-submenu>
         </el-menu>
       </el-aside>

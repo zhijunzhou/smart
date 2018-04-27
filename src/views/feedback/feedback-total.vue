@@ -55,21 +55,9 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6" style="padding-right: 5px;">
-            <el-form-item label="状态">
-              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select">
-                <el-option
-                  v-for="status in statusList"
-                  :key="status"
-                  :label="status"
-                  :value="status">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4" style="padding-right: 5px;">
+          <el-col :span="5" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="stars" placeholder="选择星评" class="rate-select">
+              <el-select clearable v-model="stars" placeholder="选择星评" class="shop-select">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -79,43 +67,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-
-          <el-col :span="10" :offset="1" style="padding-right: 5px;">
-            <el-form-item label="选择用户" >
-              <el-select clearable v-model="userId" placeholder="选择用户" class="time-select">
-                <el-option
-                  v-for="user in userList"
-                  :key="user.value"
-                  :label="user.userName"
-                  :value="user.userId">
-                </el-option>
-              </el-select>
-
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6" style="padding-right: 5px;">
-            <el-form-item label="买家">
-              <el-input
-                class="shop-select"
-                placeholder="请输入买家Id"
-                clearable
-                v-model="searchField.productId">
-              </el-input>
-            </el-form-item>
-          </el-col>  
-          <el-col :span="4" style="padding-right: 5px;">
-              <el-form-item label="订单">
-                <el-input
-                  class="nation-select"
-                  placeholder="输入订单号"
-                  clearable
-                  v-model="searchField.productId">
-                </el-input>
-              </el-form-item>
-            </el-col>  
-          <el-col :span="6" :offset="1">
+          <el-col :span="6">
             <el-form-item label="产品ASIN">
                 <el-input
                   placeholder="输入ASIN"
@@ -172,13 +124,6 @@
           stripe
           height="500"
           :data="gridData">
-          <el-table-column
-            fixed
-            sortable
-            prop="reviewDate"
-            width="110"
-            label="reviewDate">
-          </el-table-column>
           <el-table-column 
             v-for="(headerName, index) in Object.keys(dynamicHeaders)" 
             :width="headerWidth[headerName]?headerWidth[headerName]:'100%'"
@@ -189,61 +134,9 @@
               {{scope.row[headerName]}}
             </template>
           </el-table-column>
-          <el-table-column
-            fixed="right"
-            header-align="center"
-            align="center"
-            label="操作">
-            <template slot-scope="scope">
-                <el-button size="mini" round @click="edit(scope.row)">
-                  编辑
-                </el-button>
-            </template>
-          </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-    <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
-        <el-form :model="form">
-          <el-form-item label="ASIN" :label-width="formLabelWidth">
-              {{form.asin}}
-          </el-form-item>
-          <el-form-item label="Status" :label-width="formLabelWidth">
-              <el-select v-model="form.status" placeholder="选择优化类型">
-                <el-option
-                  v-for="option in statusList"
-                  :key="option"
-                  :label="option"
-                  :value="option">
-                </el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item label="Stars" :label-width="formLabelWidth">
-              {{form.stars}}
-          </el-form-item>
-          <el-form-item label="Name" :label-width="formLabelWidth">
-            {{form.name}}
-          </el-form-item>
-          <el-form-item label="Buyer Id" :label-width="formLabelWidth">
-            {{form.buyerId}}
-          </el-form-item>
-          <el-form-item label="Title" :label-width="formLabelWidth">
-            {{form.title}}
-          </el-form-item>
-          <el-form-item label="Review" :label-width="formLabelWidth">
-              {{form.review}}
-            </el-form-item>
-          <el-form-item label="操作" :label-width="formLabelWidth">
-            <div>2018-04-12 这个反馈处理 admin</div>
-            <div>2018-04-13 这个反馈不要处理 Michael</div>
-            <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>        
-          <el-button type="primary" @click="saveWork">保  存</el-button>
-        </div>
-      </el-dialog>
   </div>
 </template>
 
@@ -261,12 +154,12 @@ export default {
   data () {
     return {
       mockData: [
-        {sellerId: '11111-111', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-211', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-311', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-411', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-511', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-611', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'}
+        {sellerId: '11111-111', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
+        {sellerId: '11111-211', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
+        {sellerId: '11111-311', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
+        {sellerId: '11111-411', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
+        {sellerId: '11111-511', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'},
+        {sellerId: '11111-611', asin: 'xxxxxxxxx', currentQuantity: '1212', totalQuantity: '1212', data1: '5', data2: '5', data3: '5', currentStars: '4', AverageStars: '4'}
       ],
       stars: '',
       dynamicHeaders: {},
@@ -306,9 +199,9 @@ export default {
       },
       headers: [],
       headerWidth: {
-        reviewDate: 100,
-        reviews: 70,
-        score: 60,
+        sellerId: 240,
+        currentQuantity: 140,
+        asin: 120,
         QA: 40,
         orders: 60,
         lastUpdateTime: 160,

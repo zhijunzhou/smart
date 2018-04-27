@@ -9,6 +9,7 @@ import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
 import config from '@/views/config/config'
 import feedback from '@/views/feedback/feedback'
+import feedbackTotal from '@/views/feedback/feedback-total'
 import WorkFlow from '@/views/workflow/workflow'
 
 Vue.use(Router)
@@ -69,6 +70,10 @@ export default new Router({
           path: 'feedback',
           name: 'feedback',
           component: feedback
+        }, {
+          path: 'feedback-total',
+          name: 'feedback-total',
+          component: feedbackTotal
         },
         {
           path: 'config',
