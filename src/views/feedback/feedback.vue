@@ -195,7 +195,7 @@
             align="center"
             label="操作">
             <template slot-scope="scope">
-                <el-button size="mini" round>
+                <el-button size="mini" round @click="edit(scope.row)">
                   编辑
                 </el-button>
             </template>
@@ -203,55 +203,45 @@
         </el-table>
       </el-col>
     </el-row>
-    <el-dialog title="工作流" :visible.sync="dialogFormVisible">
+    <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="ASIN" :label-width="formLabelWidth">
-              {{form.productId}}
+              {{form.asin}}
           </el-form-item>
-          <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
-              {{form.name}}
-          </el-form-item> -->
-          <el-form-item label="产品名" :label-width="formLabelWidth">
-            <el-row>
-              <el-col :span="10">
-                <el-input v-model="form.productName"></el-input>
-              </el-col>
-            </el-row>
+          <el-form-item label="Status" :label-width="formLabelWidth">
+              <el-select v-model="form.status" placeholder="选择优化类型">
+                <el-option
+                  v-for="option in statusList"
+                  :key="option"
+                  :label="option"
+                  :value="option">
+                </el-option>
+              </el-select>
           </el-form-item>
-          <el-form-item label="优化类型" :label-width="formLabelWidth">
-            <el-select v-model="form.optimizationType" placeholder="选择优化类型">
-              <el-option
-                v-for="option in optimizationTypes"
-                :key="option.typeId"
-                :label="option.typeName"
-                :value="option.typeName">
-              </el-option>
-            </el-select>
+          <el-form-item label="Stars" :label-width="formLabelWidth">
+              {{form.stars}}
           </el-form-item>
-          <el-form-item label="所属店铺" :label-width="formLabelWidth">
-            <el-select v-model="form.shopId" placeholder="选择店铺">
-              <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
-              </el-option>
-            </el-select>
+          <el-form-item label="Name" :label-width="formLabelWidth">
+            {{form.name}}
           </el-form-item>
-          <el-form-item label="建议主题" :label-width="formLabelWidth">
-            <el-row>
-              <el-col :span="10">
-                <el-input v-model="form.title"></el-input>
-              </el-col>
-            </el-row>
+          <el-form-item label="Buyer Id" :label-width="formLabelWidth">
+            {{form.buyerId}}
           </el-form-item>
-          <el-form-item label="建议" :label-width="formLabelWidth">
-              <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
+          <el-form-item label="Title" :label-width="formLabelWidth">
+            {{form.title}}
+          </el-form-item>
+          <el-form-item label="Review" :label-width="formLabelWidth">
+              {{form.review}}
             </el-form-item>
+          <el-form-item label="操作" :label-width="formLabelWidth">
+            <div>2018-04-12 这个反馈处理 admin</div>
+            <div>2018-04-13 这个反馈不要处理 Michael</div>
+            <el-input type="textarea" :maxlength="maxlength" :autosize="{ minRows: 3, maxRows: 5}" :placeholder="'请输入建议内容, 最大字数' + maxlength" v-model="form.suggestion"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>        
-          <el-button type="primary" @click="saveWork" v-if="modalType === 'add'">保  存</el-button>
+          <el-button type="primary" @click="saveWork">保  存</el-button>
         </div>
       </el-dialog>
   </div>
@@ -304,7 +294,6 @@ export default {
       formLabelWidth: '120px',
       options: [],
       productType: '',
-      modalType: 'add',
       dialogFormVisible: false,
       optimizationTypes: [
       ],
@@ -437,18 +426,10 @@ export default {
         self.errorHandler(err, {code: 404, message: '产品未找到'})
       })
     },
-    add (row) {
+    edit (row) {
       console.log(row)
-      const {asin, shopId, name} = row
-      this.modalType = 'add'
+      this.form = row
       this.dialogFormVisible = true
-      this.form.productId = asin
-      this.form.name = name
-      this.form.shopId = shopId
-      this.form.productName = undefined
-      this.form.optimizationType = undefined
-      this.form.suggestion = undefined
-      this.form.title = undefined
     },
     isNotLike (product) {
       return !this.likedProducts.find(p => {
