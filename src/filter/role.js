@@ -1,4 +1,4 @@
-import { ROLE } from '../../static/enum'
+import { ROLE } from '../utils/enum'
 export const role = (code) => {
   let name = ''
   switch (code) {

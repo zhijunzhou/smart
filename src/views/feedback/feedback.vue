@@ -20,8 +20,8 @@
               <el-option
                 v-for="nation in nationList"
                 :key="nation.value"
-                :label="nation.nationName"
-                :value="nation.nationId">
+                :label="nation"
+                :value="nation">
               </el-option>
             </el-select>
           </el-form-item>
@@ -60,9 +60,9 @@
               <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select">
                 <el-option
                   v-for="status in statusList"
-                  :key="status.value"
-                  :label="status.statusName"
-                  :value="status.statusId">
+                  :key="status"
+                  :label="status"
+                  :value="status">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -140,29 +140,28 @@
             </el-checkbox-group>
           </el-popover>
           <el-col :span="8">
-              <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
-              <vue-csv-download
-                :data="download"
-                :fields="fieldsCn"
-                class="download"
-                >
-                <el-button size="mini" icon="el-icon-document">下载</el-button>
-                <!-- <i class="el-icon-document" ></i> -->
-              </vue-csv-download>
-          </el-col>
-          <!-- <el-col :span="5" :offset="0" class="text-right"> -->
-              <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
-            <!-- </el-col> -->
-          <el-col :span="16" class="text-right">
             <el-pagination
-              @size-change="sizeChange"
-              @current-change="currentChange"
-              :current-page="currentPage"
-              :page-sizes="[20, 50, 100]"
-              :page-size="pageSize"
-              layout="sizes, total, prev, pager, next"
-              :total="total">
-            </el-pagination>
+            @size-change="sizeChange"
+            @current-change="currentChange"
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="sizes, total, prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </el-col>
+        <!-- <el-col :span="5" :offset="0" class="text-right"> -->
+          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
+          <!-- </el-col> -->
+          <el-col :span="16" class="text-right">
+            <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+            <vue-csv-download
+              :data="download"
+              :fields="fieldsCn"
+              class="download"
+              >
+              <el-button size="mini" icon="el-icon-document">下载</el-button>
+            </vue-csv-download>
           </el-col>
         </el-row>
       </el-form>
@@ -263,6 +262,7 @@ import api from '../../utils/api'
 import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
+import {PERIOD_OPTIONS} from '../../utils/enum'
 
 export default {
   components: {
@@ -278,44 +278,20 @@ export default {
         {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
         {sellerId: '11111-111', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'}
       ],
-      stars: 0,
+      stars: '',
       dynamicHeaders: {},
       checkedList: [],
-      periodOptions: [
-        {
-          label: '周',
-          value: 7
-        }, {
-          label: '月',
-          value: 30
-        }, {
-          label: '季度',
-          value: 120
-        }, {
-          label: '半年',
-          value: 183
-        }, {
-          label: '一年',
-          value: 365
-        }, {
-          label: '两年',
-          value: 730
-        },
-        {
-          label: '自定义',
-          value: 0
-        }
-      ],
+      periodOptions: PERIOD_OPTIONS,
       rateList: [1, 2, 3, 4, 5],
       pageSize: 20,
       total: 0,
       currentPage: 1,
       maxlength: 200,
-      nationId: 0,
-      nationList: [],
-      statusId: 0,
-      statusList: [],
-      userId: 0,
+      nationId: '',
+      nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
+      statusId: '',
+      statusList: ['All', 'Active', 'Processing Succeed', 'Failed Deleted'],
+      userId: '',
       userList: [],
       gridData: [],
       productTotal: 0,
@@ -346,7 +322,7 @@ export default {
         score: 60,
         QA: 40,
         orders: 60,
-        Sessions: 80,
+        lastUpdateTime: 160,
         'Session Percentage': 90
       },
       form: {
@@ -389,7 +365,8 @@ export default {
 
     },
     updateVisibleColumns () {
-
+      this.showHideColumns(this.checkedList)
+      // this.headers = this.checkedList
     },
     showHideColumns (newHeaders) {
       for (let dh in this.dynamicHeaders) {
@@ -402,7 +379,7 @@ export default {
           this.dynamicHeaders[dh] = false
         }
       }
-      this.dynamicHeaders = Object.assign({}, this.dynamicHeaders)
+      this.dynamicHeaders = { ...this.dynamicHeaders }
     },
     createHeader () {
       for (let key in this.gridData[0]) {
