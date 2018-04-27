@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-row>
+      <el-row class="search-bar">
           <el-col :span="6">
           <el-input
             placeholder="请输入姓名或者工号"
@@ -40,6 +40,17 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
+        <el-col :span="24" class="text-left">
+          <el-pagination
+            @size-change="sizeChange"
+            @current-change="updatePageUsers"
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="sizes, total, prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </el-col>
         <el-col :span="24">
           <el-table
             :data="users">
@@ -109,17 +120,6 @@
                 </template>
               </el-table-column>
             </el-table>
-        </el-col>
-        <el-col :span="24" class="text-right">
-          <el-pagination
-            @size-change="sizeChange"
-            @current-change="updatePageUsers"
-            :current-page="currentPage"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageSize"
-            layout="sizes, total, prev, pager, next"
-            :total="total">
-          </el-pagination>
         </el-col>
       </el-row>
       <el-dialog :title="modalType === 'edit' ? '用户详情' : '新增用户'" :visible.sync="dialogFormVisible">
@@ -419,7 +419,10 @@
   }
 </script>
 <style>
-    .privateImage{
+.search-bar {
+  margin-bottom: 10px;
+}
+.privateImage{
 	display:inline-block;
 	border-radius:50%;
 	height: 40px;
