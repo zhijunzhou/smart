@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-form ref="form">
+    <el-form ref="form" class="search-bar">
       <el-row class="first-search">
-        <el-col :span="6">
+        <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" >
+            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
               <el-option
                 v-for="shop in shopList"
                 :key="shop.value"
@@ -14,83 +14,115 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="5" :offset="1">
-          <el-form-item label="选择时间">
-            <el-select style="width: 150px;" v-model="periodSelect" @change="updateLu">
+        <el-col :span="4" style="padding-right: 5px;">
+          <el-form-item label="国家">
+            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
               <el-option
-              v-for="item in periodOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-col>
-      <el-col :span="9">
-        <el-form-item v-if="periodSelect===0">
-          <el-date-picker
-            v-model="dr"
-            @change="updateDateRangeValue"
-            type="daterange"
-            format="yyyy-MM-dd"
-            value-format="yyyy-MM-dd"
-            range-separator="~"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <span v-else>&nbsp;</span>
-      </el-col>
-        <el-col :span="2" :offset="1" class="text-right">
-          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
-          <vue-csv-download
-            :data="download"
-            :fields="fieldsCn"
-            class="download"
-            >
-            <i class="el-icon-document" ></i>
-          </vue-csv-download>
-        </el-col>    
+                v-for="nation in nationList"
+                :key="nation.value"
+                :label="nation"
+                :value="nation">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="5" :offset="1">
+            <el-form-item label="选择时间">
+              <el-select class="time-select" v-model="periodSelect" @change="updateLu">
+                <el-option
+                v-for="item in periodOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item v-if="periodSelect===0">
+              <el-date-picker
+                v-model="dr"
+                @change="updateDateRangeValue"
+                type="daterange"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                range-separator="~"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item v-else>&nbsp;</el-form-item>
+          </el-col>   
       </el-row>
       <el-row>
-        <el-col :span="5" >
-            <el-form-item>
+        <el-col :span="6" >
+            <el-form-item label="ASIN">
                 <el-input
                   placeholder="请输入产品ASIN"
                   clearable
                   @clear="searchWorkflow"
+                  class="shop-select"
                   v-model="searchField.productId">
-                  <template slot="prepend">产品码</template>
                 </el-input>
               </el-form-item>
         </el-col>    
-        <el-col :span="5" :offset="2">
-          <el-form-item>
+        <el-col :span="4" :offset="0">
+          <el-form-item label="建议人">
               <el-input
                 placeholder="输入建议人"
                 clearable
                 @clear="searchWorkflow"
+                class="nation-select"
                 v-model="searchField.proposer">
-                <template slot="prepend">建议人</template>
               </el-input>
             </el-form-item>
         </el-col>    
-        <el-col :span="5" :offset="2">
-          <el-form-item>
-              <el-input
-                placeholder="输入审批人"
-                clearable
-                @clear="searchWorkflow"
-                v-model="searchField.auditor">
-                <template slot="prepend">审批人</template>
-              </el-input>
-            </el-form-item>
+        <el-col :span="5" :offset="1">
+          <el-form-item label="审批人">
+            <el-input
+              placeholder="输入审批人"
+              clearable
+              class="time-select"
+              @clear="searchWorkflow"
+              v-model="searchField.auditor">
+            </el-input>
+          </el-form-item>
         </el-col>
         <el-col :span="2" :offset="2">
             <el-button type="primary" round icon="el-icon-search" @click="searchWorkflow">搜索</el-button>
         </el-col>
       </el-row>
     </el-form>
+  <el-row>
+    <el-popover
+      ref="showHideColumns"
+      trigger="hover">
+      <el-checkbox-group v-model="checkedList" @change="updateVisibleColumns">
+        <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
+      </el-checkbox-group>
+    </el-popover>
+    <el-col :span="8">
+      <el-pagination
+        @size-change="sizeChange"
+        @current-change="currentChange"
+        :current-page="currentPage"
+        :page-sizes="[20, 50, 100]"
+        :page-size="pageSize"
+        layout="sizes, total, prev, pager, next"
+        :total="total">
+      </el-pagination>
+    </el-col>
+    <el-col :span="16" class="text-right">
+      <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+      <vue-csv-download
+        :data="download"
+        :fields="fieldsCn"
+        class="download"
+        >
+        <el-button size="mini" icon="el-icon-document">下载</el-button>
+      </vue-csv-download>
+      </el-col>
+    </el-row>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
@@ -98,7 +130,7 @@
           toggleRowExpansion
           clearSort
           @expand-change="getSugHistory"
-          :data="workflows">
+          :data="gridData">
             <el-table-column type="expand">
               <template slot-scope="scope">
                 <el-form label-position="right">
@@ -121,6 +153,8 @@
                       name="attachement"
                       :file-list="scope.row.attachment"
                       :on-preview="downloadFile"
+                      :before-remove="beforeRemove"
+                      :on-remove="removeFile"
                       :on-change="handlerUploader"
                       :headers="getAuthHeaders()"
                       :action="getUploadUrl(scope.row.suggestionId)">
@@ -163,10 +197,22 @@
                 </template>
             </el-table-column>
             <el-table-column
-            label="优化类型"
-            width="100"
-            prop="suggestType">
-          </el-table-column> 
+              label="优化类型"
+              width="100"
+              prop="suggestType">
+            </el-table-column>
+            <el-table-column
+              label="店铺"
+              width="100">
+              <template slot-scope="scope">                  
+                {{ getShopName(scope.row.shopId)}}
+              </template>
+            </el-table-column> 
+            <el-table-column
+              label="国家"
+              width="60"
+              prop="nationId">
+            </el-table-column>
             <el-table-column
               label="ASIN"
               width="120">
@@ -177,16 +223,21 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="产品名"
+              label="产品名称"
               width="100"
               prop="name">
             </el-table-column>
             <el-table-column
+              label="优化类型"
               width="100"
-              label="建议"
-              prop="suggestion">
+              prop="suggestType">
+            </el-table-column> 
+            <el-table-column
+              width="100"
+              label="建议主题"
+              prop="title">
               <template slot-scope="scope">
-                <div class="suggestion" :title="scope.row.suggestion">{{scope.row.suggestion}}</div>
+                <div class="suggestion" :title="scope.row.title">{{scope.row.title}}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -201,7 +252,12 @@
               prop="auditor">
             </el-table-column>
             <el-table-column
-              width=""
+              label="执行时间"
+              width="100"
+              prop="finishDate">
+            </el-table-column>
+            <el-table-column
+              width="200"
               label="操作">
               <template slot-scope="scope">
                 <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productId}}">
@@ -216,7 +272,7 @@
             </el-table-column>
           </el-table>
       </el-col>
-      <el-col :span="24" class="text-right">
+      <el-col :span="24" class="text-left">
         <el-pagination
           @size-change="sizeChange"
           @current-change="updatePageWorkflow"
@@ -251,7 +307,7 @@
           <el-form-item label="ASIN" :label-width="formLabelWidth">
             <small>{{wf.productId}}</small>
           </el-form-item>
-          <el-form-item label="产品名" :label-width="formLabelWidth">
+          <el-form-item label="产品名称" :label-width="formLabelWidth">
             <small>{{wf.productName}}</small>
           </el-form-item>
           <el-form-item label="优化类型" :label-width="formLabelWidth">
@@ -286,12 +342,8 @@
                 </el-col>
               </el-row> -->
         </el-form-item>
-        <el-form-item label="产品名" :label-width="formLabelWidth">
-          <el-row>
-            <el-col :span="10">
-              <el-input v-model="form.productName"></el-input>
-            </el-col>
-          </el-row>
+        <el-form-item label="产品名称" :label-width="formLabelWidth">
+            &nbsp;&nbsp;&nbsp;&nbsp;{{form.productName}}
         </el-form-item>
         <el-form-item label="优化类型" :label-width="formLabelWidth">
           <el-select v-model="form.optimizationType" placeholder="选择优化类型">
@@ -340,6 +392,7 @@
   import json2csv from 'json2csv'
   import VueCsvDownload from '@/components/csvDownload/csvDownload'
   import moment from 'moment'
+  import { PERIOD_OPTIONS } from '../../utils/enum'
 
   export default {
     watch: {
@@ -353,7 +406,9 @@
       return {
         dr: null,
         maxlength: 200,
-        workflows: [],
+        nationId: '',
+        gridData: [],
+        gridDataBackup: [],
         pageSize: 20,
         currentPage: 1,
         total: 0,
@@ -372,7 +427,10 @@
         options: [],
         productType: '',
         shopList: [],
-        checkList: [],
+        headers: ['suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
+          'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'],
+        checkedList: ['suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
+          'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'],
         download: [],
         shopId: undefined,
         currentSugId: undefined,
@@ -425,6 +483,7 @@
           'rejected': '被拒绝',
           'closed': '已关闭',
           'comments': '备注',
+          'attach_upload': '附件上传',
           'reissued': '重新提交'
         },
         operMapping: {
@@ -438,31 +497,7 @@
         },
         optimizationTypes: [
         ],
-        periodOptions: [
-          {
-            label: '周',
-            value: 7
-          }, {
-            label: '月',
-            value: 30
-          }, {
-            label: '季度',
-            value: 120
-          }, {
-            label: '半年',
-            value: 183
-          }, {
-            label: '一年',
-            value: 365
-          }, {
-            label: '两年',
-            value: 730
-          },
-          {
-            label: '自定义',
-            value: 0
-          }
-        ],
+        periodOptions: PERIOD_OPTIONS,
         chains: {
           issued: {
             permitted: {
@@ -556,7 +591,7 @@
           return this.$route.query.status.split('_')
         }
         return []
-        //  this.checkList.map(ck => {
+        //  this.checkedList.map(ck => {
         //   if (ck && this.typeMapping[ck]) {
         //     return this.typeMapping[ck]
         //   }
@@ -575,6 +610,34 @@
       }
     },
     methods: {
+      updateVisibleColumns () {
+        this.gridData = this.gridDataBackup.map(bk => {
+          const newData = {}
+          this.checkedList.forEach(c => {
+            newData[c] = bk[c]
+          })
+          newData.history = bk.history
+          newData.attachment = bk.attachment
+          return newData
+        })
+      // this.headers = this.checkedList
+      },
+      getShopName (shopId) {
+        const finder = this.shopList.find(s => s.shopId === shopId)
+        return finder ? finder.shopName : ''
+      },
+      beforeRemove (file, fileList) {
+        if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
+          return this.$confirm(`确定移除 ${file.name}？`)
+        } else {
+          this.$alert('无权限删除附件', '注意', {confirmButtonText: '确定'})
+          return false
+        }
+      },
+      removeFile (suggestionId, file, fileList) {
+        console.log(suggestionId, file, fileList)
+        // api.delete('/suggestion/attachement/' + suggestionId)
+      },
       analysis (row) {
   
       },
@@ -655,7 +718,7 @@
       },
       exportCsv (filename = '列表') {
         // const columns = this.$refs.table.$children.filter(t => t.prop != null)
-        // this.ExportCsv(this.workflows, columns, filename)
+        // this.ExportCsv(this.gridData, columns, filename)
       },
       add () {
         this.modalType = 'add'
@@ -749,8 +812,8 @@
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
         api.post(`/api/suggestion/pagination`, params).then(res => {
           if (res.status === 200 && res.data) {
-            this.workflows = res.data.grid
-            this.workflows.forEach(w => {
+            this.gridData = res.data.grid
+            this.gridData.forEach(w => {
               api.get(`/api/suggestion/${w.suggestionId}/history`).then(res => {
                 w.history = res.data
               })
@@ -764,6 +827,7 @@
                 })
               })
             })
+            this.gridDataBackup = this.gridData
             this.total = res.data.pagination.total
           }
           this.$store.dispatch('setLoadingState', false)
@@ -865,8 +929,8 @@
         // expandedRows.map((eRow) => {
         //   console.log(eRow)
         //   let currentIndex
-        //   let copied = self.workflows
-        //   self.workflows.map((wf, index) => {
+        //   let copied = self.gridData
+        //   self.gridData.map((wf, index) => {
         //     if (wf.suggestionId === eRow.suggestionId) {
         //       currentIndex = index
         //     }
@@ -876,7 +940,7 @@
         //       api.get(`/api/suggestion/${activeRow.suggestionId}/history`).then(res => {
         //         copied[activeIndex].history = res.data
         //         self.$nextTick(() => {
-        //           self.workflows = copied
+        //           self.gridData = copied
         //         })
         //       })
         //     })(eRow, currentIndex)
@@ -976,7 +1040,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .first-search {
   margin-bottom: 0px;
 }
@@ -995,6 +1059,33 @@
 .download {
   color: #FF6600;
   font-size: 24px;
+}
+.search-bar {
+  margin-bottom: 20px;  
+  .el-form-item {
+    margin-bottom: 0px!important;
+  }
+}
+.nation-select {
+  width: 110px!important;
+}
+.el-icon-star-on {
+  color:#FF6600
+}
+
+.asin-input {
+  width: 150px!important;
+}
+.rate-select {
+  width: 110px!important;
+}
+
+.time-select {
+  width: 150px!important;
+}
+
+.shop-select {
+  width: 160px!important;
 }
 </style>
 

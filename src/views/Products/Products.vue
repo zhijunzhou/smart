@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="商品描述"
+              label="产品名称"
               width="350"
               prop="name"
               sortable>
@@ -146,7 +146,7 @@
           <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
               {{form.name}}
           </el-form-item> -->
-          <el-form-item label="产品名" :label-width="formLabelWidth">
+          <el-form-item label="产品名称" :label-width="formLabelWidth">
             <el-row>
               <el-col :span="10">
                 <el-input v-model="form.productName"></el-input>

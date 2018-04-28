@@ -14,7 +14,7 @@
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item> -->
-    <el-form-item label="描述">
+    <el-form-item label="产品名称">
       {{product.name}}
     </el-form-item>
     <el-form-item label="关键字">

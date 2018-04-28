@@ -439,7 +439,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .el-icon-star-off {
   color:#FF6600
 }
