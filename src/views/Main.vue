@@ -73,7 +73,6 @@
 					:defaultOpeneds="defaultOpeneds"
           default-active="1"
 					active-text-color="#FF6600"
-					@open="allWork($event)" @close="allWork($event)"
 					class="el-menu-vertical-d">					
 					<el-menu-item index="1" :route="{ path: '/main/setting' }" v-if="userInfo.userName==='admin'">
 						<i class="el-icon-setting"></i>

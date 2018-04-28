@@ -275,7 +275,7 @@
       <el-col :span="24" class="text-left">
         <el-pagination
           @size-change="sizeChange"
-          @current-change="updatePageWorkflow"
+          @current-change="currentChange"
           :current-page="currentPage"
           :page-sizes="[20, 50, 100]"
           :page-size="pageSize"
@@ -407,6 +407,7 @@
         dr: null,
         maxlength: 200,
         nationId: '',
+        nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
         gridData: [],
         gridDataBackup: [],
         pageSize: 20,
@@ -784,7 +785,7 @@
           this.errorHandler(err)
         })
       },
-      updatePageWorkflow (currentPage) {
+      currentChange (currentPage) {
         this.currentPage = currentPage
         this.getPageWorkflows()
       },

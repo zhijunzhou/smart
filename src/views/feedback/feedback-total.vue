@@ -102,21 +102,18 @@
             :total="total">
           </el-pagination>
         </el-col>
-        <!-- <el-col :span="5" :offset="0" class="text-right"> -->
-          <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
-          <!-- </el-col> -->
-          <el-col :span="16" class="text-right">
-            <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
-            <vue-csv-download
-              :data="download"
-              :fields="fieldsCn"
-              class="download"
-              >
-              <el-button size="mini" icon="el-icon-document">下载</el-button>
-            </vue-csv-download>
-          </el-col>
-        </el-row>
-      </el-form>
+        <el-col :span="16" class="text-right">
+          <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
+          <vue-csv-download
+            :data="download"
+            :fields="fieldsCn"
+            class="download"
+            >
+            <el-button size="mini" icon="el-icon-document">下载</el-button>
+          </vue-csv-download>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table 
