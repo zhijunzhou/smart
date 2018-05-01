@@ -8,9 +8,10 @@ export const ROLE = {
 
 export const PERIOD_OPTIONS = [
   {
-    label: '最近3天',
-    value: 3
-  }, {
+    label: '自定义',
+    value: 0
+  },
+  {
     label: '最近一周',
     value: 7
   }, {
@@ -22,15 +23,5 @@ export const PERIOD_OPTIONS = [
   }, {
     label: '最近半年',
     value: 183
-  // }, {
-  //   label: '最近一年',
-  //   value: 365
-  // }, {
-  //   label: '最近两年',
-  //   value: 730
-  },
-  {
-    label: '自定义',
-    value: 0
   }
 ]

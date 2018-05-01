@@ -413,7 +413,7 @@
         pageSize: 20,
         currentPage: 1,
         total: 0,
-        periodSelect: null,
+        periodSelect: 0,
         searchField: {
           productId: '',
           auditor: '',

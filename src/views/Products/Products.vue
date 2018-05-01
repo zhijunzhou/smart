@@ -56,11 +56,18 @@
     </el-row>
   <el-row>
         <el-col :span="8">
-          <el-radio-group v-model="radio" class="radio-select">
+          <el-form-item>
+            <el-radio-group v-model="radio">
               <el-radio :label="3">按店铺</el-radio>
               <el-radio :label="6">按订单</el-radio>
               <el-radio :label="9">按数量</el-radio>
             </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6" class="text-left">
+          <el-form-item>
+            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
+          </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-input
@@ -70,22 +77,6 @@
             clearable>
             <el-button slot="append" icon="el-icon-search" @click="searchProduct">搜索</el-button>
           </el-input>
-
-          <!-- <el-form-item>
-            <el-input
-              placeholder="产品ASIN"
-              prefix-icon="el-icon-search"
-              v-model="search_val">
-            </el-input>
-          </el-form-item> -->
-        </el-col>
-        <!-- <el-col :span="2" style="padding-left: 5px;">
-          <el-button type="primary" icon="el-icon-search" @click="searchProduct">搜索</el-button>
-        </el-col> -->
-        <el-col :span="6" class="text-right">
-          <el-form-item>
-            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
-          </el-form-item>
         </el-col>
       </el-row>
     </el-form>
@@ -276,7 +267,7 @@ export default {
       radio: 0,
       maxlength: 200,
       gridData: [],
-      periodSelect: null,
+      periodSelect: 0,
       dr: null,
       nationId: '',
       periodOptions: PERIOD_OPTIONS,
@@ -339,6 +330,7 @@ export default {
     changeName (row) {
       this.$prompt('请输入产品名称', '提示', {
         confirmButtonText: '确定',
+        inputValue: row.name,
         cancelButtonText: '取消'
       }).then(({ value }) => {
         this.$message({
@@ -346,10 +338,10 @@ export default {
           message: '更新成功'
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
+        // this.$message({
+        //   type: 'info',
+        //   message: '取消输入'
+        // })
       })
     },
     updateDateRangeValue () {

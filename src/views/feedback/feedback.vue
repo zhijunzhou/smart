@@ -297,7 +297,7 @@ export default {
       dialogFormVisible: false,
       optimizationTypes: [
       ],
-      periodSelect: null,
+      periodSelect: 0,
       dr: null,
       searchField: {
         productId: '',
