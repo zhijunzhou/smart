@@ -128,8 +128,8 @@
               >
             </el-table-column>  
             <el-table-column
-              label="ASIN码"
-              width="140">
+              label="ASIN"
+              width="120">
               <template slot-scope="scope">
                 <b>{{scope.row.asin}}</b>
                 <div v-for="cp in scope.row.competitors" :key="cp">
@@ -140,8 +140,11 @@
             <el-table-column
               label="产品名称"
               width="350"
-              prop="name"
               sortable>
+              <template slot-scope="scope">
+                {{scope.row.name}}
+                <i class="el-icon-edit" @click="changeName(scope.row)"></i>
+              </template>
             </el-table-column>
  
             <el-table-column
@@ -333,6 +336,22 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    changeName (row) {
+      this.$prompt('请输入产品名称', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '更新成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
     updateDateRangeValue () {
       console.log(this.dr)
     },
@@ -365,6 +384,7 @@ export default {
     },
     saveWork () {
       let self = this
+      self.form.productName = self.form.name
       self.form.sn = undefined
       api.post(`/api/suggestion`, self.form).then(res => {
         Message({
@@ -504,6 +524,10 @@ export default {
 </script>
 <style>
 .el-icon-star-off {
+  color:#FF6600
+}
+
+.el-icon-edit {
   color:#FF6600
 }
 
