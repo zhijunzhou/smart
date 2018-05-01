@@ -88,7 +88,7 @@
           :current-page="currentPage"
           :page-sizes="[20, 50, 100]"
           :page-size="pageSize"
-          layout="sizes, total, prev, pager, next"
+          layout="sizes, total, prev, pager, next, jumper"
           :total="total">
         </el-pagination>
       </el-col>
@@ -196,11 +196,14 @@
             </el-table-column>
           </el-table>
       </el-col>
-      <el-col :span="24" class="text-right">
+      <el-col :span="24" class="text-left">
         <el-pagination
-          layout="total, prev, pager, next, jumper"
+          @size-change="sizeChange"
           @current-change="currentChange"
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100]"
           :page-size="pageSize"
+          layout="sizes, total, prev, pager, next, jumper"
           :total="total">
         </el-pagination>
       </el-col>
