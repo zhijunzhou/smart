@@ -116,6 +116,15 @@
 							<el-menu-item index="4-1" :route="{ path: '/main/feedback' }">反馈详情</el-menu-item>
 							<el-menu-item index="4-2" :route="{ path: '/main/feedback-total' }">反馈统计</el-menu-item>
 					</el-submenu>
+					<!-- <el-submenu index="5">
+							<template slot="title">
+								<i class="el-icon-news"></i>
+								<span><b>竞品监测</b></span>
+							</template>
+							<el-menu-item index="5-1" :route="{ path: '/main/feedback-total' }">竞品列表</el-menu-item>
+							<el-menu-item index="5-2" :route="{ path: '/main/competitor-feedback' }">竞品反馈</el-menu-item>
+							<el-menu-item index="5-3" :route="{ path: '/main/feedback-total' }">竞品分析</el-menu-item>
+					</el-submenu> -->
         </el-menu>
       </el-aside>
       <el-main class="content">

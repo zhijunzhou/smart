@@ -9,6 +9,7 @@ import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
 import config from '@/views/config/config'
 import feedback from '@/views/feedback/feedback'
+import competitorFeedback from '@/views/competitors/competitor-feedback'
 import orders from '@/views/Products/orders'
 import feedbackTotal from '@/views/feedback/feedback-total'
 import WorkFlow from '@/views/workflow/workflow'
@@ -73,10 +74,16 @@ export default new Router({
           component: Setting
         },
         {
+          path: 'competitor-feedback',
+          name: 'competitor-feedback',
+          component: competitorFeedback
+        },
+        {
           path: 'feedback',
           name: 'feedback',
           component: feedback
-        }, {
+        },
+        {
           path: 'feedback-total',
           name: 'feedback-total',
           component: feedbackTotal
