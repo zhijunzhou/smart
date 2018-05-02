@@ -100,10 +100,14 @@
 							<!-- <el-badge :value="work.count" class="suggestion-count">&nbsp;&nbsp;&nbsp;&nbsp;</el-badge> -->
 						</el-menu-item>
           </el-submenu>
-					<el-menu-item index="3" :route="{path: '/main/products'}">
-						<i class="el-icon-location"></i>
-						<span><b>订单统计</b></span>
-					</el-menu-item>
+					<el-submenu index="3">
+							<template slot="title">
+								<i class="el-icon-location"></i>
+								<span><b>订单统计</b></span>
+							</template>
+							<el-menu-item index="3-1" :route="{ path: '/main/products' }">销量报表</el-menu-item>
+							<el-menu-item index="3-2" :route="{ path: '/main/orders' }">订单查询</el-menu-item>
+					</el-submenu>
 					<el-submenu index="4">
 							<template slot="title">
 								<i class="el-icon-service"></i>

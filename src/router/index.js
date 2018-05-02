@@ -9,6 +9,7 @@ import AddProduct from '@/views/Products/Add'
 import Setting from '@/views/Setting/Setting'
 import config from '@/views/config/config'
 import feedback from '@/views/feedback/feedback'
+import orders from '@/views/Products/orders'
 import feedbackTotal from '@/views/feedback/feedback-total'
 import WorkFlow from '@/views/workflow/workflow'
 
@@ -45,6 +46,11 @@ export default new Router({
           path: 'products',
           name: 'products',
           component: Products
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: orders
         },
         {
           path: 'add-product',

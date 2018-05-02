@@ -28,7 +28,7 @@
         </el-col>
         <el-col :span="5" :offset="1">
             <el-form-item label="选择时间">
-              <el-select class="time-select" v-model="periodSelect" @change="updateLu">
+              <el-select class="period-select" v-model="periodSelect" @change="updateLu">
                 <el-option
                 v-for="item in periodOptions"
                 :key="item.value"
@@ -82,7 +82,7 @@
             <el-input
               placeholder="输入审批人"
               clearable
-              class="time-select"
+              class="period-select"
               @clear="searchWorkflow"
               v-model="searchField.auditor">
             </el-input>
@@ -1081,7 +1081,7 @@
   width: 110px!important;
 }
 
-.time-select {
+.period-select {
   width: 150px!important;
 }
 
