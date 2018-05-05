@@ -186,13 +186,7 @@ export default {
   },
   data () {
     return {
-      mockData: [
-        {orderTime: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '1'},
-        {orderTime: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '2'},
-        {orderTime: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '3'},
-        {orderTime: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '4'},
-        {orderTime: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '5'}
-      ],
+      mockData: [],
       stars: '',
       dynamicHeaders: {},
       checkedList: [],
@@ -205,7 +199,7 @@ export default {
       nationId: '',
       nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
       statusId: '',
-      statusList: ['All', 'Pedning', 'Unshipped', 'Shipped', 'Canceled'],
+      statusList: ['All', 'Pendding', 'Unshipped', 'Shipped', 'Canceled'],
       userId: '',
       userList: [],
       gridData: [],
@@ -222,7 +216,7 @@ export default {
       dialogFormVisible: false,
       optimizationTypes: [
       ],
-      periodSelect: 0,
+      periodSelect: 7,
       dr: null,
       searchField: {
         productId: '',
@@ -240,7 +234,7 @@ export default {
         'Session Percentage': 90
       },
       enMap: {
-        orderTime: '购买时间',
+        date: '购买时间',
         orderId: '订单号',
         status: '订单状态',
         asin: 'ASIN',
@@ -391,28 +385,35 @@ export default {
       if (filter) {
         pagination.filter = filter
       }
-
+      pagination.filter = {
+        status: ['Shipped']
+      }
+      // request.filter = {}
+      const period = {
+        start: '2016-04-30',
+        end: '2018-05-02'
+      }
       this.$store.dispatch('setLoadingState', true)
       this.gridData = this.mockData
       this.download = this.gridData
       this.total = this.mockData.length
       this.createHeader()
       this.$store.dispatch('setLoadingState', false)
-      // api.post('/api/product/pagination', {pagination}).then(res => {
-      //   if (res.status === 200 && res.data) {
-      //     this.products = res.data.grid
-      //     this.productTotal = res.data.pagination.total
-      //     this.listLikedProducts()
-      //   }
-      //   this.$store.dispatch('setLoadingState', false)
-      // }).catch(err => {
-      //   this.$store.dispatch('setLoadingState', false)
-      //   Message({
-      //     showClose: true,
-      //     message: err.response.statusText,
-      //     type: 'error'
-      //   })
-      // })
+      api.post('/api/product/orders', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.gridData = res.data.grid
+          this.total = res.data.pagination.total
+          this.listLikedProducts()
+        }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     getShopList () {
       api.get('/api/shop').then(res => {
