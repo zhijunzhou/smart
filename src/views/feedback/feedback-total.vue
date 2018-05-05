@@ -187,7 +187,7 @@ export default {
       dialogFormVisible: false,
       optimizationTypes: [
       ],
-      periodSelect: 0,
+      periodSelect: 7,
       dr: null,
       searchField: {
         productId: '',

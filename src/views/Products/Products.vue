@@ -270,7 +270,7 @@ export default {
       radio: 0,
       maxlength: 200,
       gridData: [],
-      periodSelect: 0,
+      periodSelect: 7,
       dr: null,
       nationId: '',
       periodOptions: PERIOD_OPTIONS,
