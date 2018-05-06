@@ -142,7 +142,7 @@
       </el-form>
     <el-row :gutter="20">
       <el-col :span="24">
-        <el-table 
+        <el-table v-if="gridData.length>0"
           border
           stripe
           :data="gridData">
@@ -186,7 +186,13 @@ export default {
   },
   data () {
     return {
-      mockData: [],
+      mockData: [
+        {date: '', orderId: '', status: '', asin: '', productName: '', buyerName: '', buyerId: '', quantity: '', price: '', country: '', shopId: ''}
+        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '2'},
+        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '3'},
+        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '4'},
+        // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '5'}
+      ],
       stars: '',
       dynamicHeaders: {},
       checkedList: [],
