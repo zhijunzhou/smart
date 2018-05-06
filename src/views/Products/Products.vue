@@ -115,14 +115,14 @@
             <el-table-column
               label="国家"
               width="60"
-              prop="nation"
+              prop="marketPlaceName"
               >
             </el-table-column>  
             <el-table-column
               label="ASIN"
               width="120">
               <template slot-scope="scope">
-                <b>{{scope.row.asin}}</b>
+                <b>{{scope.row.productASIN}}</b>
                 <div v-for="cp in scope.row.competitors" :key="cp">
                   {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
                 </div>
@@ -130,43 +130,31 @@
             </el-table-column>
             <el-table-column
               label="产品名称"
-              width="350"
+              width="200"
               sortable>
               <template slot-scope="scope">
-                {{scope.row.name}}
+                {{scope.row.productName}}
                 <i class="el-icon-edit" @click="changeName(scope.row)"></i>
               </template>
             </el-table-column>
  
-            <el-table-column
-              label="2018/4/18"
+            <el-table-column v-for="orderData in gridData[0].orderList"
+              :label="orderData.label"
               width="100"
+              :prop="orderData.label"
               >
-              <template slot-scope="scope">100</template>
-              
-            </el-table-column>
-            <el-table-column
-              label="2018/4/19"
-              width="100"
-              >
-              <template slot-scope="scope">100</template>
-            </el-table-column>
-            <el-table-column
-              label="2018/4/20"
-              width="100"
-              >
-              <template slot-scope="scope">100</template>
             </el-table-column>
             <el-table-column
               label="合计"
               width="100"
-              prop="orders"
+              prop="totalCount"
               fixed="right"
               >
             </el-table-column>
             <el-table-column
               header-align="center"
               align="center"
+              width="200"
               fixed="right"
               label="操作">
               <template slot-scope="scope">
@@ -211,13 +199,13 @@
     <el-dialog title="工作流" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item label="ASIN" :label-width="formLabelWidth">
-              {{form.productId}}
+              {{form.productASIN}}
           </el-form-item>
           <!-- <el-form-item label="产品描述" :label-width="formLabelWidth">
               {{form.name}}
           </el-form-item> -->
           <el-form-item label="产品名称" :label-width="formLabelWidth">
-            {{form.name}}
+            {{form.productName}}
           </el-form-item>
           <el-form-item label="优化类型" :label-width="formLabelWidth">
             <el-select v-model="form.optimizationType" placeholder="选择优化类型">
@@ -230,10 +218,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="所属店铺" :label-width="formLabelWidth">
-            {{getShopName(form.shopId)}}
+            {{form.shopName}}
           </el-form-item>
           <el-form-item label="所属国家" :label-width="formLabelWidth">
-              {{form.nationName}}
+              {{form.marketPlaceName}}
             </el-form-item>
           <el-form-item label="建议主题" :label-width="formLabelWidth">
             <el-row>
@@ -271,6 +259,12 @@ export default {
       maxlength: 200,
       gridData: [],
       periodSelect: 7,
+      filter: {
+        period: {
+          start: '2017-07-02',
+          end: '2017-09-21'
+        }
+      },
       dr: null,
       nationId: '',
       periodOptions: PERIOD_OPTIONS,
@@ -333,7 +327,7 @@ export default {
     changeName (row) {
       this.$prompt('请输入产品名称', '提示', {
         confirmButtonText: '确定',
-        inputValue: row.name,
+        inputValue: row.productName,
         cancelButtonText: '取消'
       }).then(({ value }) => {
         this.$message({
@@ -379,7 +373,7 @@ export default {
     },
     saveWork () {
       let self = this
-      self.form.productName = self.form.name
+      self.form.productName = self.form.productName
       self.form.sn = undefined
       api.post(`/api/suggestion`, self.form).then(res => {
         Message({
@@ -418,15 +412,14 @@ export default {
       }
       this.getPageProducts(filter)
     },
-    getPageProducts (filter) {
+    getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      if (filter) {
-        pagination.filter = filter
-      }
-
+      this.filter.period.start = moment().subtract(this.periodSelect, 'days').format('YYYY-MM-DD')
+      this.filter.period.end = moment().format('YYYY-MM-DD')
+      pagination.filter = this.filter
       this.$store.dispatch('setLoadingState', true)
       api.post('/api/product/pagination', {pagination}).then(res => {
         if (res.status === 200 && res.data) {
