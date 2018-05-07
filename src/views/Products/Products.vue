@@ -122,7 +122,7 @@
               label="ASIN"
               width="120">
               <template slot-scope="scope">
-                <b>{{scope.row.productASIN}}</b>
+                <a :href="scope.row.url">{{scope.row.productASIN}}</a>
                 <div v-for="cp in scope.row.competitors" :key="cp">
                   {{cp}}&nbsp;<el-tag type="success" size="mini">竞</el-tag> 
                 </div>
@@ -166,7 +166,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.asin}}">
+                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productASIN}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
@@ -330,9 +330,17 @@ export default {
         inputValue: row.productName,
         cancelButtonText: '取消'
       }).then(({ value }) => {
-        this.$message({
-          type: 'success',
-          message: '更新成功'
+        const shopId = row.shopId
+        const name = value
+        api.post(`/api/product/name/${row.productASIN}`, {shopId, name}).then(res => {
+          this.$message({
+            showClose: true,
+            message: '更新成功!',
+            type: 'success'
+          })
+          this.getPageProducts()
+        }).catch(err => {
+          this.errorHandler(err, {code: 404, message: '产品未找到'})
         })
       }).catch(() => {
         // this.$message({

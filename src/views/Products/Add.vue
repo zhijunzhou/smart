@@ -1,7 +1,7 @@
 <template v-if="product">
   <el-form :label-position="labelPosition" label-width="80px" class="product-form">
     <el-form-item label="产品ASIN">
-      {{product.asin}}
+      {{product.productASIN}}
     </el-form-item>
     <!-- <el-form-item label="图片">
       <el-upload
@@ -15,7 +15,7 @@
       </el-upload>
     </el-form-item> -->
     <el-form-item label="产品名称">
-      {{product.name}}
+      {{product.productName}}
     </el-form-item>
     <el-form-item label="关键字">
       <div v-for="(kw, index) in keywords" :key="kw + '_' + index">
@@ -73,7 +73,7 @@ export default {
   },
   created () {
     let self = this
-    if (self.$route.query && self.$route.query.name) {
+    if (self.$route.query && self.$route.query.productName) {
       self.product = self.$route.query
       console.log(self.product)
       self.listCompetitor()
@@ -97,12 +97,12 @@ export default {
     },
     addCompetitor () {
       this.competitor.shopId = this.product.shopId
-      this.competitor.productId = this.product.asin
+      this.competitor.productId = this.product.productASIN
       this.showAddCpButton = false
     },
     addKeyword () {
       this.gKeyword.shopId = this.product.shopId
-      this.gKeyword.productId = this.product.asin
+      this.gKeyword.productId = this.product.productASIN
       this.showAddKwButton = false
     },
     assignKeywords (data) {
@@ -139,7 +139,7 @@ export default {
     },
     listCompetitor () {
       let self = this
-      api.get(`/api/product/competitor/${self.product.shopId}/${self.product.asin}`).then(res => {
+      api.get(`/api/product/competitor/${self.product.shopId}/${self.product.productASIN}`).then(res => {
         self.competitors = res.data
         self.listKeywords()
         self.clearCompetitor()
@@ -147,7 +147,7 @@ export default {
     },
     listKeywords () {
       let self = this
-      api.get(`/api/product/keyword/${self.product.shopId}/${self.product.asin}`).then(res => {
+      api.get(`/api/product/keyword/${self.product.shopId}/${self.product.productASIN}`).then(res => {
         self.assignKeywords(res.data)
         self.clearGKeywork()
       })
@@ -159,7 +159,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.asin}/${id}`).then(res => {
+        api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.productASIN}/${id}`).then(res => {
           self.listCompetitor()
           Message({
             type: 'success',
@@ -174,7 +174,7 @@ export default {
       })
       // if (confirm('Do you want to delete the competitor product?')) {
       //   let self = this
-      //   api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.asin}/${id}`).then(res => {
+      //   api.delete(`/api/product/competitor/${self.product.shopId}/${self.product.productASIN}/${id}`).then(res => {
       //     self.listCompetitor()
       //   })
       // }
