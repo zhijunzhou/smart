@@ -28,7 +28,7 @@
       </el-col>
       <el-col :span="5" :offset="1">
         <el-form-item label="选择时间">
-          <el-select class="period-select" v-model="periodSelect" @change="updateLu">
+          <el-select class="period-select" v-model="periodSelect" @change="periodChange">
             <el-option
             v-for="item in periodOptions"
             :key="item.value"
@@ -42,7 +42,7 @@
           <el-form-item v-if="periodSelect===0">
             <el-date-picker
             v-model="dr"
-            @change="updateDateRangeValue"
+            @change="periodCustomizeChange"
             type="daterange"
             format="yyyy-MM-dd"
             value-format="yyyy-MM-dd"
@@ -269,7 +269,7 @@ export default {
       nationId: '',
       periodOptions: PERIOD_OPTIONS,
       nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
-      pageSize: 15,
+      pageSize: 20,
       total: 0,
       currentPage: 1,
       pageProducts: [],
@@ -349,20 +349,27 @@ export default {
         // })
       })
     },
-    updateDateRangeValue () {
+    periodCustomizeChange () {
       console.log(this.dr)
+      this.filter.period.start = this.dr[0]
+      this.filter.period.end = this.dr[1]
+      this.getPageProducts()
     },
     sizeChange () {
 
     },
 
-    updateLu () {
+    periodChange () {
+      if (this.periodSelect === 0) {
+        return
+      }
       let format = 'YYYY-MM-DD'
       let start = moment().subtract(this.periodSelect, 'days').format(format)
       let end = moment().format(format)
-      const status = this.getStatus
-
-      console.log('updateLu', status, start, end)
+      // const status = this.getStatus
+      this.filter.period.start = start
+      this.filter.period.end = end
+      this.getPageProducts()
       // this.searchField.period = {
       //   dateType: status.join(','),
       //   start: start,
@@ -425,8 +432,6 @@ export default {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      this.filter.period.start = moment().subtract(this.periodSelect, 'days').format('YYYY-MM-DD')
-      this.filter.period.end = moment().format('YYYY-MM-DD')
       pagination.filter = this.filter
       this.$store.dispatch('setLoadingState', true)
       api.post('/api/product/pagination', {pagination}).then(res => {
