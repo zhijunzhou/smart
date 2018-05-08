@@ -19,9 +19,9 @@
           <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
             <el-option
             v-for="nation in nationList"
-            :key="nation.value"
-            :label="nation"
-            :value="nation">
+            :key="nation.marketPlace"
+            :label="nation.marketPlace"
+            :value="nation.marketPlaceId">
           </el-option>
         </el-select>
       </el-form-item>
@@ -221,8 +221,14 @@
             {{form.shopName}}
           </el-form-item>
           <el-form-item label="所属国家" :label-width="formLabelWidth">
-              {{form.marketPlaceName}}
-            </el-form-item>
+            {{form.marketPlaceName}}
+          </el-form-item>
+          <el-form-item label="优先级" :label-width="formLabelWidth">
+              <el-radio-group v-model="form.status">
+                <el-radio label='normal'>普通</el-radio>
+                <el-radio label='high'>高</el-radio>
+              </el-radio-group>
+          </el-form-item>
           <el-form-item label="建议主题" :label-width="formLabelWidth">
             <el-row>
               <el-col :span="10">
@@ -255,6 +261,7 @@ export default {
   },
   data () {
     return {
+      status: 'normal',
       radio: 0,
       maxlength: 200,
       gridData: [],
@@ -287,6 +294,7 @@ export default {
       ],
       download: [],
       form: {
+        status: 'normal',
         productId: '',
         shopId: undefined,
         productName: '',
@@ -315,7 +323,7 @@ export default {
     this.shopId = this.$route.query.shopId
 
     this.getShopList()
-
+    this.getNationList()
     if (this.search_val && this.shopId) {
       this.searchProduct()
     } else {
@@ -455,6 +463,11 @@ export default {
     getShopList () {
       api.get('/api/shop').then(res => {
         this.shopList = res.data
+      })
+    },
+    getNationList () {
+      api.get('/api/country').then(res => {
+        this.nationList = res.data.grid
       })
     },
     currentChange (currentPage) {
