@@ -2,10 +2,10 @@
     <el-form :label-position="labelPosition" label-width="80px" class="product-form">
       <el-form-item label="优化类型">
         <div v-for="(kw, index) in suggestTypes" :key="kw + '_' + index">
-          {{kw.typeName}} <i class="el-icon-delete" @click="deleteSuggestType(kw)"></i>
+          {{kw}} <i class="el-icon-delete" @click="deleteSuggestType(kw)"></i>
         </div>
         <div v-if="showAddKwButton === false">
-          <el-input v-model="gSuggestType.typeName" placeholder="优化类型"></el-input>
+          <el-input v-model="gSuggestType.suggestType" placeholder="优化类型"></el-input>
         </div>
         <el-button size="mini" icon="el-icon-plus" v-if="showAddKwButton === true" @click="addSuggestType" round>增加优化类型</el-button>
         <el-button size="mini" v-if="showAddKwButton === false" @click="saveSuggestType" round>保存优化类型</el-button>
@@ -101,7 +101,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          api.delete(`/api/suggest_type/${kw.typeId}`).then(res => {
+          api.delete(`/api/suggest_type/${kw}`).then(res => {
             self.listSuggestTypes()
             Message({
               type: 'success',
