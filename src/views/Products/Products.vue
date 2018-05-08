@@ -71,8 +71,8 @@
         </el-col>
         <el-col :span="8">
           <el-input
-            placeholder="请输入产品ASIN"
-            v-model="search_val"
+            placeholder="请输入产品名称或者ASIN"
+            v-model="filter.asinOrName"
             @clear="searchProduct"
             clearable>
             <el-button slot="append" icon="el-icon-search" @click="searchProduct">搜索</el-button>
@@ -267,9 +267,10 @@ export default {
       gridData: [],
       periodSelect: 7,
       filter: {
+        asinOrName: '',
         period: {
-          start: '2017-07-02',
-          end: '2017-09-21'
+          start: '',
+          end: ''
         }
       },
       dr: null,
@@ -321,7 +322,11 @@ export default {
   created () {
     this.search_val = this.$route.query.productId
     this.shopId = this.$route.query.shopId
-
+    let format = 'YYYY-MM-DD'
+    let start = moment().subtract(this.periodSelect, 'days').format(format)
+    let end = moment().format(format)
+    this.filter.period.start = start
+    this.filter.period.end = end
     this.getShopList()
     this.getNationList()
     if (this.search_val && this.shopId) {
@@ -431,7 +436,7 @@ export default {
     },
     searchProduct () {
       let filter = {
-        productId: this.search_val,
+        productId: this.filter.asinOrName,
         shopId: this.shopId
       }
       this.getPageProducts(filter)
@@ -482,7 +487,7 @@ export default {
     },
     showHideLiked () {
       let filter = {
-        productId: this.search_val,
+        productId: this.filter.asinOrName,
         shopId: this.shopId,
         interestedOnly: this.isShowLiked ? 1 : undefined
       }
@@ -490,7 +495,7 @@ export default {
     },
     likeProduct (product, like) {
       let productInfo = {
-        productId: product.asin,
+        productId: product.productASIN,
         shopId: product.shopId
       }
       if (like === true) {
