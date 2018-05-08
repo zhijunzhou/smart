@@ -137,8 +137,7 @@ export default {
   data () {
     return {
       activeName: 'sales',
-      salesUnit: '5',
-      latestUnit: '5',
+      salesUnit: 5,
       showChartCategory: false,
       showChartKeyword: false,
       statisticsQuery: this.$route.query,
@@ -280,7 +279,7 @@ export default {
             start: yesterday.format(format),
             end: moment().format(format)
           },
-          unit: this.salesUnit,
+          unit: parseInt(this.salesUnit),
           ...this.statisticsQuery
         }
       }
