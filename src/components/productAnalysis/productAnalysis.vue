@@ -141,6 +141,7 @@ export default {
       latestUnit: '5',
       showChartCategory: false,
       showChartKeyword: false,
+      statisticsQuery: this.$route.query,
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
       categories: [],
@@ -280,8 +281,7 @@ export default {
             end: moment().format(format)
           },
           unit: this.salesUnit,
-          productId: this.productId,
-          shopId: this.shopId
+          ...this.statisticsQuery
         }
       }
 

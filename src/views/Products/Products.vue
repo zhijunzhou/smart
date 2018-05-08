@@ -166,7 +166,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {shopId: scope.row.shopId, productId: scope.row.productASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {marketPlaceId: scope.row.marketPlaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
@@ -388,7 +388,6 @@ export default {
     },
     saveWork () {
       let self = this
-      self.form.productName = self.form.productName
       self.form.sn = undefined
       api.post(`/api/suggestion`, self.form).then(res => {
         Message({
@@ -404,14 +403,16 @@ export default {
     },
     add (row) {
       console.log(row)
-      const {asin, shopId, name} = row
+      const {productASIN, productName, shopId, shopName, marketPlaceName} = row
       this.modalType = 'add'
       this.dialogFormVisible = true
-      this.form.productId = asin
-      this.form.name = name
+      this.form.productId = productASIN
+      this.form.productASIN = productASIN
+      this.form.productName = productName
+      this.form.shopName = shopName
       this.form.shopId = shopId
-      this.form.productName = undefined
-      this.form.optimizationType = undefined
+      this.form.marketPlaceName = marketPlaceName
+      this.form.optimizationType = ''
       this.form.suggestion = undefined
       this.form.title = undefined
     },
