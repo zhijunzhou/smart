@@ -194,7 +194,7 @@ export default {
       //     }
       //   }
       // }
-      api.get('/api/suggestion/count').then(res => {
+      api.post('/api/suggestion/count', {fiilter: {}}).then(res => {
         if (res.status === 200 && res.data) {
           // this.workflows = res.data.grid
           console.log(this.workflow)
