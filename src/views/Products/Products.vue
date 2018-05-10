@@ -211,9 +211,9 @@
             <el-select v-model="form.optimizationType" placeholder="选择优化类型">
               <el-option
                 v-for="option in optimizationTypes"
-                :key="option.typeId"
-                :label="option.typeName"
-                :value="option.typeName">
+                :key="option"
+                :label="option"
+                :value="option">
               </el-option>
             </el-select>
           </el-form-item>

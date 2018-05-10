@@ -807,6 +807,10 @@
               status: this.getStatus,
               ...this.searchField
             }
+          },
+          period: {
+            start: '2016-04-20',
+            end: '2018-05-30'
           }
         }
         console.log('params', params, this.getStatus)
