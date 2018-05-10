@@ -322,9 +322,9 @@
         const email = this.form.email || ''
         const phone = this.form.phone || ''
         const userName = this.form.userName
-        const roles = this.roleSelected
+        const role = this.roleSelected ? this.roleSelected[0] : null
         const shops = this.shopSelected
-        const body = this.modalType === 'edit' ? {fullName, email, phone, roles, shops} : {userName, fullName, email, phone, roles, shops}
+        const body = this.modalType === 'edit' ? {fullName, email, phone, role, shops} : {userName, fullName, email, phone, role, shops}
         const url = this.modalType === 'edit' ? `/${this.form.userId}` : ''
         api.post(`/api/user${url}`, body).then(res => {
           Message({
