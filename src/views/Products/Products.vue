@@ -66,7 +66,7 @@
         </el-col>
         <el-col :span="6" class="text-left">
           <el-form-item>
-            <el-checkbox v-model="isShowLiked" @change="showHideLiked">只显示我关注的</el-checkbox>
+            <el-checkbox v-model="interestedOnly" @change="showHideLiked">只显示我关注的</el-checkbox>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -105,6 +105,7 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-table
+          v-if="gridData.length > 0"
             :data="gridData">
             <el-table-column
               label="店铺"
@@ -139,6 +140,7 @@
             </el-table-column>
  
             <el-table-column v-for="orderData in gridData[0].orderList"
+              :key="orderData.label"
               :label="orderData.label"
               width="100"
               :prop="orderData.label"
@@ -283,7 +285,7 @@ export default {
       pageProducts: [],
       search_val: undefined,
       shopId: undefined,
-      isShowLiked: false,
+      interestedOnly: false,
       likedProducts: [],
       shopList: [],
       formLabelWidth: '120px',
@@ -431,7 +433,7 @@ export default {
     },
     isNotLike (product) {
       return !this.likedProducts.find(p => {
-        return product.asin === p.productId
+        return product.productASIN === p.productId
       })
     },
     searchProduct () {
@@ -486,28 +488,39 @@ export default {
       })
     },
     showHideLiked () {
-      let filter = {
-        productId: this.filter.asinOrName,
-        shopId: this.shopId,
-        interestedOnly: this.isShowLiked ? 1 : undefined
-      }
-      this.getPageProducts(filter)
+      // let filter = {
+      //   productId: this.filter.asinOrName,
+      //   shopId: this.shopId,
+      //   interestedOnly: this.interestedOnly
+      // }
+      this.filter.interestedOnly = this.interestedOnly
+      this.getPageProducts()
     },
     likeProduct (product, like) {
       let productInfo = {
         productId: product.productASIN,
+        marketplaceId: product.marketPlaceId,
         shopId: product.shopId
       }
       if (like === true) {
         api.post(`/api/interested`, productInfo).then(res => {
           if (res && res.status === 200) {
-            console.log(res)
+            Message({
+              showClose: true,
+              message: '更新成功',
+              type: 'success'
+            })
             this.listLikedProducts()
           }
         })
       } else {
-        let interested = this.likedProducts.find(p => p.productId === product.asin)
+        let interested = this.likedProducts.find(p => p.productId === product.productASIN)
         api.delete(`/api/interested/${interested.interestedId}`).then(res => {
+          Message({
+            showClose: true,
+            message: '更新成功',
+            type: 'success'
+          })
           this.listLikedProducts()
         })
       }

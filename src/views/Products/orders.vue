@@ -392,7 +392,7 @@ export default {
         pagination.filter = filter
       }
       pagination.filter = {
-        status: ['Shipped']
+        // status: ['Shipped']
       }
       // request.filter = {}
       const period = {

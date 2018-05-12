@@ -231,7 +231,6 @@ export default {
     } else {
       this.getPageProducts()
     }
-    this.listSuggestTypes()
   },
   methods: {
     searchGrid () {
@@ -296,11 +295,6 @@ export default {
     updateDateRangeValue () {
       console.log(this.dr)
     },
-    listSuggestTypes () {
-      api.get(`/api/suggest_type`).then(res => {
-        this.optimizationTypes = res.data
-      })
-    },
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -341,28 +335,31 @@ export default {
       if (filter) {
         pagination.filter = filter
       }
-
+      const period = {
+        start: '2016-04-01',
+        end: '2018-05-30'
+      }
       this.$store.dispatch('setLoadingState', true)
-      this.gridData = this.mockData
-      this.download = this.gridData
-      this.total = this.mockData.length
-      this.createHeader()
-      this.$store.dispatch('setLoadingState', false)
-      // api.post('/api/product/pagination', {pagination}).then(res => {
-      //   if (res.status === 200 && res.data) {
-      //     this.products = res.data.grid
-      //     this.productTotal = res.data.pagination.total
-      //     this.listLikedProducts()
-      //   }
-      //   this.$store.dispatch('setLoadingState', false)
-      // }).catch(err => {
-      //   this.$store.dispatch('setLoadingState', false)
-      //   Message({
-      //     showClose: true,
-      //     message: err.response.statusText,
-      //     type: 'error'
-      //   })
-      // })
+      // this.gridData = this.mockData
+      // this.download = this.gridData
+      // this.total = this.mockData.length
+      // this.createHeader()
+      // this.$store.dispatch('setLoadingState', false)
+      api.post('/api/review/statistics', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.gridData = res.data.grid
+          this.total = res.data.pagination.total
+          this.createHeader()
+        }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     getShopList () {
       api.get('/api/shop').then(res => {

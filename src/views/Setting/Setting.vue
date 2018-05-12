@@ -115,8 +115,8 @@
                 <template slot-scope="scope">
                   <el-button size="mini" round @click="edit(scope.row)" icon="el-icon-edit">编辑</el-button>
                   <el-button size="mini" round icon="el-icon-view" @click="changePassWord(scope.row)">修改密码</el-button>
-                  <el-button v-if="scope.row.userStatus==='disabled'"  icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 1)">激活</el-button>
-                  <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 0)" >禁用</el-button>
+                  <el-button v-if="scope.row.userStatus==='disabled'"  icon="el-icon-check" size="mini" round @click="switchStatus(scope.row.userId, 'active')">激活</el-button>
+                  <el-button v-else size="mini" round icon="el-icon-close" @click="switchStatus(scope.row.userId, 'disabled')" >禁用</el-button>
                 </template>
               </el-table-column>
             </el-table>

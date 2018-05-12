@@ -341,7 +341,6 @@ export default {
     } else {
       this.getPageProducts()
     }
-    this.listSuggestTypes()
   },
   methods: {
     searchGrid () {
@@ -408,11 +407,6 @@ export default {
     updateDateRangeValue () {
       console.log(this.dr)
     },
-    listSuggestTypes () {
-      api.get(`/api/suggest_type`).then(res => {
-        this.optimizationTypes = res.data
-      })
-    },
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -453,28 +447,31 @@ export default {
       if (filter) {
         pagination.filter = filter
       }
-
+      const period = {
+        start: '2016-04-01',
+        end: '2018-05-30'
+      }
       this.$store.dispatch('setLoadingState', true)
-      this.gridData = this.mockData
-      this.download = this.gridData
-      this.total = this.mockData.length
-      this.createHeader()
-      this.$store.dispatch('setLoadingState', false)
-      // api.post('/api/product/pagination', {pagination}).then(res => {
-      //   if (res.status === 200 && res.data) {
-      //     this.products = res.data.grid
-      //     this.productTotal = res.data.pagination.total
-      //     this.listLikedProducts()
-      //   }
-      //   this.$store.dispatch('setLoadingState', false)
-      // }).catch(err => {
-      //   this.$store.dispatch('setLoadingState', false)
-      //   Message({
-      //     showClose: true,
-      //     message: err.response.statusText,
-      //     type: 'error'
-      //   })
-      // })
+      // this.gridData = this.mockData
+      // this.download = this.gridData
+      // this.total = this.mockData.length
+      // this.createHeader()
+      // this.$store.dispatch('setLoadingState', false)
+      api.post('/api/review', {pagination, period}).then(res => {
+        if (res.status === 200 && res.data) {
+          this.gridData = res.data.grid
+          this.total = res.data.pagination.total
+          this.createHeader()
+        }
+        this.$store.dispatch('setLoadingState', false)
+      }).catch(err => {
+        this.$store.dispatch('setLoadingState', false)
+        Message({
+          showClose: true,
+          message: err.response.statusText,
+          type: 'error'
+        })
+      })
     },
     getShopList () {
       api.get('/api/shop').then(res => {
@@ -484,39 +481,6 @@ export default {
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
-    },
-    listLikedProducts () {
-      api.get(`/api/interested`).then(res => {
-        console.log(res.data)
-        this.likedProducts = res.data
-      })
-    },
-    showHideLiked () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId,
-        interestedOnly: this.isShowLiked ? 1 : undefined
-      }
-      this.getPageProducts(filter)
-    },
-    likeProduct (product, like) {
-      let productInfo = {
-        productId: product.asin,
-        shopId: product.shopId
-      }
-      if (like === true) {
-        api.post(`/api/interested`, productInfo).then(res => {
-          if (res && res.status === 200) {
-            console.log(res)
-            this.listLikedProducts()
-          }
-        })
-      } else {
-        let interested = this.likedProducts.find(p => p.productId === product.asin)
-        api.delete(`/api/interested/${interested.interestedId}`).then(res => {
-          this.listLikedProducts()
-        })
-      }
     },
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
