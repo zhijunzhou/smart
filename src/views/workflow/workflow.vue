@@ -1,59 +1,7 @@
 <template>
   <div>
     <el-form ref="form" class="search-bar">
-      <el-row class="first-search">
-        <el-col :span="6" style="padding-right: 5px;">
-          <el-form-item label="店铺">
-            <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
-              <el-option
-                v-for="shop in shopList"
-                :key="shop.value"
-                :label="shop.shopName"
-                :value="shop.shopId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4" style="padding-right: 5px;">
-          <el-form-item label="国家">
-            <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
-              <el-option
-                v-for="nation in nationList"
-                :key="nation.value"
-                :label="nation"
-                :value="nation">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5" :offset="1">
-            <el-form-item label="选择时间">
-              <el-select class="period-select" v-model="periodSelect" @change="updateLu">
-                <el-option
-                v-for="item in periodOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item v-if="periodSelect===0">
-              <el-date-picker
-                v-model="dr"
-                @change="updateDateRangeValue"
-                type="daterange"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                range-separator="~"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
-            <el-form-item v-else>&nbsp;</el-form-item>
-          </el-col>   
-      </el-row>
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
       <el-row>
         <el-col :span="6" >
             <el-form-item label="ASIN">
@@ -392,6 +340,7 @@
   import json2csv from 'json2csv'
   import VueCsvDownload from '@/components/csvDownload/csvDownload'
   import moment from 'moment'
+  import searchBar from '@/components/search-bar/search-bar'
   import { PERIOD_OPTIONS } from '../../utils/enum'
 
   export default {
@@ -400,20 +349,18 @@
       '$route': 'getPageWorkflows'
     },
     components: {
-      VueCsvDownload
+      VueCsvDownload, searchBar
     },
     data () {
       return {
         dr: null,
         maxlength: 200,
-        nationId: '',
         nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
         gridData: [],
         gridDataBackup: [],
         pageSize: 20,
         currentPage: 1,
         total: 0,
-        periodSelect: 7,
         searchField: {
           productId: '',
           auditor: '',
@@ -433,7 +380,6 @@
         checkedList: ['suggestionId', 'status', 'createDate', 'name', 'productId', 'proposer', 'suggestType',
           'suggestion', 'auditor', 'reply', 'auditDate', 'finishDate', 'sumup', 'sumupDate', 'comments'],
         download: [],
-        shopId: undefined,
         currentSugId: undefined,
         modalType: undefined,
         dictCn: {
@@ -611,6 +557,11 @@
       }
     },
     methods: {
+      searchBarChange (filter) {
+        console.log('searchBarChange', filter)
+        this.filter = {...this.filter, ...filter}
+        this.getPageWorkflows()
+      },
       updateVisibleColumns () {
         this.gridData = this.gridDataBackup.map(bk => {
           const newData = {}
@@ -653,26 +604,9 @@
         // 然后移除
         document.body.removeChild(eleLink)
       },
-      updateDateRangeValue () {
-        console.log(this.dr)
-      },
       sizeChange (pageSize) {
         this.pageSize = pageSize
         this.getPageWorkflows()
-      },
-      updateLu () {
-        let format = 'YYYY-MM-DD'
-        let start = moment().subtract(this.periodSelect, 'days').format(format)
-        let end = moment().format(format)
-        const status = this.getStatus
-  
-        console.log('updateLu', status, start, end)
-        // this.searchField.period = {
-        //   dateType: status.join(','),
-        //   start: start,
-        //   end: end
-        // }
-        // this.getPageWorkflows()
       },
       listSuggestTypes () {
         api.get(`/api/suggest_type`).then(res => {
@@ -803,15 +737,13 @@
             pageSize: this.pageSize,
             currentPage: this.currentPage,
             filter: {
-              shopId: this.shopId,
+              shopId: this.filter.shopId,
               status: this.getStatus,
+              countryCode: this.filter.nationId,
               ...this.searchField
             }
           },
-          period: {
-            start: '2016-04-20',
-            end: '2018-05-30'
-          }
+          period: this.filter.period
         }
         console.log('params', params, this.getStatus)
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
@@ -848,14 +780,16 @@
       getAllWorkflows (hideWorkingDialog) {
         const params = {
           pagination: {
-            pageSize: 999999,
+            pageSize: 9999,
             currentPage: 1,
             filter: {
-              shopId: this.shopId,
+              shopId: this.filter.shopId,
               status: this.getStatus,
+              countryCode: this.filter.nationId,
               ...this.searchField
             }
-          }
+          },
+          period: this.filter.period
         }
         console.log(this.getStatus)
         this.$store.dispatch('setLoadingState', !hideWorkingDialog && true)
