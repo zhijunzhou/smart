@@ -68,6 +68,8 @@ export default {
   data () {
     return {
       filter: {
+        shopId: null,
+        nationId: null,
         period: {}
       },
       shopIdIn: this.shopId,
