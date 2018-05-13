@@ -728,8 +728,23 @@
         return finder ? finder.shopName : ''
       },
       beforeRemove (file, fileList) {
+        const reg = new RegExp(/ment\/.*/)
+        const path = reg.exec(file.url)[0]
+        console.log('beforeRemove', file, fileList)
         if (this.userInfo.roles.findIndex(r => r.roleId === 6) >= 0) {
-          return this.$confirm(`确定移除 ${file.name}？`)
+          return this.$confirm(`确定移除 ${file.name}？`).then(() => {
+            api.delete(`/api/suggestion/attach${path}`).then(res => {
+              this.$message({
+                type: 'success',
+                message: '更新成功'
+              })
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '更新失败'
+            })
+          })
         } else {
           this.$alert('无权限删除附件', '注意', {confirmButtonText: '确定'})
           return false
