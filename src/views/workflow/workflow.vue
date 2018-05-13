@@ -150,7 +150,7 @@
                   </el-row>
                   <el-form-item label="附件" :label-width="formLabelWidth">
                     <el-upload
-                      name="attachement"
+                      name="attachment"
                       :file-list="scope.row.attachment"
                       :on-preview="downloadFile"
                       :before-remove="beforeRemove"
@@ -637,7 +637,7 @@
       },
       removeFile (suggestionId, file, fileList) {
         console.log(suggestionId, file, fileList)
-        // api.delete('/suggestion/attachement/' + suggestionId)
+        // api.delete('/suggestion/attachment/' + suggestionId)
       },
       analysis (row) {
   
@@ -822,7 +822,7 @@
               api.get(`/api/suggestion/${w.suggestionId}/history`).then(res => {
                 w.history = res.data
               })
-              api.get(`/api/suggestion/attachement/${w.suggestionId}`).then(attachment => {
+              api.get(`/api/suggestion/attachment/${w.suggestionId}`).then(attachment => {
                 console.log(attachment)
                 w.attachment = attachment.data.map(a => {
                   return {
@@ -1006,7 +1006,7 @@
         return headers
       },
       getUploadUrl (suggestionId) {
-        return api.baseURL + '/api/suggestion/attachement/' + suggestionId
+        return api.baseURL + '/api/suggestion/attachment/' + suggestionId
       },
       handlerUploader (file, fileList) {
         console.log(api, file, fileList)
