@@ -17,9 +17,9 @@
         <el-select clearable v-model="nationIdIn" placeholder="选择国家" class="nation-select" @change="updateNation">
           <el-option
             v-for="nation in nationList"
-            :key="nation.value"
-            :label="nation"
-            :value="nation">
+            :key="nation.countryCode"
+            :label="nation.countryCode"
+            :value="nation.countryCode">
           </el-option>
         </el-select>
       </el-form-item>
@@ -37,7 +37,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item v-if="periodSelect===0">
+        <el-form-item v-if="periodSelectIn===0">
           <el-date-picker
             v-model="periodCustomize"
             @change="updatePeriodCustomize"
@@ -72,6 +72,7 @@ export default {
         nationId: null,
         period: {}
       },
+      periodCustomize: [],
       shopIdIn: this.shopId,
       nationIdIn: this.nationId,
       periodSelectIn: 0,
@@ -99,7 +100,7 @@ export default {
       console.log('nationChange', this.filter)
     },
     updatePerid () {
-      if (this.periodSelect === 0) {
+      if (this.periodSelectIn === 0) {
         return
       }
       let format = 'YYYY-MM-DD'
@@ -107,13 +108,13 @@ export default {
       this.filter.period.end = moment().format(format)
       this.$emit('onChange', this.filter)
       console.log('onChange', this.filter)
+    },
+    updatePeriodCustomize () {
+      this.filter.period.start = this.periodCustomize[0]
+      this.filter.period.end = this.periodCustomize[1]
+      this.$emit('onChange', this.filter)
+      console.log('onChange', this.filter)
     }
-  },
-  updtaePeriodCustomize () {
-    this.filter.period.start = this.periodCustomize[0]
-    this.filter.period.end = this.periodCustomize[1]
-    this.$emit('onChange', this.filter)
-    console.log('onChange', this.filter)
   }
 }
 </script>

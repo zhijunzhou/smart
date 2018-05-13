@@ -447,6 +447,7 @@
           'Session Percentage': 90
         },
         nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
+        nationListBK: [],
         gridData: [],
         gridDataBackup: [],
         pageSize: 20,
@@ -652,6 +653,7 @@
     created () {
       this.createHeader()
       this.getShopList()
+      this.getNationList()
       // this.getPageWorkflows()
       // this.getAllWorkflows()
       this.listSuggestTypes()
@@ -700,6 +702,7 @@
         console.log('searchBarChange', filter)
         this.filter = {...this.filter, ...filter}
         this.getPageWorkflows()
+        this.getAllWorkflows()
       },
       updateVisibleColumns () {
         const checkList = this.checkedList.map(c => this.dictEn[c])
@@ -871,6 +874,12 @@
       },
       searchWorkflow () {
         this.getPageWorkflows()
+      },
+      getNationList () {
+        api.get('/api/country').then(res => {
+          this.nationList = res.data.grid
+          this.nationListBK = this.nationList
+        })
       },
       getShopList () {
         api.get('/api/shop').then(res => {
@@ -1171,6 +1180,9 @@
 
 .shop-select {
   width: 160px!important;
+}
+.el-checkbox + .el-checkbox {
+    margin-left: 0px;
 }
 </style>
 
