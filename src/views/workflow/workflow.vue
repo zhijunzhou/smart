@@ -137,6 +137,9 @@
                       {{scope.row.productId}}
                     </router-link>
                   </span>
+                  <span v-else-if="headerName==='suggestionId'">
+                      <i v-if="scope.row.specialStatus ==='high'" class="el-icon-warning"></i>&nbsp;&nbsp;{{scope.row.suggestionId}}
+                  </span>
                   <span v-else-if="headerName==='status'">
                       <el-tag :type="getTagType(scope.row.status)">{{typeReverseMapping[scope.row.status]}}</el-tag>
                   </span>
@@ -1198,6 +1201,10 @@
 }
 .el-checkbox + .el-checkbox {
     margin-left: 0px;
+}
+
+.el-icon-warning {
+  color: #FF6600;
 }
 </style>
 
