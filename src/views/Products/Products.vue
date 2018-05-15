@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-form ref="form">
-      <el-row class="first-search">
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <!-- <el-row class="first-search">
         <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
@@ -53,7 +54,7 @@
         </el-form-item>
         <el-form-item v-else>&nbsp;</el-form-item>
       </el-col>   
-    </el-row>
+    </el-row> -->
   <el-row>
         <el-col :span="8">
           <el-form-item>
@@ -256,10 +257,11 @@ import { Message } from 'element-ui'
 import {PERIOD_OPTIONS} from '../../utils/enum'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import moment from 'moment'
+import searchBar from '@/components/search-bar/search-bar'
 
 export default {
   components: {
-    VueCsvDownload
+    VueCsvDownload, searchBar
   },
   data () {
     return {
@@ -269,6 +271,7 @@ export default {
       gridData: [],
       periodSelect: 7,
       filter: {
+        shopId: null,
         asinOrName: '',
         period: {
           start: '',
@@ -278,7 +281,8 @@ export default {
       dr: null,
       nationId: '',
       periodOptions: PERIOD_OPTIONS,
-      nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
+      nationList: [],
+      nationListBK: [],
       pageSize: 20,
       total: 0,
       currentPage: 1,
@@ -323,7 +327,7 @@ export default {
   },
   created () {
     this.search_val = this.$route.query.productId
-    this.shopId = this.$route.query.shopId
+    this.filter.shopId = this.$route.query.shopId
     let format = 'YYYY-MM-DD'
     let start = moment().subtract(this.periodSelect, 'days').format(format)
     let end = moment().format(format)
@@ -339,6 +343,11 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    searchBarChange (filter) {
+      console.log('searchBarChange', filter)
+      this.filter = {...this.filter, ...filter}
+      this.getPageProducts()
+    },
     changeName (row) {
       this.$prompt('请输入产品名称', '提示', {
         confirmButtonText: '确定',
@@ -437,11 +446,11 @@ export default {
       })
     },
     searchProduct () {
-      let filter = {
-        productId: this.filter.asinOrName,
-        shopId: this.shopId
-      }
-      this.getPageProducts(filter)
+      // let filter = {
+      //   productId: this.filter.asinOrName,
+      //   shopId: this.shopId
+      // }
+      this.getPageProducts()
     },
     getPageProducts () {
       let pagination = {
@@ -475,6 +484,7 @@ export default {
     getNationList () {
       api.get('/api/country').then(res => {
         this.nationList = res.data.grid
+        this.nationListBK = this.nationList
       })
     },
     currentChange (currentPage) {
