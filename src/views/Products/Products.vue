@@ -117,7 +117,7 @@
             <el-table-column
               label="国家"
               width="60"
-              prop="marketPlaceName"
+              prop="countryCode"
               >
             </el-table-column>  
             <el-table-column
@@ -169,7 +169,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {marketPlaceId: scope.row.marketPlaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {marketPlaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>

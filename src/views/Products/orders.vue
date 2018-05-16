@@ -397,7 +397,7 @@ export default {
       // request.filter = {}
       const period = {
         start: '2016-04-30',
-        end: '2018-05-02'
+        end: '2018-06-02'
       }
       this.$store.dispatch('setLoadingState', true)
       this.gridData = this.mockData
