@@ -140,7 +140,7 @@ export default {
       salesUnit: 5,
       showChartCategory: false,
       showChartKeyword: false,
-      statisticsQuery: this.$route.query,
+      statisticsQuery: null,
       productId: this.$route.query.productId,
       shopId: this.$route.query.shopId,
       categories: [],
@@ -183,6 +183,8 @@ export default {
     }
   },
   created () {
+    this.statisticsQuery = this.$route.query
+    this.statisticsQuery.shopId = parseInt(this.statisticsQuery.shopId)
     this.getStatistics()
     this.getSuggestion()
   },

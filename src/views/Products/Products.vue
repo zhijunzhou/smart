@@ -20,9 +20,9 @@
           <el-select clearable v-model="nationId" placeholder="选择国家" class="nation-select">
             <el-option
             v-for="nation in nationList"
-            :key="nation.marketPlace"
-            :label="nation.marketPlace"
-            :value="nation.marketPlaceId">
+            :key="nation.marketplace"
+            :label="nation.marketplace"
+            :value="nation.marketplaceId">
           </el-option>
         </el-select>
       </el-form-item>
@@ -58,10 +58,11 @@
   <el-row>
         <el-col :span="8">
           <el-form-item>
-            <el-radio-group v-model="radio">
-              <el-radio :label="3">按店铺</el-radio>
-              <el-radio :label="6">按订单</el-radio>
-              <el-radio :label="9">按数量</el-radio>
+            <el-checkbox v-model="filter.dimension.shop" @change="useShopChange">按店铺</el-checkbox>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <el-radio-group v-model="useOrderQuantity" @change="useOrderQuantityChange">
+              <el-radio label="order">按订单</el-radio>
+              <el-radio label="quantity">按数量</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -169,7 +170,7 @@
                     编辑
                   </el-button>
                 </router-link>
-                <router-link :to="{path: '/main/analysis', query: {marketPlaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
+                <router-link :to="{path: '/main/analysis', query: {marketplaceId: scope.row.marketplaceId, shopId: scope.row.shopId, productId: scope.row.productASIN}}">
                   <el-button size="mini" round>
                     分析
                   </el-button>
@@ -224,7 +225,7 @@
             {{form.shopName}}
           </el-form-item>
           <el-form-item label="所属国家" :label-width="formLabelWidth">
-            {{form.marketPlaceName}}
+            {{form.marketplaceName}}
           </el-form-item>
           <el-form-item label="优先级" :label-width="formLabelWidth">
               <el-radio-group v-model="form.status">
@@ -265,6 +266,8 @@ export default {
   },
   data () {
     return {
+      useOrderQuantity: 'quantity',
+      useShop: null,
       status: 'normal',
       radio: 0,
       maxlength: 200,
@@ -276,6 +279,11 @@ export default {
         period: {
           start: '',
           end: ''
+        },
+        dimension: {
+          shop: false,
+          order: false,
+          quantity: true
         }
       },
       dr: null,
@@ -343,6 +351,19 @@ export default {
     this.listSuggestTypes()
   },
   methods: {
+    useOrderQuantityChange () {
+      console.log(this.useOrderQuantity, this.filter)
+      this.filter.dimension.order = false
+      this.filter.dimension.quantity = false
+      this.filter.dimension[this.useOrderQuantity] = true
+      console.log(this.useOrderQuantity, this.filter)
+      this.getPageProducts()
+    },
+    useShopChange (event) {
+      // this.filter.dimension = {shop: this.useShop}
+      this.getPageProducts()
+      console.log(event)
+    },
     searchBarChange (filter) {
       console.log('searchBarChange', filter)
       this.filter = {...this.filter, ...filter}
@@ -427,7 +448,7 @@ export default {
     },
     add (row) {
       console.log(row)
-      const {productASIN, productName, shopId, shopName, marketPlaceName} = row
+      const {productASIN, productName, shopId, shopName, marketplaceName} = row
       this.modalType = 'add'
       this.dialogFormVisible = true
       this.form.productId = productASIN
@@ -435,7 +456,7 @@ export default {
       this.form.productName = productName
       this.form.shopName = shopName
       this.form.shopId = shopId
-      this.form.marketPlaceName = marketPlaceName
+      this.form.marketplaceName = marketplaceName
       this.form.optimizationType = ''
       this.form.suggestion = undefined
       this.form.title = undefined
@@ -509,7 +530,7 @@ export default {
     likeProduct (product, like) {
       let productInfo = {
         productId: product.productASIN,
-        marketplaceId: product.marketPlaceId,
+        marketplaceId: product.marketplaceId,
         shopId: product.shopId
       }
       if (like === true) {
