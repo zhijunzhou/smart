@@ -400,8 +400,9 @@ export default {
       this.filter.period.end = this.dr[1]
       this.getPageProducts()
     },
-    sizeChange () {
-
+    sizeChange (e) {
+      this.pageSize = e
+      this.getPageProducts()
     },
 
     periodChange () {

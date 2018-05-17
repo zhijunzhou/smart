@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-form ref="form">
-      <el-row>
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <!-- <el-row>
         <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
@@ -53,10 +54,8 @@
             </el-form-item>
             <el-form-item v-else>&nbsp;</el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+        </el-row> -->
 
-        </el-row>
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="订单">
@@ -64,7 +63,7 @@
                 class="shop-select"
                 placeholder="输入订单号"
                 clearable
-                v-model="searchField.productId">
+                v-model="filter.orderId">
               </el-input>
             </el-form-item>
           </el-col> 
@@ -74,7 +73,7 @@
                 class="nation-select"
                 placeholder="请输入买家Id"
                 clearable
-                v-model="searchField.productId">
+                v-model="filter.buyerId">
               </el-input>
             </el-form-item>
           </el-col>  
@@ -85,13 +84,13 @@
                   placeholder="输入ASIN"
                   class="asin-input"
                   clearable
-                  v-model="searchField.auditor">
+                  v-model="filter.productId">
                 </el-input>
               </el-form-item>
           </el-col>
           <el-col :span="6" style="padding-right: 5px;">
               <el-form-item label="订单状态">
-                <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select">
+                <el-select clearable v-model="orderStatus" placeholder="选择状态" @change="orderStatusChange" class="shop-select">
                   <el-option
                     v-for="status in statusList"
                     :key="status"
@@ -179,13 +178,30 @@ import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_OPTIONS} from '../../utils/enum'
+import searchBar from '@/components/search-bar/search-bar'
 
 export default {
   components: {
-    VueCsvDownload
+    VueCsvDownload,
+    searchBar
   },
   data () {
     return {
+      orderStatus: '',
+      download: [],
+      filter: {
+        shopId: null,
+        // asinOrName: '',
+        period: {
+          start: '',
+          end: ''
+        },
+        status: ['Pendding', 'Unshipped', 'Shipped', 'Canceled'],
+        countryCode: '',
+        productId: '',
+        buyerId: '',
+        ordeId: ''
+      },
       mockData: [
         {date: '', orderId: '', status: '', asin: '', productName: '', buyerName: '', buyerId: '', quantity: '', price: '', country: '', shopId: ''}
         // {date: '11111-111', orderId: 'asdadasdasdasdasd', status: 'xxxx', asin: 'xxxxxxxxx', productName: '12121212', buyerName: 'asdasd', buyerId: '1212123', quantity: '1212', price: 200, country: 'UK', shopId: '2'},
@@ -203,7 +219,7 @@ export default {
       currentPage: 1,
       maxlength: 200,
       nationId: '',
-      nationList: ['US', 'UK', 'DE', 'FR', 'IT', 'ES', 'JP'],
+      nationList: [],
       statusId: '',
       statusList: ['All', 'Pendding', 'Unshipped', 'Shipped', 'Canceled'],
       userId: '',
@@ -269,27 +285,33 @@ export default {
     }
   },
   created () {
-    this.search_val = this.$route.query.productId
-    this.shopId = this.$route.query.shopId
+    // this.search_val = this.$route.query.productId
+    // this.shopId = this.$route.query.shopId
 
     this.getShopList()
+    this.getNationList()
 
-    if (this.search_val && this.shopId) {
-      this.searchProduct()
-    } else {
-      this.getPageProducts()
-    }
-    this.listSuggestTypes()
+    this.getPageProducts()
   },
   methods: {
+    orderStatusChange (evnet) {
+      console.log(this.orderStatus)
+      if (this.orderStatus === 'All') {
+        this.filter.status = ['Pendding', 'Unshipped', 'Shipped', 'Canceled']
+      } else {
+        this.filter.status = [this.orderStatus]
+      }
+    },
     searchGrid () {
-
+      this.getPageProducts()
     },
-    sizeChange () {
-
+    sizeChange (e) {
+      this.pageSize = e
+      this.getPageProducts()
     },
-    currentChange () {
-
+    currentChange (e) {
+      this.currentPage = e
+      this.getPageProducts()
     },
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
@@ -346,11 +368,6 @@ export default {
     updateDateRangeValue () {
       console.log(this.dr)
     },
-    listSuggestTypes () {
-      api.get(`/api/suggest_type`).then(res => {
-        this.optimizationTypes = res.data
-      })
-    },
     saveWork () {
       let self = this
       self.form.sn = undefined
@@ -377,39 +394,32 @@ export default {
       })
     },
     searchProduct () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId
-      }
-      this.getPageProducts(filter)
+      this.getPageProducts()
     },
-    getPageProducts (filter) {
+    getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      if (filter) {
-        pagination.filter = filter
-      }
-      pagination.filter = {
-        // status: ['Shipped']
-      }
+      // if (filter) {
+      //   pagination.filter = filter
+      // }
+      pagination.filter = this.filter
+      const period = this.filter.period
+      // delete this.filter.period
       // request.filter = {}
-      const period = {
-        start: '2016-04-30',
-        end: '2018-06-02'
-      }
       this.$store.dispatch('setLoadingState', true)
-      this.gridData = this.mockData
-      this.download = this.gridData
-      this.total = this.mockData.length
-      this.createHeader()
-      this.$store.dispatch('setLoadingState', false)
+      // this.gridData = this.mockData
+      // this.download = this.gridData
+      // this.total = this.mockData.length
+
+      // this.$store.dispatch('setLoadingState', false)
       api.post('/api/product/orders', {pagination, period}).then(res => {
         if (res.status === 200 && res.data) {
           this.gridData = res.data.grid
+          this.download = this.gridData
           this.total = res.data.pagination.total
-          this.listLikedProducts()
+          this.createHeader()
         }
         this.$store.dispatch('setLoadingState', false)
       }).catch(err => {
@@ -426,15 +436,20 @@ export default {
         this.shopList = res.data
       })
     },
+    getNationList () {
+      api.get('/api/country').then(res => {
+        this.nationList = res.data.grid
+        this.nationListBK = this.nationList
+      })
+    },
+    searchBarChange (filter) {
+      console.log('searchBarChange', filter)
+      this.filter = {...this.filter, ...filter}
+      this.getPageProducts()
+    },
     updatePageProducts (currentPage) {
       this.currentPage = currentPage
       this.getPageProducts()
-    },
-    listLikedProducts () {
-      api.get(`/api/interested`).then(res => {
-        console.log(res.data)
-        this.likedProducts = res.data
-      })
     },
     showHideLiked () {
       let filter = {
@@ -443,25 +458,6 @@ export default {
         interestedOnly: this.isShowLiked ? 1 : undefined
       }
       this.getPageProducts(filter)
-    },
-    likeProduct (product, like) {
-      let productInfo = {
-        productId: product.asin,
-        shopId: product.shopId
-      }
-      if (like === true) {
-        api.post(`/api/interested`, productInfo).then(res => {
-          if (res && res.status === 200) {
-            console.log(res)
-            this.listLikedProducts()
-          }
-        })
-      } else {
-        let interested = this.likedProducts.find(p => p.productId === product.asin)
-        api.delete(`/api/interested/${interested.interestedId}`).then(res => {
-          this.listLikedProducts()
-        })
-      }
     },
     errorHandler (err, specialCase) {
       if (specialCase && err.request.status === specialCase.code) {
