@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-form ref="form">
-      <el-row>
+      <search-bar :shopList="shopList" :nationList="nationList" :periodSelect="7" @onChange="searchBarChange($event)" ></search-bar>
+      <!-- <el-row>
         <el-col :span="6" style="padding-right: 5px;">
           <el-form-item label="店铺">
             <el-select clearable v-model="shopId" placeholder="选择店铺" class="shop-select">
@@ -53,11 +54,11 @@
             </el-form-item>
             <el-form-item v-else>&nbsp;</el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row>
           <el-col :span="6" style="padding-right: 5px;">
             <el-form-item label="状态">
-              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select">
+              <el-select clearable v-model="statusId" placeholder="选择状态" class="shop-select" @change="statusChange">
                 <el-option
                   v-for="status in statusList"
                   :key="status"
@@ -69,7 +70,7 @@
           </el-col>
           <el-col :span="4" style="padding-right: 5px;">
             <el-form-item label="星评">
-              <el-select clearable v-model="stars" placeholder="选择星评" class="rate-select">
+              <el-select clearable v-model="filter.stars" placeholder="选择星评" class="rate-select">
                 <el-option
                   v-for="rate in rateList"
                   :key="rate"
@@ -82,7 +83,7 @@
 
           <el-col :span="10" :offset="1" style="padding-right: 5px;">
             <el-form-item label="选择用户" >
-              <el-select clearable v-model="userId" placeholder="选择用户" class="period-select">
+              <el-select clearable v-model="filter.userId" placeholder="选择用户" class="period-select">
                 <el-option
                   v-for="user in userList"
                   :key="user.value"
@@ -101,7 +102,7 @@
                 class="shop-select"
                 placeholder="请输入买家Id"
                 clearable
-                v-model="searchField.productId">
+                v-model="filter.buyerId">
               </el-input>
             </el-form-item>
           </el-col>  
@@ -111,7 +112,7 @@
                   class="nation-select"
                   placeholder="输入订单号"
                   clearable
-                  v-model="searchField.productId">
+                  v-model="filter.orderId">
                 </el-input>
               </el-form-item>
             </el-col>  
@@ -122,7 +123,7 @@
                   type="textarea"
                   class="asin-input"
                   clearable
-                  v-model="searchField.auditor">
+                  v-model="filter.productId">
                 </el-input>
               </el-form-item>
           </el-col>
@@ -139,7 +140,7 @@
               <el-checkbox v-for="(header, index) of headers" :key="index" :label="header" style="width: 100%;"></el-checkbox>
             </el-checkbox-group>
           </el-popover>
-          <el-col :span="8">
+          <el-col :span="16">
             <el-pagination
             @size-change="sizeChange"
             @current-change="currentChange"
@@ -153,7 +154,7 @@
         <!-- <el-col :span="5" :offset="0" class="text-right"> -->
           <!-- <el-button size="mini" icon="el-icon-plus" @click="ExportCsv">导出表格</el-button> -->
           <!-- </el-col> -->
-          <el-col :span="16" class="text-right">
+          <el-col :span="8" class="text-right">
             <el-button size="mini" v-popover:showHideColumns>显示/隐藏列</el-button>
             <vue-csv-download
               :data="download"
@@ -201,6 +202,17 @@
             </template>
           </el-table-column>
         </el-table>
+      </el-col>
+      <el-col :span="24">
+          <el-pagination
+          @size-change="sizeChange"
+          @current-change="currentChange"
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100]"
+          :page-size="pageSize"
+          layout="sizes, total, prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
       </el-col>
     </el-row>
     <el-dialog title="反馈详情" :visible.sync="dialogFormVisible">
@@ -253,21 +265,30 @@ import { Message } from 'element-ui'
 import moment from 'moment'
 import VueCsvDownload from '@/components/csvDownload/csvDownload'
 import {PERIOD_OPTIONS} from '../../utils/enum'
+import searchBar from '@/components/search-bar/search-bar'
 
 export default {
   components: {
-    VueCsvDownload
+    VueCsvDownload, searchBar
   },
   data () {
     return {
       mockData: [
-        {sellerId: '11111-111', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-211', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-311', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-411', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-511', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
-        {sellerId: '11111-611', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'}
+        // {sellerId: '11111-111', review: 'asdadasdasdasdasd', asin: 'xxxxxxxxx', country: 'UK', quantity: '1212', score: '5', reviewDate: '2018-04-12', status: 'xxxx', stars: '4', buyerId: '1212123', orderId: '121211212', name: 'asdasd', title: '1212t', operatorId: 11, lastUpdateTime: '2018-05-22 21:00:00'},
       ],
+      filter: {
+        shopId: null,
+        // asinOrName: '',
+        period: {
+          start: '',
+          end: ''
+        },
+        countryCode: '',
+        productId: '',
+        buyerId: '',
+        stars: 0,
+        ordeId: ''
+      },
       stars: '',
       dynamicHeaders: {},
       checkedList: [],
@@ -335,22 +356,31 @@ export default {
     this.shopId = this.$route.query.shopId
 
     this.getShopList()
-
-    if (this.search_val && this.shopId) {
-      this.searchProduct()
-    } else {
-      this.getPageProducts()
-    }
+    this.getNationList()
+    this.getPageProducts()
   },
   methods: {
+    getNationList () {
+      api.get('/api/country').then(res => {
+        this.nationList = res.data.grid
+        this.nationListBK = this.nationList
+      })
+    },
+    searchBarChange (filter) {
+      console.log('searchBarChange', filter)
+      this.filter = {...this.filter, ...filter}
+      this.getPageProducts()
+    },
     searchGrid () {
-
+      this.getPageProducts()
     },
-    sizeChange () {
-
+    sizeChange (e) {
+      this.pageSize = e
+      this.getPageProducts()
     },
-    currentChange () {
-
+    currentChange (e) {
+      this.currentPage = e
+      this.getPageProducts()
     },
     updateVisibleColumns () {
       this.showHideColumns(this.checkedList)
@@ -433,24 +463,15 @@ export default {
       })
     },
     searchProduct () {
-      let filter = {
-        productId: this.search_val,
-        shopId: this.shopId
-      }
-      this.getPageProducts(filter)
+      this.getPageProducts()
     },
-    getPageProducts (filter) {
+    getPageProducts () {
       let pagination = {
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }
-      if (filter) {
-        pagination.filter = filter
-      }
-      const period = {
-        start: '2016-04-01',
-        end: '2018-05-30'
-      }
+      pagination.filter = this.filter
+      const period = this.filter.period
       this.$store.dispatch('setLoadingState', true)
       // this.gridData = this.mockData
       // this.download = this.gridData

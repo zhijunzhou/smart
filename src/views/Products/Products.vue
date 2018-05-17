@@ -83,7 +83,7 @@
       </el-row>
     </el-form>
     <el-row>
-      <el-col :span="8">
+      <el-col :span="16">
         <el-pagination
           @size-change="sizeChange"
           @current-change="currentChange"
@@ -94,7 +94,7 @@
           :total="total">
         </el-pagination>
       </el-col>
-      <el-col :span="16" class="text-right">
+      <el-col :span="8" class="text-right">
         <vue-csv-download
           :data="download"
           :fields="fieldsCn"
