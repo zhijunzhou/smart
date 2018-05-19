@@ -24,5 +24,5 @@ npm run build --report
 3. 微信开放平台：[https://open.weixin.qq.com](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=&lang=zh_CN)
 4: [Travis CI](https://travis-ci.org)
 
-yelgogogo sync 2018-05-19
+yelgogogo sync 2018-05-19 1
 
